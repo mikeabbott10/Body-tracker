@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Volleyball Movement Tracker</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="bt_not_supported">Bluetooth non supportato</string>
+    <string name="bt_permissions_request">Permettere l\'utilizzo del bluetooth?</string>
+    <string name="bt_not_permitted">Permessi di utilizzo bluetooth necessari</string>
+</resources>
