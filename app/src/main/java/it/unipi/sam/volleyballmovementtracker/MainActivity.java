@@ -21,7 +21,7 @@ import java.util.List;
 import it.unipi.sam.volleyballmovementtracker.activities.player.PlayerActivity;
 import it.unipi.sam.volleyballmovementtracker.activities.trainer.TrainerActivity;
 import it.unipi.sam.volleyballmovementtracker.databinding.ActivityMainBinding;
-import it.unipi.sam.volleyballmovementtracker.util.graphic.Constants;
+import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, DialogInterface.OnClickListener, EasyPermissions.PermissionCallbacks {
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // check bt permissions
         bta = ((BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
         if(bta==null){
-            // doesn't support bt
+            // device doesn't support bt
             new AlertDialog.Builder(MainActivity.this)
                     .setTitle(getString(R.string.bt_not_supported))
                     .setCancelable(false)
@@ -57,7 +57,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 if (!EasyPermissions.hasPermissions(this, Constants.BT_PERMISSIONS)) {
                     EasyPermissions.requestPermissions(this, getString(R.string.bt_permissions_request), Constants.BT_PERMISSION_CODE, Constants.BT_PERMISSIONS);
-                }
+                }else
+                    bta.enable();
             }else
                 bta.enable();
         }

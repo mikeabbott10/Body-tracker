@@ -1,4 +1,4 @@
-package it.unipi.sam.volleyballmovementtracker.util.graphic;
+package it.unipi.sam.volleyballmovementtracker.util;
 
 import android.Manifest;
 import android.os.Build;
