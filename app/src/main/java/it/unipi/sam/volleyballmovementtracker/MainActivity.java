@@ -13,18 +13,22 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 
 import java.util.List;
 
+import it.unipi.sam.volleyballmovementtracker.activities.BaseActivity;
 import it.unipi.sam.volleyballmovementtracker.activities.player.PlayerActivity;
 import it.unipi.sam.volleyballmovementtracker.activities.trainer.TrainerActivity;
 import it.unipi.sam.volleyballmovementtracker.databinding.ActivityMainBinding;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, DialogInterface.OnClickListener, EasyPermissions.PermissionCallbacks {
+
+// TODO:
+//  1. porta vectors xml ad al massimo 200x200
+// 2. scritte davanti a scelta rompono il cazzo
+public class MainActivity extends BaseActivity implements View.OnClickListener, DialogInterface.OnClickListener, EasyPermissions.PermissionCallbacks {
     private static final String TAG = "AAAMainActivity";
     private ActivityMainBinding binding;
     private BluetoothAdapter bta;
@@ -68,12 +72,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         if(view.getId() == binding.trainerView.getId()){
             // start trainer activity
-            startActivity(new Intent(this, TrainerActivity.class),
-                    ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+
+            // create the transition animation - the images in the layouts
+            // of both activities are defined with android:transitionName="who_am_i_choice"
+            ActivityOptions options = ActivityOptions
+                    .makeSceneTransitionAnimation(this, binding.coachIv, "who_am_i_choice");
+            // start the new activity
+            Intent i = new Intent(this, TrainerActivity.class);
+            Bundle mBundle = new Bundle();
+            mBundle.putInt(Constants.who_am_i_id_key, R.drawable.ic_coach1);
+            i.putExtra(Constants.starting_activity_bundle_key, mBundle);
+            startActivity(i, options.toBundle());
         }else if(view.getId() == binding.playerView.getId()){
             // start player activity
-            startActivity(new Intent(this, PlayerActivity.class),
-                    ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+
+            // create the transition animation - the images in the layouts
+            // of both activities are defined with android:transitionName="who_am_i_choice"
+            ActivityOptions options = ActivityOptions
+                    .makeSceneTransitionAnimation(this, binding.coachIv, "who_am_i_choice");
+            // start the new activity
+            Intent i = new Intent(this, PlayerActivity.class);
+            Bundle mBundle = new Bundle();
+            mBundle.putInt(Constants.who_am_i_id_key, R.drawable.ic_block2);
+            i.putExtra(Constants.starting_activity_bundle_key, mBundle);
+            startActivity(i, options.toBundle());
         }
     }
 

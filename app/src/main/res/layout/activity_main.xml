@@ -26,22 +26,104 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
                 android:adjustViewBounds="true"
-                android:contentDescription="@null"
+                android:alpha="@dimen/sagoma_alpha"
                 android:scaleType="fitCenter"
-                android:src="@drawable/all" />
+                app:tint="@color/white"
+
+                android:id="@+id/coach_iv"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_coach1"
+                android:transitionName="who_am_i_choice" />
                 <!-- adjustViewBounds attribute is needed because
                 ImageView measures itself to match the original dimensions
                 of the drawable by default, without regard to any
                 scaling performed according to the scale type-->
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingHorizontal="3dp"
+                android:layout_centerVertical="true">
+
+                <TextView
+                    android:id="@+id/trainer_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/audiowide"
+                    android:textAlignment="center"
+                    android:text="@string/coach"
+                    android:textColor="@color/black"
+                    android:textSize="72sp"
+                    android:textStyle="bold|italic"
+                    android:typeface="normal"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="3dp" />
+
+                <TextView
+                    android:id="@+id/trainer_tv_back"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:fontFamily="@font/audiowide"
+                    android:text="@string/coach"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="72sp"
+                    android:textStyle="bold|italic"
+                    android:typeface="normal" />
+
+            </RelativeLayout>
         </RelativeLayout>
-        <it.unipi.sam.volleyballmovementtracker.util.graphic.TopCropImageView
+
+        <RelativeLayout
             android:id="@+id/player_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5"
-            android:src="@drawable/attack"
-            android:contentDescription="@null"/>
+            android:layout_weight="0.5">
+            <it.unipi.sam.volleyballmovementtracker.util.graphic.TopCropImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/attack"
+                android:contentDescription="@null"/>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingHorizontal="3dp"
+                android:layout_centerVertical="true">
+
+                <TextView
+                    android:id="@+id/player_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/audiowide"
+                    android:textAlignment="center"
+                    android:text="@string/player"
+                    android:textColor="@color/black"
+                    android:textSize="72sp"
+                    android:textStyle="bold|italic"
+                    android:typeface="normal"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="3dp" />
+
+                <TextView
+                    android:id="@+id/player_tv_back"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:fontFamily="@font/audiowide"
+                    android:textAlignment="center"
+                    android:text="@string/player"
+                    android:textColor="@color/white"
+                    android:textSize="72sp"
+                    android:textStyle="bold|italic"
+                    android:typeface="normal" />
+
+            </RelativeLayout>
+        </RelativeLayout>
     </LinearLayout>
 
     <ImageView

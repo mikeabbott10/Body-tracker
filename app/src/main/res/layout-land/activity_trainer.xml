@@ -6,80 +6,83 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:baselineAligned="false">
         <RelativeLayout
             android:id="@+id/centrale_view"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.33">
+            android:layout_weight="0.5">
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@null"
                 android:scaleType="centerCrop"
-                android:src="@drawable/back3"
-                android:scaleY="-1" />
+                android:scaleY="-1"
+                android:src="@drawable/back3" />
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginStart="10dp"
+                android:layout_centerHorizontal="true"
                 android:adjustViewBounds="true"
+                android:alpha="@dimen/sagoma_alpha"
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"
-                android:src="@drawable/muro_centrale" />
+                android:src="@drawable/ic_block2"
+                app:tint="@color/white" />
 
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="match_parent"
-                android:contentDescription="@null"
-                android:layout_alignParentEnd="true"
-                android:src="@drawable/right_gradient" />
-        </RelativeLayout>
-        <RelativeLayout
-            android:id="@+id/laterale_view"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.33">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@null"
-                android:scaleType="centerCrop"
-                android:src="@drawable/back5" />
-
-            <ImageView
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="370dp"
-                android:layout_alignParentBottom="true"
-                android:layout_centerInParent="true"
-                android:layout_alignParentEnd="true"
-                android:adjustViewBounds="true"
-                android:contentDescription="@null"
-                android:scaleType="centerCrop"
-                android:src="@drawable/muro_centrale_laterale2" />
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingHorizontal="3dp"
+                android:layout_centerVertical="true">
+
+                <TextView
+                    android:id="@+id/middle_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/audiowide"
+                    android:textAlignment="center"
+                    android:text="@string/middle_blocker_training"
+                    android:textColor="@color/black"
+                    android:textSize="72sp"
+                    android:textStyle="bold|italic"
+                    android:typeface="normal"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="3dp" />
+
+                <TextView
+                    android:id="@+id/middle_tv_back"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:fontFamily="@font/audiowide"
+                    android:text="@string/middle_blocker_training"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="72sp"
+                    android:textStyle="bold|italic"
+                    android:typeface="normal" />
+
+            </RelativeLayout>
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="match_parent"
-                android:contentDescription="@null"
-                android:src="@drawable/left_gradient" />
-
-            <ImageView
-                android:layout_width="20dp"
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:contentDescription="@null"
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/right_gradient" />
+
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/centrale_e_laterale_view"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.33">
+            android:layout_weight="0.5">
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -91,19 +94,56 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginEnd="20dp"
+                android:layout_centerHorizontal="true"
                 android:adjustViewBounds="true"
+                android:alpha="@dimen/sagoma_alpha"
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"
-                android:src="@drawable/muro_laterale" />
+                android:src="@drawable/ic_block1"
+                app:tint="@color/white" />
 
             <ImageView
-                android:layout_width="20dp"
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:contentDescription="@null"
                 android:src="@drawable/left_gradient" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingHorizontal="3dp"
+                android:layout_centerVertical="true">
+
+                <TextView
+                    android:id="@+id/middle_lat_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/audiowide"
+                    android:textAlignment="center"
+                    android:text="@string/middle_lat_blockers_training"
+                    android:textColor="@color/black"
+                    android:textSize="72sp"
+                    android:textStyle="bold|italic"
+                    android:typeface="normal"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="3dp" />
+
+                <TextView
+                    android:id="@+id/middle_lat_tv_back"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:fontFamily="@font/audiowide"
+                    android:text="@string/middle_lat_blockers_training"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="72sp"
+                    android:textStyle="bold|italic"
+                    android:typeface="normal" />
+
+            </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>
 

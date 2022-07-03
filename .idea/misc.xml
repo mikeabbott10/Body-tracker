@@ -5,16 +5,21 @@
       <map>
         <entry key="app/src/main/res/drawable/bottom_gradient.xml" value="0.2635" />
         <entry key="app/src/main/res/drawable/horizontal_double_gradient.xml" value="0.2635" />
+        <entry key="app/src/main/res/drawable/ic_block1.xml" value="0.2635" />
+        <entry key="app/src/main/res/drawable/ic_block2.xml" value="0.2635" />
+        <entry key="app/src/main/res/drawable/ic_coach1.xml" value="0.2635" />
         <entry key="app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.231" />
         <entry key="app/src/main/res/drawable/left_gradient.xml" value="0.2635" />
         <entry key="app/src/main/res/drawable/right_gradient.xml" value="0.2635" />
         <entry key="app/src/main/res/drawable/right_qualifier.xml" value="0.2635" />
         <entry key="app/src/main/res/drawable/top_gradient.xml" value="0.2635" />
         <entry key="app/src/main/res/drawable/vertical_double_gradient.xml" value="0.2635" />
+        <entry key="app/src/main/res/font/audiowide.xml" value="0.31936725096194957" />
         <entry key="app/src/main/res/layout-land/activity_main.xml" value="0.22" />
         <entry key="app/src/main/res/layout-land/activity_trainer.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_trainer.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/cool_title.xml" value="0.2669990933816863" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.35989583333333336" />
       </map>
     </option>

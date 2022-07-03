@@ -4,4 +4,9 @@
     <string name="bt_not_supported">Bluetooth non supportato</string>
     <string name="bt_permissions_request">Permettere l\'utilizzo del bluetooth?</string>
     <string name="bt_not_permitted">Permessi di utilizzo bluetooth necessari</string>
+    <string name="coach">Coach</string>
+    <string name="player">Giocatore</string>
+    <string name="middle_blocker">Centrale</string>
+    <string name="middle_lat_blockers_training">Centrale + laterale</string>
+    <string name="middle_blocker_training">Muro solo centrale</string>
 </resources>

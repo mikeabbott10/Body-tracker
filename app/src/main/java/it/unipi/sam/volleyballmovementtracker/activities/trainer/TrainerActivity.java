@@ -8,13 +8,14 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 
+import it.unipi.sam.volleyballmovementtracker.activities.SharedElementBaseActivity;
 import it.unipi.sam.volleyballmovementtracker.databinding.ActivityTrainerBinding;
 import it.unipi.sam.volleyballmovementtracker.util.MyBroadcastReceiver;
 import it.unipi.sam.volleyballmovementtracker.util.OnBroadcastReceiverOnReceiveListener;
 
-public class TrainerActivity extends AppCompatActivity implements OnBroadcastReceiverOnReceiveListener {
+public class TrainerActivity extends SharedElementBaseActivity implements OnBroadcastReceiverOnReceiveListener {
     private static final String TAG = "AAATrainerActivity";
     private ActivityTrainerBinding binding;
     private BroadcastReceiver mReceiver;
@@ -23,8 +24,16 @@ public class TrainerActivity extends AppCompatActivity implements OnBroadcastRec
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityTrainerBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        assert binding.whoAmIIv != null;
+        binding.whoAmIIv.setImageDrawable(
+                AppCompatResources.getDrawable(this, whoAmIDrawableId));
 
+        setContentView(binding.getRoot());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         // Register for broadcasts on BluetoothAdapter state change
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         mReceiver = new MyBroadcastReceiver(this);
@@ -32,8 +41,8 @@ public class TrainerActivity extends AppCompatActivity implements OnBroadcastRec
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onPause() {
+        super.onPause();
 
         // Unregister broadcast listener
         unregisterReceiver(mReceiver);
@@ -41,22 +50,23 @@ public class TrainerActivity extends AppCompatActivity implements OnBroadcastRec
 
     @Override
     public void onBluetoothEventReceived(Context context, Intent intent) {
-        final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
-                BluetoothAdapter.ERROR);
+        final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
         switch (state) {
             case BluetoothAdapter.STATE_OFF:
                 // bluetooth off
 
                 break;
-            case BluetoothAdapter.STATE_TURNING_OFF:
-                // turning Bluetooth off...
-                break;
             case BluetoothAdapter.STATE_ON:
                 // bluetooth on
+
                 break;
-            case BluetoothAdapter.STATE_TURNING_ON:
+            //case BluetoothAdapter.STATE_TURNING_OFF:
+                // turning Bluetooth off...
+                //break;
+
+            //case BluetoothAdapter.STATE_TURNING_ON:
                 // turning Bluetooth on...
-                break;
+                //break;
         }
     }
 }
