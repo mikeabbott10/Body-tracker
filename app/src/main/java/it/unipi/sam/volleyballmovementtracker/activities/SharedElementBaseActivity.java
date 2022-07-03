@@ -8,8 +8,9 @@ import androidx.annotation.Nullable;
 import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 
-public class SharedElementBaseActivity extends BaseActivity{
+public class SharedElementBaseActivity extends BaseActivity {
     protected int whoAmIDrawableId;
+    protected int currentTrainingDrawableId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -19,12 +20,15 @@ public class SharedElementBaseActivity extends BaseActivity{
         if(startingThisActivityBundle != null){
             super.onCreate(savedInstanceState);
             whoAmIDrawableId = startingThisActivityBundle.getInt(Constants.who_am_i_id_key);
+            currentTrainingDrawableId = startingThisActivityBundle.getInt(Constants.current_training_id_key);
         }else if(savedInstanceState!=null){
             super.onCreate(savedInstanceState);
             whoAmIDrawableId = savedInstanceState.getInt(Constants.who_am_i_id_key);
+            currentTrainingDrawableId = savedInstanceState.getInt(Constants.current_training_id_key);
         }else {
             super.onCreate(null);
             whoAmIDrawableId = R.drawable.ic_home_black_24dp; // no reason (only launcher activity here: it doesn't use this var)
+            currentTrainingDrawableId = R.drawable.ic_home_black_24dp; // no reason (only launcher activity here: it doesn't use this var)
         }
     }
 

@@ -11,20 +11,19 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 
 import it.unipi.sam.volleyballmovementtracker.activities.SharedElementBaseActivity;
-import it.unipi.sam.volleyballmovementtracker.databinding.ActivityTrainerBinding;
+import it.unipi.sam.volleyballmovementtracker.databinding.ActivityCoachBinding;
 import it.unipi.sam.volleyballmovementtracker.util.MyBroadcastReceiver;
 import it.unipi.sam.volleyballmovementtracker.util.OnBroadcastReceiverOnReceiveListener;
 
 public class PlayerActivity extends SharedElementBaseActivity implements OnBroadcastReceiverOnReceiveListener {
     private static final String TAG = "AAAPlayerActivity";
-    private ActivityTrainerBinding binding;
+    private ActivityCoachBinding binding;
     private BroadcastReceiver mReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityTrainerBinding.inflate(getLayoutInflater());
-        assert binding.whoAmIIv != null;
+        binding = ActivityCoachBinding.inflate(getLayoutInflater());
         binding.whoAmIIv.setImageDrawable(
                 AppCompatResources.getDrawable(this, whoAmIDrawableId));
 

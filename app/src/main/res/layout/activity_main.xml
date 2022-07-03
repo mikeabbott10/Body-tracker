@@ -15,33 +15,34 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.5">
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/background1"
+                android:contentDescription="@null"
                 android:scaleType="centerCrop"
-                android:contentDescription="@null" />
+                android:src="@drawable/background1" />
 
             <ImageView
+                android:id="@+id/coach_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:adjustViewBounds="true"
                 android:alpha="@dimen/sagoma_alpha"
-                android:scaleType="fitCenter"
-                app:tint="@color/white"
-
-                android:id="@+id/coach_iv"
                 android:contentDescription="@null"
+                android:scaleType="fitCenter"
                 android:src="@drawable/ic_coach1"
-                android:transitionName="who_am_i_choice" />
+                android:transitionName="who_am_i_choice"
+                app:tint="@color/white" />
                 <!-- adjustViewBounds attribute is needed because
                 ImageView measures itself to match the original dimensions
                 of the drawable by default, without regard to any
                 scaling performed according to the scale type-->
 
             <RelativeLayout
+                android:id="@+id/trainer_tv_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -50,30 +51,24 @@
 
                 <TextView
                     android:id="@+id/trainer_tv"
+                    style="@style/TitleTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/audiowide"
-                    android:textAlignment="center"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
                     android:text="@string/coach"
                     android:textColor="@color/black"
-                    android:textSize="72sp"
-                    android:textStyle="bold|italic"
-                    android:typeface="normal"
                     android:layout_marginStart="3dp"
                     android:layout_marginTop="3dp" />
 
                 <TextView
                     android:id="@+id/trainer_tv_back"
+                    style="@style/TitleTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginEnd="3dp"
-                    android:fontFamily="@font/audiowide"
+                    android:gravity="center"
                     android:text="@string/coach"
-                    android:textAlignment="center"
-                    android:textColor="@color/white"
-                    android:textSize="72sp"
-                    android:textStyle="bold|italic"
-                    android:typeface="normal" />
+                    android:textColor="@color/white" />
 
             </RelativeLayout>
         </RelativeLayout>
@@ -83,12 +78,35 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.5">
-            <it.unipi.sam.volleyballmovementtracker.util.graphic.TopCropImageView
+
+            <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/attack"
-                android:contentDescription="@null"/>
+                android:contentDescription="@null"
+                android:scaleType="centerCrop"
+                android:src="@drawable/back6" />
+
+            <ImageView
+                android:id="@+id/player_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:adjustViewBounds="true"
+                android:alpha="@dimen/sagoma_alpha"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_block3"
+                android:transitionName="who_am_i_choice"
+                app:tint="@color/white" />
+            <!-- adjustViewBounds attribute is needed because
+            ImageView measures itself to match the original dimensions
+            of the drawable by default, without regard to any
+            scaling performed according to the scale type-->
+
+
             <RelativeLayout
+                android:id="@+id/player_tv_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -97,30 +115,24 @@
 
                 <TextView
                     android:id="@+id/player_tv"
+                    style="@style/TitleTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/audiowide"
-                    android:textAlignment="center"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
                     android:text="@string/player"
                     android:textColor="@color/black"
-                    android:textSize="72sp"
-                    android:textStyle="bold|italic"
-                    android:typeface="normal"
                     android:layout_marginStart="3dp"
                     android:layout_marginTop="3dp" />
 
                 <TextView
                     android:id="@+id/player_tv_back"
+                    style="@style/TitleTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginEnd="3dp"
-                    android:fontFamily="@font/audiowide"
-                    android:textAlignment="center"
+                    android:gravity="center"
                     android:text="@string/player"
-                    android:textColor="@color/white"
-                    android:textSize="72sp"
-                    android:textStyle="bold|italic"
-                    android:typeface="normal" />
+                    android:textColor="@color/white" />
 
             </RelativeLayout>
         </RelativeLayout>
@@ -133,6 +145,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:background="@drawable/vertical_double_gradient"
         tools:ignore="ContentDescription" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

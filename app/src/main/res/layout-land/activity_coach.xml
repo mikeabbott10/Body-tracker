@@ -6,11 +6,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:baselineAligned="false">
         <RelativeLayout
             android:id="@+id/centrale_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="0.5">
 
             <ImageView
@@ -22,6 +23,7 @@
                 android:src="@drawable/back3" />
 
             <ImageView
+                android:id="@+id/middle_blocker_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -31,16 +33,11 @@
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_block2"
-                app:tint="@color/white" />
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:contentDescription="@null"
-                android:layout_alignParentBottom="true"
-                android:src="@drawable/bottom_gradient" />
+                app:tint="@color/white"
+                android:transitionName="current_training_choice"/>
 
             <RelativeLayout
+                android:id="@+id/middle_tv_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -49,47 +46,50 @@
 
                 <TextView
                     android:id="@+id/middle_tv"
+                    style="@style/TwoLinesTitleTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/audiowide"
-                    android:textAlignment="center"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
                     android:text="@string/middle_blocker_training"
                     android:textColor="@color/black"
-                    android:textSize="72sp"
-                    android:textStyle="bold|italic"
-                    android:typeface="normal"
                     android:layout_marginStart="3dp"
                     android:layout_marginTop="3dp" />
 
                 <TextView
                     android:id="@+id/middle_tv_back"
+                    style="@style/TwoLinesTitleTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginEnd="3dp"
-                    android:fontFamily="@font/audiowide"
+                    android:gravity="center"
                     android:text="@string/middle_blocker_training"
-                    android:textAlignment="center"
-                    android:textColor="@color/white"
-                    android:textSize="72sp"
-                    android:textStyle="bold|italic"
-                    android:typeface="normal" />
+                    android:textColor="@color/white" />
 
             </RelativeLayout>
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:contentDescription="@null"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/right_gradient" />
+
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/centrale_e_laterale_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="0.5">
-
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="@null"
+                android:src="@drawable/back5"
+                android:scaleX="-1"
                 android:scaleType="centerCrop"
-                android:src="@drawable/back5" />
+                android:contentDescription="@null" />
 
             <ImageView
+                android:id="@+id/middle_plus_hitter_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -98,16 +98,18 @@
                 android:alpha="@dimen/sagoma_alpha"
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_block1"
+                android:src="@drawable/ic_blockplus"
+                android:transitionName="current_training_choice"
                 app:tint="@color/white" />
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
                 android:contentDescription="@null"
-                android:src="@drawable/top_gradient" />
+                android:src="@drawable/left_gradient" />
 
             <RelativeLayout
+                android:id="@+id/middle_hitter_tv_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -116,58 +118,53 @@
 
                 <TextView
                     android:id="@+id/middle_lat_tv"
+                    style="@style/TwoLinesTitleTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/audiowide"
-                    android:textAlignment="center"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
                     android:text="@string/middle_lat_blockers_training"
                     android:textColor="@color/black"
-                    android:textSize="72sp"
-                    android:textStyle="bold|italic"
-                    android:typeface="normal"
                     android:layout_marginStart="3dp"
                     android:layout_marginTop="3dp" />
 
                 <TextView
                     android:id="@+id/middle_lat_tv_back"
+                    style="@style/TwoLinesTitleTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginEnd="3dp"
-                    android:fontFamily="@font/audiowide"
+                    android:gravity="center"
                     android:text="@string/middle_lat_blockers_training"
-                    android:textAlignment="center"
-                    android:textColor="@color/white"
-                    android:textSize="72sp"
-                    android:textStyle="bold|italic"
-                    android:typeface="normal" />
+                    android:textColor="@color/white" />
 
             </RelativeLayout>
-
         </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp">
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="2dp">
         <ImageView
             android:id="@+id/who_am_i_iv"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
             android:layout_weight="0.3"
             android:transitionName="who_am_i_choice"
             android:contentDescription="@null"
             app:tint="@color/white" />
         <ImageView
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="0dp"
             android:layout_weight="0.3"
             android:contentDescription="@null" />
         <ImageView
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="0dp"
             android:layout_weight="0.3"
             android:contentDescription="@null" />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

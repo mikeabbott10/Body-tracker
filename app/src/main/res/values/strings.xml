@@ -9,4 +9,10 @@
     <string name="middle_blocker">Centrale</string>
     <string name="middle_lat_blockers_training">Centrale + laterale</string>
     <string name="middle_blocker_training">Muro solo centrale</string>
+    <string name="bt_not_enabled">Bluetooth necessario</string>
+    <string name="enable_bt">Abilitare bluetooth?</string>
+    <string name="accept">Accetto</string>
+    <string name="decline">Declino</string>
+    <string name="who_am_i_choice">who_am_i_choice</string>
+    <string name="current_training_choice">current_training_choice</string>
 </resources>

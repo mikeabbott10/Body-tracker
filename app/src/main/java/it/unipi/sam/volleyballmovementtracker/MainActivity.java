@@ -2,131 +2,134 @@ package it.unipi.sam.volleyballmovementtracker;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.content.res.AppCompatResources;
-
-import java.util.List;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import it.unipi.sam.volleyballmovementtracker.activities.BaseActivity;
 import it.unipi.sam.volleyballmovementtracker.activities.player.PlayerActivity;
-import it.unipi.sam.volleyballmovementtracker.activities.trainer.TrainerActivity;
+import it.unipi.sam.volleyballmovementtracker.activities.coach.CoachActivity;
 import it.unipi.sam.volleyballmovementtracker.databinding.ActivityMainBinding;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
+import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
+import it.unipi.sam.volleyballmovementtracker.util.graphic.MyTranslateAnimation;
 import pub.devrel.easypermissions.EasyPermissions;
 
 
 // TODO:
+//  0. scrivere mail a gervasi
 //  1. porta vectors xml ad al massimo 200x200
-// 2. scritte davanti a scelta rompono il cazzo
-public class MainActivity extends BaseActivity implements View.OnClickListener, DialogInterface.OnClickListener, EasyPermissions.PermissionCallbacks {
+public class MainActivity extends BaseActivity implements View.OnClickListener, Animation.AnimationListener {
     private static final String TAG = "AAAMainActivity";
     private ActivityMainBinding binding;
-    private BluetoothAdapter bta;
+    private BroadcastReceiver mReceiver;
 
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         binding.trainerView.setOnClickListener(this);
         binding.playerView.setOnClickListener(this);
 
-        // check bt permissions
-        bta = ((BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
+        // check bt support
         if(bta==null){
             // device doesn't support bt
-            new AlertDialog.Builder(MainActivity.this)
+            new MaterialAlertDialogBuilder(this)
                     .setTitle(getString(R.string.bt_not_supported))
                     .setCancelable(false)
-                    .setPositiveButton("", this)
-                    .setPositiveButtonIcon(AppCompatResources.getDrawable(this, android.R.drawable.ic_menu_close_clear_cancel))
+                    .setPositiveButton("OK", (dialogInterface, i) -> finish())
                     .create().show();
             return;
         }
 
-        if (!bta.isEnabled()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                if (!EasyPermissions.hasPermissions(this, Constants.BT_PERMISSIONS)) {
-                    EasyPermissions.requestPermissions(this, getString(R.string.bt_permissions_request), Constants.BT_PERMISSION_CODE, Constants.BT_PERMISSIONS);
-                }else
-                    bta.enable();
-            }else
+        // check bt permissions
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (!EasyPermissions.hasPermissions(this, Constants.BT_PERMISSIONS)) {
+                EasyPermissions.requestPermissions(this, getString(R.string.bt_permissions_request), Constants.BT_PERMISSION_CODE, Constants.BT_PERMISSIONS);
+            } else {
                 bta.enable();
+            }
+        }else
+            bta.enable();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // code for portrait mode
+            GraphicUtil.slideLeftToOrigin(binding.trainerTvLayout, null, null);
+            GraphicUtil.slideRightToOrigin(binding.playerTvLayout, null, null);
+        } else {
+            // code for landscape mode
+            GraphicUtil.slideDownToOrigin(binding.trainerTvLayout, null, null);
+            GraphicUtil.slideUpToOrigin(binding.playerTvLayout, null,null);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
     }
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == binding.trainerView.getId()){
-            // start trainer activity
+        // start coach or player activity
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // code for portrait mode
+            GraphicUtil.slideLeft(binding.trainerTvLayout,
+                    view.getId() == binding.trainerView.getId()
+                            ? Constants.STARTING_COACH_ACTIVITY : Constants.STARTING_PLAYER_ACTIVITY,this);
+            GraphicUtil.slideRight(binding.playerTvLayout, null, null);
+        } else {
+            // code for landscape mode
+            GraphicUtil.slideUp(binding.trainerTvLayout,
+                    view.getId() == binding.trainerView.getId()
+                            ? Constants.STARTING_COACH_ACTIVITY : Constants.STARTING_PLAYER_ACTIVITY, this);
+            GraphicUtil.slideDown(binding.playerTvLayout, null, null);
+        }
+    }
 
+    @Override
+    public void onAnimationEnd(Animation animation) {
+        if(((MyTranslateAnimation)animation).getObj().equals(Constants.STARTING_COACH_ACTIVITY)){
+            // start trainer activity
             // create the transition animation - the images in the layouts
             // of both activities are defined with android:transitionName="who_am_i_choice"
             ActivityOptions options = ActivityOptions
-                    .makeSceneTransitionAnimation(this, binding.coachIv, "who_am_i_choice");
+                    .makeSceneTransitionAnimation(this, binding.coachIv, getString(R.string.who_am_i_choice));
             // start the new activity
-            Intent i = new Intent(this, TrainerActivity.class);
+            Intent i = new Intent(MainActivity.this, CoachActivity.class);
             Bundle mBundle = new Bundle();
             mBundle.putInt(Constants.who_am_i_id_key, R.drawable.ic_coach1);
             i.putExtra(Constants.starting_activity_bundle_key, mBundle);
             startActivity(i, options.toBundle());
-        }else if(view.getId() == binding.playerView.getId()){
+        }else if(((MyTranslateAnimation)animation).getObj().equals(Constants.STARTING_PLAYER_ACTIVITY)){
             // start player activity
-
             // create the transition animation - the images in the layouts
-            // of both activities are defined with android:transitionName="who_am_i_choice"
+            // of both activities are defined with android:transitionName="@string/who_am_i_choice"
             ActivityOptions options = ActivityOptions
-                    .makeSceneTransitionAnimation(this, binding.coachIv, "who_am_i_choice");
+                    .makeSceneTransitionAnimation(this, binding.playerIv, getString(R.string.who_am_i_choice));
+
             // start the new activity
             Intent i = new Intent(this, PlayerActivity.class);
             Bundle mBundle = new Bundle();
-            mBundle.putInt(Constants.who_am_i_id_key, R.drawable.ic_block2);
+            mBundle.putInt(Constants.who_am_i_id_key, R.drawable.ic_block3);
             i.putExtra(Constants.starting_activity_bundle_key, mBundle);
             startActivity(i, options.toBundle());
         }
     }
-
-    @Override
-    public void onClick(DialogInterface dialogInterface, int i) {
-        finish();
-    }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @SuppressLint("MissingPermission")
-    @Override
-    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-        // bt permissions granted
-        if (!bta.isEnabled()) {
-            bta.enable();
-        }
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        new AlertDialog.Builder(MainActivity.this)
-                .setTitle(getString(R.string.bt_not_permitted))
-                .setCancelable(false)
-                .setPositiveButton("", this)
-                .setPositiveButtonIcon(AppCompatResources.getDrawable(this, android.R.drawable.ic_menu_close_clear_cancel))
-                .create().show();
-    }
+    @Override public void onAnimationStart(Animation animation) {}
+    @Override public void onAnimationRepeat(Animation animation) {}
 }

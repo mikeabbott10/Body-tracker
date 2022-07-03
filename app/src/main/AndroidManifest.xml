@@ -45,8 +45,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.trainer.TrainerActivity" />
+        <activity android:name=".activities.coach.CoachActivity" />
         <activity android:name=".activities.player.PlayerActivity" />
+        <activity android:name=".activities.coach.practices.MiddleBlockerBlockActivity" />
+        <activity android:name=".activities.coach.practices.MiddleAndHitterBlockActivity" />
     </application>
 
 </manifest>

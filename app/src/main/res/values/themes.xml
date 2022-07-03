@@ -14,9 +14,34 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="TitleTextView" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/audiowide</item>
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:typeface">normal</item>
+
+        <item name="android:lines">1</item>
+
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeMinTextSize">50sp</item>
+        <item name="autoSizeMaxTextSize">72sp</item>
+        <item name="autoSizeStepGranularity">2sp</item>
+    </style>
+
+    <style name="TwoLinesTitleTextView" parent="TitleTextView">
+        <item name="android:lines">2</item>
+    </style>
+
     <style name="AppAnimatedTheme" parent="Theme.VolleyballMovementTracker">
         <item name="android:windowContentTransitions">true</item>
+    </style>
 
+    <style name="NumberPickerTheme" parent="Theme.AppCompat.Light">
+        <item name="android:colorAccent">@android:color/white</item>
+        <!-- To remove divider of the number picker -->
+        <item name="colorControlNormal">@android:color/transparent</item>
+
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textSize">50sp</item>
     </style>
 
     <!-- Application theme. -->

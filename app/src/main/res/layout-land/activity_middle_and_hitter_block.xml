@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/back7"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null" />
+    <include
+        android:id="@+id/picker"
+        layout="@layout/number_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="2dp">
+        <ImageView
+            android:id="@+id/who_am_i_iv"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.3"
+            android:transitionName="@string/who_am_i_choice"
+            android:contentDescription="@null"
+            app:tint="@color/white" />
+        <ImageView
+            android:id="@+id/current_training_iv"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.3"
+            android:transitionName="@string/current_training_choice"
+            android:contentDescription="@null"
+            app:tint="@color/white" />
+        <ImageView
+            android:id="@+id/bluetooth_state"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.3"
+            android:contentDescription="@null"
+            app:tint="@color/white" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
