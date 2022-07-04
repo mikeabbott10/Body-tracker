@@ -6,6 +6,8 @@ import android.view.animation.Animation;
 import androidx.annotation.Nullable;
 
 public class GraphicUtil {
+    private static final long animationDuration = 70;
+
     // slide the view from its current position to above itself
     public static void slideUp(View view, String key, @Nullable Animation.AnimationListener anListener){
         view.setVisibility(View.VISIBLE);
@@ -14,7 +16,7 @@ public class GraphicUtil {
                 0,                 // toXDelta
                 0,  // fromYDelta
                 -view.getHeight());                // toYDelta
-        animate.setDuration(100);
+        animate.setDuration(animationDuration);
         animate.setFillAfter(true);
         animate.setObj(key);
         if(anListener!=null)
@@ -29,7 +31,7 @@ public class GraphicUtil {
                 0,                 // toXDelta
                 0,                 // fromYDelta
                 view.getHeight()); // toYDelta
-        animate.setDuration(100);
+        animate.setDuration(animationDuration);
         animate.setFillAfter(true);
         animate.setObj(key);
         if(anListener!=null)
@@ -45,7 +47,7 @@ public class GraphicUtil {
                 0,                 // toXDelta
                 view.getHeight(),  // fromYDelta
                 0);                // toYDelta
-        animate.setDuration(100);
+        animate.setDuration(animationDuration);
         animate.setFillAfter(true);
         animate.setObj(key);
         if(anListener!=null)
@@ -60,7 +62,7 @@ public class GraphicUtil {
                 0,                 // toXDelta
                 -view.getHeight(),                 // fromYDelta
                 0); // toYDelta
-        animate.setDuration(100);
+        animate.setDuration(animationDuration);
         animate.setFillAfter(true);
         animate.setObj(key);
         if(anListener!=null)
@@ -77,7 +79,7 @@ public class GraphicUtil {
                 - view.getWidth(),           // toXDelta
                 0,              // fromYDelta
                 0);                // toYDelta
-        animate.setDuration(100);
+        animate.setDuration(animationDuration);
         animate.setFillAfter(true);
         animate.setObj(key);
         if(anListener!=null)
@@ -93,7 +95,7 @@ public class GraphicUtil {
                 view.getWidth(),                 // toXDelta
                 0,                 // fromYDelta
                 0);                 // toYDelta
-        animate.setDuration(100);
+        animate.setDuration(animationDuration);
         animate.setFillAfter(true);
         animate.setObj(key);
         if(anListener!=null)
@@ -109,7 +111,7 @@ public class GraphicUtil {
                 0,                 // toXDelta
                 0,                 // fromYDelta
                 0);                 // toYDelta
-        animate.setDuration(100);
+        animate.setDuration(animationDuration);
         animate.setFillAfter(true);
         animate.setObj(key);
         if(anListener!=null)
@@ -125,7 +127,7 @@ public class GraphicUtil {
                 0,                 // toXDelta
                 0,                 // fromYDelta
                 0);                 // toYDelta
-        animate.setDuration(100);
+        animate.setDuration(animationDuration);
         animate.setFillAfter(true);
         animate.setObj(key);
         if(anListener!=null)

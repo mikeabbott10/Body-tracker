@@ -22,7 +22,7 @@
                 android:layout_height="match_parent"
                 android:contentDescription="@null"
                 android:scaleType="centerCrop"
-                android:src="@drawable/background1" />
+                android:src="@drawable/back7" />
 
             <ImageView
                 android:id="@+id/coach_iv"

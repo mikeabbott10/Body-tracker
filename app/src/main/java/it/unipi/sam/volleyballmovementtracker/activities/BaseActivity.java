@@ -35,7 +35,17 @@ public class BaseActivity extends AppCompatActivity implements OnBroadcastReceiv
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+
+        // get custom instance state or original instance state
+        Bundle startingThisActivityBundle = getIntent().getBundleExtra(Constants.starting_activity_bundle_key);
+        if(startingThisActivityBundle != null){
+            super.onCreate(savedInstanceState);
+        }else if(savedInstanceState!=null){
+            super.onCreate(savedInstanceState);
+        }else {
+            super.onCreate(null);
+        }
+
         bta = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
         btEnablingDialog = new MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.bt_not_enabled))

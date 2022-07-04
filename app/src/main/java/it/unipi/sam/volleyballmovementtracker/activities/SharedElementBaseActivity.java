@@ -11,6 +11,7 @@ import it.unipi.sam.volleyballmovementtracker.util.Constants;
 public class SharedElementBaseActivity extends BaseActivity {
     protected int whoAmIDrawableId;
     protected int currentTrainingDrawableId;
+    protected int currentBtStateDrawableId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -21,14 +22,17 @@ public class SharedElementBaseActivity extends BaseActivity {
             super.onCreate(savedInstanceState);
             whoAmIDrawableId = startingThisActivityBundle.getInt(Constants.who_am_i_id_key);
             currentTrainingDrawableId = startingThisActivityBundle.getInt(Constants.current_training_id_key);
+            currentBtStateDrawableId = R.drawable.ic_ok;
         }else if(savedInstanceState!=null){
             super.onCreate(savedInstanceState);
             whoAmIDrawableId = savedInstanceState.getInt(Constants.who_am_i_id_key);
             currentTrainingDrawableId = savedInstanceState.getInt(Constants.current_training_id_key);
+            currentBtStateDrawableId = savedInstanceState.getInt(Constants.current_bt_state_id_key);
         }else {
             super.onCreate(null);
             whoAmIDrawableId = R.drawable.ic_home_black_24dp; // no reason (only launcher activity here: it doesn't use this var)
             currentTrainingDrawableId = R.drawable.ic_home_black_24dp; // no reason (only launcher activity here: it doesn't use this var)
+            currentBtStateDrawableId = R.drawable.ic_ok;
         }
     }
 
@@ -36,5 +40,7 @@ public class SharedElementBaseActivity extends BaseActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(Constants.who_am_i_id_key, whoAmIDrawableId);
+        outState.putInt(Constants.current_training_id_key, currentTrainingDrawableId);
+        outState.putInt(Constants.current_bt_state_id_key, currentBtStateDrawableId);
     }
 }

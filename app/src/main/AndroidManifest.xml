@@ -48,7 +48,7 @@
         <activity android:name=".activities.coach.CoachActivity" />
         <activity android:name=".activities.player.PlayerActivity" />
         <activity android:name=".activities.coach.practices.MiddleBlockerBlockActivity" />
-        <activity android:name=".activities.coach.practices.MiddleAndHitterBlockActivity" />
+        <activity android:name=".activities.coach.practices.PracticingActivity" />
     </application>
 
 </manifest>

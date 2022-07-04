@@ -21,10 +21,6 @@ import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.MyTranslateAnimation;
 import pub.devrel.easypermissions.EasyPermissions;
 
-
-// TODO:
-//  0. scrivere mail a gervasi
-//  1. porta vectors xml ad al massimo 200x200
 public class MainActivity extends BaseActivity implements View.OnClickListener, Animation.AnimationListener {
     private static final String TAG = "AAAMainActivity";
     private ActivityMainBinding binding;

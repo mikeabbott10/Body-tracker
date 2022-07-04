@@ -15,4 +15,6 @@
     <string name="decline">Declino</string>
     <string name="who_am_i_choice">who_am_i_choice</string>
     <string name="current_training_choice">current_training_choice</string>
+    <string name="wait_for_n_connections">Numero di connessioni attese</string>
+    <string name="middle_and_hitter_block_info">Selezionare il numero di connessioni attese. Questo corrisponde al numero di giocatori partecipanti all\'allenamento.</string>
 </resources>
