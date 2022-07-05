@@ -1,15 +1,14 @@
-package it.unipi.sam.volleyballmovementtracker.activities;
+package it.unipi.sam.volleyballmovementtracker.activities.util;
 
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 
-public class SharedElementBaseActivity extends AppCompatActivity {
+public class SharedElementBaseActivity extends DialogActivity {
     protected int whoAmIDrawableId;
     protected int currentTrainingDrawableId;
     protected int currentBtStateDrawableId;

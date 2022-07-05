@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 
 import it.unipi.sam.volleyballmovementtracker.R;
-import it.unipi.sam.volleyballmovementtracker.activities.SharedElementBaseActivity;
+import it.unipi.sam.volleyballmovementtracker.activities.util.SharedElementBaseActivity;
 import it.unipi.sam.volleyballmovementtracker.activities.coach.practices.PracticingActivity;
 import it.unipi.sam.volleyballmovementtracker.databinding.ActivityCoachBinding;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
@@ -25,7 +25,7 @@ public class CoachActivity extends SharedElementBaseActivity implements View.OnC
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
+        Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         binding = ActivityCoachBinding.inflate(getLayoutInflater());
         binding.whoAmIIv.setImageDrawable(
@@ -39,7 +39,7 @@ public class CoachActivity extends SharedElementBaseActivity implements View.OnC
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "onResume");
+        Log.i(TAG, "onResume");
         binding.middleBlockerIv.setVisibility(View.VISIBLE);
         binding.middlePlusHitterIv.setVisibility(View.VISIBLE);
         super.onResume();
@@ -63,19 +63,19 @@ public class CoachActivity extends SharedElementBaseActivity implements View.OnC
 
     @Override
     protected void onPause() {
-        Log.d(TAG, "onPause");
+        Log.i(TAG, "onPause");
         super.onPause();
     }
 
     @Override
     protected void onStop() {
-        Log.d(TAG, "onStop");
+        Log.i(TAG, "onStop");
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
+        Log.i(TAG, "onDestroy");
         super.onDestroy();
         binding = null;
     }

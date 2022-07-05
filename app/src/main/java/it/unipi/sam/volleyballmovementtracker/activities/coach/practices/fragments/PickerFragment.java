@@ -34,7 +34,6 @@ public class PickerFragment extends CommonFragment implements NumberPicker.Forma
         // nota requireActivity() : same scope as in the activity is required or different ViewModel!
         viewModel = new ViewModelProvider(requireActivity()).get(MyViewModel.class);
         viewModel.selectCurrentFragment(Constants.PICKER_FRAGMENT);
-        viewModel.selectMakingMeDiscoverableValue(true);
 
         initNumberPicker();
 

@@ -15,7 +15,7 @@ import android.view.animation.Animation;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import it.unipi.sam.volleyballmovementtracker.activities.SharedElementBaseActivity;
+import it.unipi.sam.volleyballmovementtracker.activities.util.SharedElementBaseActivity;
 import it.unipi.sam.volleyballmovementtracker.activities.coach.CoachActivity;
 import it.unipi.sam.volleyballmovementtracker.activities.player.PlayerActivity;
 import it.unipi.sam.volleyballmovementtracker.databinding.ActivityMainBinding;
@@ -31,7 +31,7 @@ public class MainActivity extends SharedElementBaseActivity implements View.OnCl
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
+        Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -54,7 +54,7 @@ public class MainActivity extends SharedElementBaseActivity implements View.OnCl
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "onResume");
+        Log.i(TAG, "onResume");
         super.onResume();
 
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -70,19 +70,19 @@ public class MainActivity extends SharedElementBaseActivity implements View.OnCl
 
     @Override
     protected void onPause() {
-        Log.d(TAG, "onPause");
+        Log.i(TAG, "onPause");
         super.onPause();
     }
 
     @Override
     protected void onStop() {
-        Log.d(TAG, "onStop");
+        Log.i(TAG, "onStop");
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
+        Log.i(TAG, "onDestroy");
         super.onDestroy();
         binding = null;
     }

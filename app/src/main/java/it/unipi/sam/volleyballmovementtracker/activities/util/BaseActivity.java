@@ -1,4 +1,4 @@
-package it.unipi.sam.volleyballmovementtracker.activities;
+package it.unipi.sam.volleyballmovementtracker.activities.util;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
@@ -10,9 +10,12 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -26,45 +29,60 @@ import it.unipi.sam.volleyballmovementtracker.util.MyViewModel;
 import it.unipi.sam.volleyballmovementtracker.util.OnBroadcastReceiverOnReceiveListener;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class BaseActivity extends SharedElementBaseActivity implements OnBroadcastReceiverOnReceiveListener, EasyPermissions.PermissionCallbacks {
+public class BaseActivity extends SharedElementBaseActivity implements OnBroadcastReceiverOnReceiveListener,
+                EasyPermissions.PermissionCallbacks, ActivityResultCallback<ActivityResult> {
     private static final String TAG = "AAAABaseActivity";
     protected BluetoothAdapter bta;
     private BroadcastReceiver mReceiver;
-    private AlertDialog btEnablingDialog;
     protected MyViewModel viewModel;
+    protected ActivityResultLauncher<Intent> activityResultLaunch;
+    public static final int extraDiscoverableDuration = 240;
+    protected int currentScanModeStatus;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        // init current scan status
+        currentScanModeStatus = BluetoothAdapter.SCAN_MODE_NONE;
 
-        // get custom instance state or original instance state
-        Bundle startingThisActivityBundle = getIntent().getBundleExtra(Constants.starting_component_bundle_key);
-        if(startingThisActivityBundle != null){
+        showingDialog = -1;
+        // get original instance state
+        if(savedInstanceState!=null){
             super.onCreate(savedInstanceState);
-        }else if(savedInstanceState!=null){
-            super.onCreate(savedInstanceState);
+            currentScanModeStatus = savedInstanceState.getInt(Constants.scan_mode_status_key);
+            showingDialog = savedInstanceState.getInt(Constants.showing_dialog_key);
         }else {
             super.onCreate(null);
         }
 
+        activityResultLaunch = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), this);
+
+        // Register for broadcasts on BluetoothAdapter state and scan mode change
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        filter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+        mReceiver = new MyBroadcastReceiver(this);
+        registerReceiver(mReceiver, filter);
+
         viewModel = new ViewModelProvider(this).get(MyViewModel.class);// init
-        viewModel.selectMakingMeDiscoverableValue(true);
 
         bta = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
-        btEnablingDialog = new MaterialAlertDialogBuilder(this)
-                .setTitle(getString(R.string.bt_not_enabled))
-                .setMessage(getString(R.string.enable_bt))
-                .setCancelable(false)
-                .setPositiveButton(getString(R.string.accept), ((dialogInterface, i) -> {
-                    checkBTPermissionAndEnableBT();
-                }))
-                .setNegativeButton(getString(R.string.decline), ((dialogInterface, i) -> finishAffinity()))
-                .create();
 
-        checkBTPermissionAndEnableBT();
+        if(showingDialog != Constants.BT_ENABLING_DIALOG)
+            checkBTPermissionAndEnableBT();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(Constants.scan_mode_status_key, currentScanModeStatus);
+        outState.putInt(Constants.showing_dialog_key, showingDialog);
     }
 
     @SuppressLint("MissingPermission")
-    private void checkBTPermissionAndEnableBT() {
+    @Override
+    protected void checkBTPermissionAndEnableBT() {
         // check bt permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (!EasyPermissions.hasPermissions(this, Constants.BT_PERMISSIONS)) {
@@ -82,17 +100,16 @@ public class BaseActivity extends SharedElementBaseActivity implements OnBroadca
     @Override
     protected void onResume() {
         super.onResume();
-        // Register for broadcasts on BluetoothAdapter state change
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        filter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-        mReceiver = new MyBroadcastReceiver(this);
-        registerReceiver(mReceiver, filter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         // Unregister broadcast listener
         unregisterReceiver(mReceiver);
     }
@@ -110,16 +127,17 @@ public class BaseActivity extends SharedElementBaseActivity implements OnBroadca
                         EasyPermissions.requestPermissions(this, getString(R.string.bt_permissions_request),
                                 Constants.BT_PERMISSION_CODE, Constants.BT_PERMISSIONS);
                     }else {
-                        btEnablingDialog.show();
+                        showMyDialog(Constants.BT_ENABLING_DIALOG);
                     }
                 }else{
-                    btEnablingDialog.show();
+                    showMyDialog(Constants.BT_ENABLING_DIALOG);
                 }
                 break;
             case BluetoothAdapter.STATE_ON:
                 // bluetooth on
+                showingDialog = -1;
                 if(btEnablingDialog.isShowing()){
-                    btEnablingDialog.hide();
+                    btEnablingDialog.cancel();
                 }
                 break;
         }
@@ -127,11 +145,13 @@ public class BaseActivity extends SharedElementBaseActivity implements OnBroadca
 
     @Override
     public void onBluetoothScanModeChangedEventReceived(int scanMode) {
-        viewModel.selectScanModeStatus(scanMode);
+        //viewModel.selectScanModeStatus(scanMode);
+        currentScanModeStatus = scanMode;
     }
 
     protected void resetMyBluetoothStatus(){
-        viewModel.selectMakingMeDiscoverableValue(true);
+        // chiudere connessioni con tutti (non spegnere BT)
+
     }
 
     @Override
@@ -156,5 +176,16 @@ public class BaseActivity extends SharedElementBaseActivity implements OnBroadca
                 .setCancelable(false)
                 .setPositiveButton("OK", ((dialogInterface, i) -> finish()))
                 .create().show();
+    }
+
+    protected void askForDiscoverability() {
+        Intent i = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        i.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, extraDiscoverableDuration);
+        activityResultLaunch.launch(i);
+    }
+
+    @Override
+    public void onActivityResult(ActivityResult result) {
+        //Log.i(TAG, "onActivityResult: " + result.getResultCode() );
     }
 }

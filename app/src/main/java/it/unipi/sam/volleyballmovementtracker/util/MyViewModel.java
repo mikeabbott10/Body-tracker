@@ -8,7 +8,7 @@ public class MyViewModel extends ViewModel {
     private final SavedStateHandle savedStateHandle;
     private static final String currentFragmentKey = "cfk";
     private static final String currentNumberPickerKey = "cnpk";
-    private static final String makingMeDiscoverableKey = "mmdk";
+    private static final String imDiscoverableKey = "imdk";
     private static final String scanModeStatusKey = "sssk";
 
     public MyViewModel(SavedStateHandle savedStateHandle) {
@@ -30,11 +30,11 @@ public class MyViewModel extends ViewModel {
         savedStateHandle.set(currentNumberPickerKey, newValue);
     }
 
-    public MutableLiveData<Boolean> getMakingMeDiscoverable(){
-        return savedStateHandle.getLiveData(makingMeDiscoverableKey, true);
+    public MutableLiveData<Boolean> getImDiscoverable(){
+        return savedStateHandle.getLiveData(imDiscoverableKey, false);
     }
-    public void selectMakingMeDiscoverableValue(boolean newValue) {
-        savedStateHandle.set(makingMeDiscoverableKey, newValue);
+    public void selectImDiscoverable(boolean newValue) {
+        savedStateHandle.set(imDiscoverableKey, newValue);
     }
 
     public MutableLiveData<Integer> getScanModeStatus(){

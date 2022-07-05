@@ -23,7 +23,8 @@
            devices. -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
-
+    <!-- INTERNET PERMISSION -->
+    <uses-permission android:name = "android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -48,8 +49,6 @@
         <activity android:name=".activities.coach.CoachActivity" />
         <activity android:name=".activities.player.PlayerActivity" />
         <activity android:name=".activities.coach.practices.PracticingActivity"/>
-
-        <receiver android:name=".util.MyBroadcastReceiver" />
     </application>
 
 </manifest>
