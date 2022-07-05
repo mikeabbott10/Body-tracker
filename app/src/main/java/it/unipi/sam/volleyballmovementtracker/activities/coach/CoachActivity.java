@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 
@@ -24,6 +25,7 @@ public class CoachActivity extends SharedElementBaseActivity implements View.OnC
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         binding = ActivityCoachBinding.inflate(getLayoutInflater());
         binding.whoAmIIv.setImageDrawable(
@@ -37,20 +39,43 @@ public class CoachActivity extends SharedElementBaseActivity implements View.OnC
 
     @Override
     protected void onResume() {
+        Log.d(TAG, "onResume");
+        binding.middleBlockerIv.setVisibility(View.VISIBLE);
+        binding.middlePlusHitterIv.setVisibility(View.VISIBLE);
         super.onResume();
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             // code for portrait mode
-            GraphicUtil.slideLeftToOrigin(binding.middleTvLayout, null, null);
-            GraphicUtil.slideRightToOrigin(binding.middleHitterTvLayout, null, null);
+            GraphicUtil.slideLeftToOrigin(binding.middleTvLayout, -1, null);
+            GraphicUtil.slideRightToOrigin(binding.middleHitterTvLayout, -1, null);
         } else {
             // code for landscape mode
-            GraphicUtil.slideDownToOrigin(binding.middleTvLayout, null, null);
-            GraphicUtil.slideUpToOrigin(binding.middleHitterTvLayout, null,null);
+            GraphicUtil.slideDownToOrigin(binding.middleTvLayout, -1, null);
+            GraphicUtil.slideUpToOrigin(binding.middleHitterTvLayout, -1,null);
         }
     }
 
     @Override
+    public void onBackPressed() {
+        binding.middleBlockerIv.setVisibility(View.INVISIBLE);
+        binding.middlePlusHitterIv.setVisibility(View.INVISIBLE);
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "onStop");
+        super.onStop();
+    }
+
+    @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
         super.onDestroy();
         binding = null;
     }
@@ -63,13 +88,13 @@ public class CoachActivity extends SharedElementBaseActivity implements View.OnC
             GraphicUtil.slideLeft(binding.middleTvLayout,
                     view.getId() == binding.centraleView.getId()
                             ? Constants.STARTING_MB_TRAINING : Constants.STARTING_MB_HITTER_TRAINING,this);
-            GraphicUtil.slideRight(binding.middleHitterTvLayout, null, null);
+            GraphicUtil.slideRight(binding.middleHitterTvLayout, -1, null);
         } else {
             // code for landscape mode
             GraphicUtil.slideUp(binding.middleTvLayout,
                     view.getId() == binding.centraleView.getId()
                             ? Constants.STARTING_MB_TRAINING : Constants.STARTING_MB_HITTER_TRAINING, this);
-            GraphicUtil.slideDown(binding.middleHitterTvLayout, null, null);
+            GraphicUtil.slideDown(binding.middleHitterTvLayout, -1, null);
         }
     }
 
@@ -100,7 +125,7 @@ public class CoachActivity extends SharedElementBaseActivity implements View.OnC
         }
 
         // start the new activity
-        i.putExtra(Constants.starting_activity_bundle_key, mBundle);
+        i.putExtra(Constants.starting_component_bundle_key, mBundle);
         assert options != null;
         startActivity(i, options.toBundle());
     }

@@ -47,8 +47,9 @@
         </activity>
         <activity android:name=".activities.coach.CoachActivity" />
         <activity android:name=".activities.player.PlayerActivity" />
-        <activity android:name=".activities.coach.practices.MiddleBlockerBlockActivity" />
-        <activity android:name=".activities.coach.practices.PracticingActivity" />
+        <activity android:name=".activities.coach.practices.PracticingActivity"/>
+
+        <receiver android:name=".util.MyBroadcastReceiver" />
     </application>
 
 </manifest>

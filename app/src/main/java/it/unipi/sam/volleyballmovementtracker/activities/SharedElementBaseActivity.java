@@ -4,11 +4,12 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 
-public class SharedElementBaseActivity extends BaseActivity {
+public class SharedElementBaseActivity extends AppCompatActivity {
     protected int whoAmIDrawableId;
     protected int currentTrainingDrawableId;
     protected int currentBtStateDrawableId;
@@ -17,7 +18,7 @@ public class SharedElementBaseActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
         // get custom instance state or original instance state
-        Bundle startingThisActivityBundle = getIntent().getBundleExtra(Constants.starting_activity_bundle_key);
+        Bundle startingThisActivityBundle = getIntent().getBundleExtra(Constants.starting_component_bundle_key);
         if(startingThisActivityBundle != null){
             super.onCreate(savedInstanceState);
             whoAmIDrawableId = startingThisActivityBundle.getInt(Constants.who_am_i_id_key);

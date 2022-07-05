@@ -10,12 +10,12 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 
-import it.unipi.sam.volleyballmovementtracker.activities.SharedElementBaseActivity;
+import it.unipi.sam.volleyballmovementtracker.activities.BaseActivity;
 import it.unipi.sam.volleyballmovementtracker.databinding.ActivityCoachBinding;
 import it.unipi.sam.volleyballmovementtracker.util.MyBroadcastReceiver;
 import it.unipi.sam.volleyballmovementtracker.util.OnBroadcastReceiverOnReceiveListener;
 
-public class PlayerActivity extends SharedElementBaseActivity implements OnBroadcastReceiverOnReceiveListener {
+public class PlayerActivity extends BaseActivity implements OnBroadcastReceiverOnReceiveListener {
     private static final String TAG = "AAAPlayerActivity";
     private ActivityCoachBinding binding;
     private BroadcastReceiver mReceiver;
@@ -48,7 +48,7 @@ public class PlayerActivity extends SharedElementBaseActivity implements OnBroad
     }
 
     @Override
-    public void onBluetoothEventReceived(Context context, Intent intent) {
+    public void onBluetoothStateChangedEventReceived(Context context, Intent intent) {
         final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
         switch (state) {
             case BluetoothAdapter.STATE_OFF:

@@ -4,12 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- background-->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/back7"
         android:scaleType="centerCrop"
         android:contentDescription="@null" />
+
+    <!-- fragment -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container_main"
         android:layout_width="match_parent"
@@ -17,6 +21,22 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
+
+    <!-- back button -->
+    <ImageButton
+        android:id="@+id/back_btn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="5dp"
+        android:src="@drawable/ic_back"
+        android:layout_margin="8dp"
+        android:background="@android:color/transparent"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="@null" />
+
+    <!-- bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,12 +58,24 @@
             android:transitionName="@string/current_training_choice"
             android:contentDescription="@null"
             app:tint="@color/white" />
-        <ImageView
-            android:id="@+id/bluetooth_state"
+        <RelativeLayout
+            android:id="@+id/bluetooth_state_layout"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_weight="0.3"
-            android:src="@drawable/ic_ok"
-            android:contentDescription="@null"/>
+            android:layout_weight="0.3">
+            <ImageView
+                android:id="@+id/bluetooth_state"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_ok"
+                android:contentDescription="@null"/>
+            <ImageView
+                android:id="@+id/bluetooth_state_overlay"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:contentDescription="@null"/>
+        </RelativeLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

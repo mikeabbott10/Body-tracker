@@ -4,5 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 
 public interface OnBroadcastReceiverOnReceiveListener {
-    void onBluetoothEventReceived(Context context, Intent intent);
+    void onBluetoothStateChangedEventReceived(Context context, Intent intent);
+    void onBluetoothScanModeChangedEventReceived(int scanMode);
 }

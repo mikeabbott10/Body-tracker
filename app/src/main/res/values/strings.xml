@@ -16,5 +16,11 @@
     <string name="who_am_i_choice">who_am_i_choice</string>
     <string name="current_training_choice">current_training_choice</string>
     <string name="wait_for_n_connections">Numero di connessioni attese</string>
-    <string name="middle_and_hitter_block_info">Selezionare il numero di connessioni attese. Questo corrisponde al numero di giocatori partecipanti all\'allenamento.</string>
+    <string name="picker_fragment_info">Selezionare il numero di connessioni attese. Questo corrisponde al numero di giocatori partecipanti all\'allenamento.</string>
+    <string name="get_connections_fragment_info">In attesa di ottenere tutte le connessioni necessarie…</string>
+    <string name="work_in_progress_warning">Potrebbe essere in corso un collegamento bluetooth con alcuni dispositivi. Interrompere l\'operazione?</string>
+    <string name="work_in_progress_warning_title">Operazione in corso</string>
+    <string name="bt_discoverability_not_enabled">Dispositivo non visibile</string>
+    <string name="enable_discoverability">Per utilizzare l\'applicazione è necessario rendere il dispositivo visibile ai dispositivi bluetooth nei dintorni. Procedere?</string>
+    <string name="enabling_bluetooth">Bluetooth acceso</string>
 </resources>

@@ -8,15 +8,14 @@
     <!-- Info view -->
     <TextView
         android:id="@+id/info_description"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible"
-        app:layout_constraintStart_toEndOf="@id/picker"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:fontFamily="@font/audiowide"
         android:padding="30dp"
-        android:text="@string/picker_fragment_info"
+        android:text="@string/get_connections_fragment_info"
         android:textColor="@color/white"
         android:textSize="22sp"
         android:typeface="monospace"/>
@@ -44,14 +43,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <!-- picker -->
-    <include
-        android:id="@+id/picker"
-        layout="@layout/number_picker"
+    <!-- lista di dispositivi associati -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/associated_devices_rv"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="50dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
