@@ -16,6 +16,22 @@ public class DialogActivity extends AppCompatActivity implements DialogInterface
     protected AlertDialog discoverabilityDeniedDialog;
     protected AlertDialog btEnablingDialog;
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        switch (showingDialog) {
+            case Constants.BT_ENABLING_DIALOG:
+                try{ btEnablingDialog.cancel(); }catch (RuntimeException ignored){}
+                break;
+            case Constants.DISCOVERABILITY_DIALOG:
+                try{ discoverabilityDeniedDialog.cancel(); }catch (RuntimeException ignored){}
+                break;
+            case Constants.WORK_IN_PROGRESS_DIALOG:
+                try{ workInProgressDialog.cancel(); }catch (RuntimeException ignored){}
+                break;
+        }
+    }
+
     // dialog
     protected void initDialog() {
         btEnablingDialog = new MaterialAlertDialogBuilder(this)

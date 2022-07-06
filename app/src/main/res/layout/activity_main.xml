@@ -33,7 +33,7 @@
                 android:alpha="@dimen/sagoma_alpha"
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_coach1"
+                android:src="@drawable/coach1"
                 android:transitionName="who_am_i_choice"
                 app:tint="@color/white" />
                 <!-- adjustViewBounds attribute is needed because
@@ -96,7 +96,7 @@
                 android:alpha="@dimen/sagoma_alpha"
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_block3"
+                android:src="@drawable/block3"
                 android:transitionName="who_am_i_choice"
                 app:tint="@color/white" />
             <!-- adjustViewBounds attribute is needed because

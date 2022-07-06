@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable-anydpi/ic_back.xml" value="0.267" />
         <entry key="app/src/main/res/drawable/bluetooth.xml" value="0.2365" />
         <entry key="app/src/main/res/drawable/bottom_gradient.xml" value="0.2635" />
         <entry key="app/src/main/res/drawable/horizontal_double_gradient.xml" value="0.2635" />
@@ -37,7 +38,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_middle_and_hitter_block.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_middle_blocker_block.xml" value="0.20806890299184044" />
-        <entry key="app/src/main/res/layout/activity_player.xml" value="0.14375261178437107" />
+        <entry key="app/src/main/res/layout/activity_player.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_practicing.xml" value="0.22" />
         <entry key="app/src/main/res/layout/activity_trainer.xml" value="0.33" />
         <entry key="app/src/main/res/layout/cool_title.xml" value="0.2669990933816863" />
@@ -45,6 +46,7 @@
         <entry key="app/src/main/res/layout/fragment_get_connections.xml" value="0.294570329200513" />
         <entry key="app/src/main/res/layout/fragment_number_picker.xml" value="0.14730463852904305" />
         <entry key="app/src/main/res/layout/number_picker.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/video_player.xml" value="0.14396155453405768" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.35989583333333336" />
       </map>
     </option>

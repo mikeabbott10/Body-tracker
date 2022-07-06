@@ -35,12 +35,8 @@ public class GetBTConnectionsRunnable implements Runnable {
     @Override
     public void run() {
         UUID myid = UUID.fromString(Constants.BT_UUID);
-        BluetoothServerSocket bss = null;
-        try {
-            bss = bta.listenUsingRfcommWithServiceRecord(Constants.BT_NAME, myid);
+        try(BluetoothServerSocket bss = bta.listenUsingRfcommWithServiceRecord(Constants.BT_NAME, myid)) {
             BluetoothSocket bs = bss.accept();
-            bss.close();
-
             sendMessage(bs);
         } catch (IOException e) {
             e.printStackTrace();

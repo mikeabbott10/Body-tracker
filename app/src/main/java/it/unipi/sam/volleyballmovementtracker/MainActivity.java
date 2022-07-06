@@ -96,6 +96,7 @@ public class MainActivity extends SharedElementBaseActivity implements View.OnCl
                     view.getId() == binding.trainerView.getId()
                             ? Constants.STARTING_COACH_ACTIVITY : Constants.STARTING_PLAYER_ACTIVITY,this);
             GraphicUtil.slideRight(binding.playerTvLayout, -1, null);
+
         } else {
             // code for landscape mode
             GraphicUtil.slideUp(binding.trainerTvLayout,
@@ -117,7 +118,7 @@ public class MainActivity extends SharedElementBaseActivity implements View.OnCl
             // start the new activity
             Intent i = new Intent(MainActivity.this, CoachActivity.class);
             Bundle mBundle = new Bundle();
-            mBundle.putInt(Constants.who_am_i_id_key, R.drawable.ic_coach1);
+            mBundle.putInt(Constants.who_am_i_id_key, R.drawable.coach1);
             i.putExtra(Constants.starting_component_bundle_key, mBundle);
             startActivity(i, options.toBundle());
         }else if(anim_obj == Constants.STARTING_PLAYER_ACTIVITY){
@@ -130,7 +131,7 @@ public class MainActivity extends SharedElementBaseActivity implements View.OnCl
             // start the new activity
             Intent i = new Intent(this, PlayerActivity.class);
             Bundle mBundle = new Bundle();
-            mBundle.putInt(Constants.who_am_i_id_key, R.drawable.ic_block3);
+            mBundle.putInt(Constants.who_am_i_id_key, R.drawable.block3);
             i.putExtra(Constants.starting_component_bundle_key, mBundle);
             startActivity(i, options.toBundle());
         }

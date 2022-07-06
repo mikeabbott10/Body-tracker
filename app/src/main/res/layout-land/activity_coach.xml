@@ -32,7 +32,7 @@
                 android:alpha="@dimen/sagoma_alpha"
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_block2"
+                android:src="@drawable/block2"
                 app:tint="@color/white"
                 android:transitionName="current_training_choice"/>
 
@@ -98,7 +98,7 @@
                 android:alpha="@dimen/sagoma_alpha"
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_blockplus"
+                android:src="@drawable/block_plus"
                 android:transitionName="current_training_choice"
                 app:tint="@color/white" />
 

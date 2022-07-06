@@ -113,7 +113,7 @@ public class CoachActivity extends SharedElementBaseActivity implements View.OnC
                     .makeSceneTransitionAnimation(this, binding.middleBlockerIv, getString(R.string.current_training_choice));
 
             // start the new activity
-            mBundle.putInt(Constants.current_training_id_key, R.drawable.ic_block2);
+            mBundle.putInt(Constants.current_training_id_key, R.drawable.block2);
         }else if(((MyTranslateAnimation)animation).getObj().equals(Constants.STARTING_MB_HITTER_TRAINING)){
             // create the transition animation - the images in the layouts
             // of both activities are defined with android:transitionName="@string/current_training_choice"
@@ -121,7 +121,7 @@ public class CoachActivity extends SharedElementBaseActivity implements View.OnC
                     .makeSceneTransitionAnimation(this, binding.middlePlusHitterIv, getString(R.string.current_training_choice));
 
             // start the new activity
-            mBundle.putInt(Constants.current_training_id_key, R.drawable.ic_blockplus);
+            mBundle.putInt(Constants.current_training_id_key, R.drawable.block_plus);
         }
 
         // start the new activity
