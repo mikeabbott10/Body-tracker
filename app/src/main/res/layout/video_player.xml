@@ -13,7 +13,6 @@
         android:layout_centerInParent="true"
         android:contentDescription="@null" />
 
-
     <!-- 1px size hack (will be resized programmatically) -->
     <SurfaceView
         android:id="@+id/surface_view"
@@ -33,25 +32,28 @@
         android:paddingBottom="20dp"
         android:paddingTop="5dp"
         android:gravity="center"
-        android:visibility="invisible">
+        android:visibility="gone">
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="0.3"/>
 
         <ImageView
+            android:id="@+id/fast_rewind_btn"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="0.12"
             android:src="@drawable/ic_baseline_fast_rewind_24"
             android:contentDescription="@null" />
         <ImageView
+            android:id="@+id/play_pause_btn"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="0.12"
-            android:src="@drawable/ic_baseline_play_arrow_24"
+            android:src="@drawable/ic_baseline_pause_24"
             android:contentDescription="@null" />
         <ImageView
+            android:id="@+id/fast_forward_btn"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="0.12"

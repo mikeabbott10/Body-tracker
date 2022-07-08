@@ -17,7 +17,9 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/arrow_left"
         android:scaleX="1.5"
-        android:scaleY="1.5" />
+        android:scaleY="1.5"
+        android:layout_marginVertical="60dp"
+        android:descendantFocusability="blocksDescendants" />
     <ImageView
         android:id="@+id/arrow_right"
         android:layout_width="50dp"

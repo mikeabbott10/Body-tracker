@@ -15,12 +15,12 @@ import androidx.lifecycle.ViewModelProvider;
 import java.util.Locale;
 
 import it.unipi.sam.volleyballmovementtracker.databinding.FragmentNumberPickerBinding;
+import it.unipi.sam.volleyballmovementtracker.util.CommonFragment;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import it.unipi.sam.volleyballmovementtracker.util.MyViewModel;
 
 public class PickerFragment extends CommonFragment implements NumberPicker.Formatter, NumberPicker.OnValueChangeListener {
     private FragmentNumberPickerBinding binding;
-    private MyViewModel viewModel;
 
     public PickerFragment(){}
 
@@ -36,8 +36,6 @@ public class PickerFragment extends CommonFragment implements NumberPicker.Forma
         viewModel.selectCurrentFragment(Constants.PICKER_FRAGMENT);
 
         initNumberPicker();
-
-        initInfoView(binding.infoTapGifIv, binding.infoBtn, binding.infoDescription);
 
         return root;
     }

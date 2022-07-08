@@ -1,7 +1,9 @@
 package it.unipi.sam.volleyballmovementtracker.activities.util;
 
 import android.content.DialogInterface;
+import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,6 +17,16 @@ public class DialogActivity extends AppCompatActivity implements DialogInterface
     protected AlertDialog workInProgressDialog;
     protected AlertDialog discoverabilityDeniedDialog;
     protected AlertDialog btEnablingDialog;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        showingDialog = -1;
+        // get original instance state
+        if(savedInstanceState!=null){
+            showingDialog = savedInstanceState.getInt(Constants.showing_dialog_key);
+        }
+    }
 
     @Override
     protected void onDestroy() {
@@ -59,8 +71,6 @@ public class DialogActivity extends AppCompatActivity implements DialogInterface
                 .create();
     }
 
-
-
     protected void showMyDialog(int dialogCode){
         showingDialog = dialogCode;
         switch (showingDialog) {
@@ -78,5 +88,12 @@ public class DialogActivity extends AppCompatActivity implements DialogInterface
 
     // override these
     protected void checkBTPermissionAndEnableBT() {}
-    @Override public void onClick(DialogInterface dialogInterface, int i) {}
+    @Override public void onClick(DialogInterface dialogInterface, int i) {
+        if(showingDialog == Constants.BT_ENABLING_DIALOG){
+            if(i==AlertDialog.BUTTON_POSITIVE) {
+                checkBTPermissionAndEnableBT();
+            }else
+                finishAffinity();
+        }
+    }
 }

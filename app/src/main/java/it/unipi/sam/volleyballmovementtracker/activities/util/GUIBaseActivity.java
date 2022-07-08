@@ -4,43 +4,62 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 
 import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 
-public class SharedElementBaseActivity extends DialogActivity {
+public class GUIBaseActivity extends DialogActivity{
     protected int whoAmIDrawableId;
     protected int currentTrainingDrawableId;
     protected int currentBtStateDrawableId;
+    protected int currentVideoPlayerId;
+    protected int mainColor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
         // get custom instance state or original instance state
         Bundle startingThisActivityBundle = getIntent().getBundleExtra(Constants.starting_component_bundle_key);
         if(startingThisActivityBundle != null){
             super.onCreate(savedInstanceState);
+            mainColor = startingThisActivityBundle.getInt(Constants.choice_key);
             whoAmIDrawableId = startingThisActivityBundle.getInt(Constants.who_am_i_id_key);
             currentTrainingDrawableId = startingThisActivityBundle.getInt(Constants.current_training_id_key);
-            currentBtStateDrawableId = R.drawable.ic_ok;
+            currentVideoPlayerId = ResourcesCompat.ID_NULL;
+            currentBtStateDrawableId = ResourcesCompat.ID_NULL;
+            initTheme();
         }else if(savedInstanceState!=null){
             super.onCreate(savedInstanceState);
+            mainColor = savedInstanceState.getInt(Constants.choice_key);
             whoAmIDrawableId = savedInstanceState.getInt(Constants.who_am_i_id_key);
             currentTrainingDrawableId = savedInstanceState.getInt(Constants.current_training_id_key);
+            currentVideoPlayerId = savedInstanceState.getInt(Constants.current_video_player_id_key);
             currentBtStateDrawableId = savedInstanceState.getInt(Constants.current_bt_state_id_key);
+            initTheme();
         }else {
             super.onCreate(null);
-            whoAmIDrawableId = R.drawable.ic_home_black_24dp; // no reason (only launcher activity here: it doesn't use this var)
-            currentTrainingDrawableId = R.drawable.ic_home_black_24dp; // no reason (only launcher activity here: it doesn't use this var)
-            currentBtStateDrawableId = R.drawable.ic_ok;
+            mainColor = -1;
+            whoAmIDrawableId = ResourcesCompat.ID_NULL; // no reason (only launcher activity here: it doesn't use this var)
+            currentTrainingDrawableId = ResourcesCompat.ID_NULL; // no reason (only launcher activity here: it doesn't use this var)
+            currentVideoPlayerId = ResourcesCompat.ID_NULL;
+            currentBtStateDrawableId = ResourcesCompat.ID_NULL;
         }
+    }
+
+    private void initTheme() {
+        if(mainColor ==Constants.BLUE)
+            setTheme(R.style.AppThemeBlueBackground);
+        if(mainColor ==Constants.RED)
+            setTheme(R.style.AppThemeRedBackground);
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putInt(Constants.choice_key, mainColor);
         outState.putInt(Constants.who_am_i_id_key, whoAmIDrawableId);
         outState.putInt(Constants.current_training_id_key, currentTrainingDrawableId);
+        outState.putInt(Constants.current_video_player_id_key, currentVideoPlayerId);
         outState.putInt(Constants.current_bt_state_id_key, currentBtStateDrawableId);
     }
 }

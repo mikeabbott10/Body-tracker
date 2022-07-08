@@ -25,6 +25,7 @@
 
     <!-- INTERNET PERMISSION -->
     <uses-permission android:name = "android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
 
     <application
         android:allowBackup="true"
@@ -43,13 +44,14 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".activities.coach.CoachActivity" />
-        <activity android:name=".activities.player.PlayerActivity" />
-        <activity android:name=".activities.coach.practices.PracticingActivity"/>
+        <activity android:name=".activities.player.PlayerPracticingActivity" />
+        <activity android:name=".activities.util.VideoPlayerActivity"
+            android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".activities.coach.practices.CoachPracticingActivity"/>
     </application>
 
 </manifest>

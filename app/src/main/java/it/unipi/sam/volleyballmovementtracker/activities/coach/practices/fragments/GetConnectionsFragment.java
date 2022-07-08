@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import it.unipi.sam.volleyballmovementtracker.databinding.FragmentGetConnectionsBinding;
+import it.unipi.sam.volleyballmovementtracker.util.CommonFragment;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import it.unipi.sam.volleyballmovementtracker.util.MyViewModel;
 
@@ -33,32 +34,7 @@ public class GetConnectionsFragment extends CommonFragment implements Observer<O
         viewModel.selectCurrentFragment(Constants.GET_CONNECTIONS_FRAGMENT);
         viewModel.getImDiscoverable().observe(getViewLifecycleOwner(), this);
 
-        initInfoView(binding.infoTapGifIv, binding.infoBtn, binding.infoDescription);
-
         return root;
-    }
-
-    @Override
-    public void onResume() {
-        Log.i(TAG, "onResume");
-        super.onResume();
-    }
-
-    @Override
-    public void onStop() {
-        Log.i(TAG, "onStop");
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        Log.i(TAG, "onDestroy");
-        super.onDestroy();
     }
 
     @Override

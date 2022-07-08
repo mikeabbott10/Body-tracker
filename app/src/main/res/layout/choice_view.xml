@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/choice_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/shape_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:adjustViewBounds="true"
+        android:alpha="@dimen/sagoma_alpha"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter"
+        android:transitionName="who_am_i_choice"
+        app:tint="@color/white" />
+    <!-- adjustViewBounds attribute is needed because
+    ImageView measures itself to match the original dimensions
+    of the drawable by default, without regard to any
+    scaling performed according to the scale type-->
+
+    <RelativeLayout
+        android:id="@+id/choice_tv_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingHorizontal="3dp"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/choice_tv"
+            style="@style/TitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="3dp" />
+
+        <TextView
+            android:id="@+id/choice_tv_back"
+            style="@style/TitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="3dp"
+            android:gravity="center"
+            android:textColor="@color/white" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

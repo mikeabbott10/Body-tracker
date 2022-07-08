@@ -24,33 +24,31 @@ import java.util.List;
 
 import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
-import it.unipi.sam.volleyballmovementtracker.util.MyBroadcastReceiver;
 import it.unipi.sam.volleyballmovementtracker.util.MyViewModel;
-import it.unipi.sam.volleyballmovementtracker.util.OnBroadcastReceiverOnReceiveListener;
+import it.unipi.sam.volleyballmovementtracker.util.OnBroadcastReceiverOnBTReceiveListener;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class BaseActivity extends SharedElementBaseActivity implements OnBroadcastReceiverOnReceiveListener,
+public class BaseActivity extends GUIBaseActivity implements OnBroadcastReceiverOnBTReceiveListener,
                 EasyPermissions.PermissionCallbacks, ActivityResultCallback<ActivityResult> {
     private static final String TAG = "AAAABaseActivity";
     protected BluetoothAdapter bta;
-    private BroadcastReceiver mReceiver;
+    protected BroadcastReceiver mReceiver;
+    protected IntentFilter myIntentFilter;
+
     protected MyViewModel viewModel;
     protected ActivityResultLauncher<Intent> activityResultLaunch;
     public static final int extraDiscoverableDuration = 240;
     protected int currentScanModeStatus;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         // init current scan status
         currentScanModeStatus = BluetoothAdapter.SCAN_MODE_NONE;
 
-        showingDialog = -1;
         // get original instance state
         if(savedInstanceState!=null){
             super.onCreate(savedInstanceState);
             currentScanModeStatus = savedInstanceState.getInt(Constants.scan_mode_status_key);
-            showingDialog = savedInstanceState.getInt(Constants.showing_dialog_key);
         }else {
             super.onCreate(null);
         }
@@ -59,11 +57,9 @@ public class BaseActivity extends SharedElementBaseActivity implements OnBroadca
                 new ActivityResultContracts.StartActivityForResult(), this);
 
         // Register for broadcasts on BluetoothAdapter state and scan mode change
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        filter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-        mReceiver = new MyBroadcastReceiver(this);
-        registerReceiver(mReceiver, filter);
+        myIntentFilter = new IntentFilter();
+        myIntentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        myIntentFilter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
 
         viewModel = new ViewModelProvider(this).get(MyViewModel.class);// init
 
@@ -97,15 +93,6 @@ public class BaseActivity extends SharedElementBaseActivity implements OnBroadca
         resetMyBluetoothStatus();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
 
     @Override
     protected void onDestroy() {
@@ -151,7 +138,6 @@ public class BaseActivity extends SharedElementBaseActivity implements OnBroadca
 
     protected void resetMyBluetoothStatus(){
         // chiudere connessioni con tutti (non spegnere BT)
-
     }
 
     @Override

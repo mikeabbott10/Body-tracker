@@ -6,136 +6,30 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <!-- background
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/back7"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null" />-->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <RelativeLayout
-            android:id="@+id/trainer_view"
+        <include android:id="@+id/choice_1"
+            layout="@layout/choice_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5">
+            android:layout_weight="0.5"/>
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@null"
-                android:scaleType="centerCrop"
-                android:src="@drawable/back7" />
-
-            <ImageView
-                android:id="@+id/coach_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:adjustViewBounds="true"
-                android:alpha="@dimen/sagoma_alpha"
-                android:contentDescription="@null"
-                android:scaleType="fitCenter"
-                android:src="@drawable/coach1"
-                android:transitionName="who_am_i_choice"
-                app:tint="@color/white" />
-                <!-- adjustViewBounds attribute is needed because
-                ImageView measures itself to match the original dimensions
-                of the drawable by default, without regard to any
-                scaling performed according to the scale type-->
-
-            <RelativeLayout
-                android:id="@+id/trainer_tv_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingHorizontal="3dp"
-                android:layout_centerVertical="true">
-
-                <TextView
-                    android:id="@+id/trainer_tv"
-                    style="@style/TitleTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/coach"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginTop="3dp" />
-
-                <TextView
-                    android:id="@+id/trainer_tv_back"
-                    style="@style/TitleTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="3dp"
-                    android:gravity="center"
-                    android:text="@string/coach"
-                    android:textColor="@color/white" />
-
-            </RelativeLayout>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/player_view"
+        <include android:id="@+id/choice_2"
+            layout="@layout/choice_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@null"
-                android:scaleType="centerCrop"
-                android:src="@drawable/back6" />
-
-            <ImageView
-                android:id="@+id/player_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:adjustViewBounds="true"
-                android:alpha="@dimen/sagoma_alpha"
-                android:contentDescription="@null"
-                android:scaleType="fitCenter"
-                android:src="@drawable/block3"
-                android:transitionName="who_am_i_choice"
-                app:tint="@color/white" />
-            <!-- adjustViewBounds attribute is needed because
-            ImageView measures itself to match the original dimensions
-            of the drawable by default, without regard to any
-            scaling performed according to the scale type-->
-
-
-            <RelativeLayout
-                android:id="@+id/player_tv_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingHorizontal="3dp"
-                android:layout_centerVertical="true">
-
-                <TextView
-                    android:id="@+id/player_tv"
-                    style="@style/TitleTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/player"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginTop="3dp" />
-
-                <TextView
-                    android:id="@+id/player_tv_back"
-                    style="@style/TitleTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="3dp"
-                    android:gravity="center"
-                    android:text="@string/player"
-                    android:textColor="@color/white" />
-
-            </RelativeLayout>
-        </RelativeLayout>
+            android:layout_weight="0.5"/>
     </LinearLayout>
 
     <ImageView
@@ -145,7 +39,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:background="@drawable/vertical_double_gradient"
         tools:ignore="ContentDescription" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

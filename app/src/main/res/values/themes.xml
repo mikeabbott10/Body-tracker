@@ -44,9 +44,32 @@
         <item name="android:textSize">32sp</item>
     </style>
 
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">?android:attr/listDivider</item>
+    </style>
+
+    <style name="Theme.Transparent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="colorPrimaryDark">@android:color/transparent</item>
+    </style>
+
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppAnimatedTheme">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
     </style>
+
+    <style name="AppThemeBlueBackground" parent="AppTheme">
+        <item name="android:windowBackground">@color/MidnightBlue</item>
+    </style>
+    <style name="AppThemeRedBackground" parent="AppTheme">
+    <item name="android:windowBackground">@color/Maroon</item>
+</style>
 </resources>

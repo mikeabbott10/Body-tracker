@@ -4,13 +4,15 @@ import android.content.Context;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 
 import it.unipi.sam.volleyballmovementtracker.R;
 
 public class GraphicUtil {
-    private static final long animationDuration = 70;
+    private static final long animationDuration = 200;
+    public static final int fadeDuration = 200;
 
     // slide the view from its current position to above itself
     public static void slideUp(View view, int key, @Nullable Animation.AnimationListener anListener){
@@ -286,11 +288,46 @@ public class GraphicUtil {
     public static void scaleImage(Context ctx, @Nullable View view, int key, @Nullable Animation.AnimationListener anListener){
         if(view == null)
             return;
-        MyAnimation animation = new MyAnimation(AnimationUtils.loadAnimation(ctx, R.anim.scale));
+        view.startAnimation(AnimationUtils.loadAnimation(ctx, R.anim.scale));
+    }
+
+    public static void fadeOut(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener, long animationDuration){
+        if(view == null)
+            return;
+        MyAlphaAnimation fadeOut = new MyAlphaAnimation(1.0f, 0.0f);
+        fadeOut.setDuration(animationDuration>0?animationDuration:fadeDuration);
+        fadeOut.setFillAfter(true);
         if(anListener!=null) {
-            animation.setObj(key);
-            animation.getAnimation().setAnimationListener(anListener);
+            fadeOut.setObj(key);
+            fadeOut.setAnimationListener(anListener);
         }
-        view.startAnimation(animation.getAnimation());
+        view.startAnimation(fadeOut);
+    }
+
+    public static void fadeIn(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener, long animationDuration){
+        if(view == null)
+            return;
+        MyAlphaAnimation fadeIn = new MyAlphaAnimation(0.0f, 1.0f);
+        fadeIn.setDuration(animationDuration>0?animationDuration:fadeDuration);
+        fadeIn.setFillAfter(true);
+        if(anListener!=null) {
+            fadeIn.setObj(key);
+            fadeIn.setAnimationListener(anListener);
+        }
+        view.startAnimation(fadeIn);
+    }
+
+    public static void alphaChange(ImageView view, float initVal, float finalVal,
+                                   int key, @Nullable Animation.AnimationListener anListener, long animationDuration) {
+        if(view == null)
+            return;
+        MyAlphaAnimation fadeIn = new MyAlphaAnimation(initVal, finalVal);
+        fadeIn.setDuration(animationDuration>0?animationDuration:fadeDuration);
+        fadeIn.setFillAfter(true);
+        if(anListener!=null) {
+            fadeIn.setObj(key);
+            fadeIn.setAnimationListener(anListener);
+        }
+        view.startAnimation(fadeIn);
     }
 }

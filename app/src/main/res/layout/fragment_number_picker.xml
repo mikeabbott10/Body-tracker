@@ -5,43 +5,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- info view -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-        <TextView
-            android:id="@+id/info_description"
-            android:visibility="invisible"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="25dp"
-            android:text="@string/picker_fragment_info"
-            android:fontFamily="@font/audiowide"
-            android:typeface="monospace"
-            android:textSize="20sp"
-            android:textColor="@color/white"/>
-        <ImageView
-            android:id="@+id/info_tap_gif_iv"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:alpha="0.8"
-            android:rotation="40"
-            android:layout_alignParentEnd="true"
-            android:contentDescription="@null" />
-        <ImageButton
-            android:id="@+id/info_btn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:scaleType="centerCrop"
-            android:layout_margin="8dp"
-            android:src="@drawable/ic_baseline_info_24"
-            android:background="@android:color/transparent"
-            android:layout_alignParentEnd="true"
-            android:contentDescription="@null" />
-    </RelativeLayout>
-
     <!-- picker -->
     <include
         android:id="@+id/picker"

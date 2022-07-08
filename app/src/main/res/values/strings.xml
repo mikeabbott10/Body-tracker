@@ -23,4 +23,9 @@
     <string name="bt_discoverability_not_enabled">Dispositivo non visibile</string>
     <string name="enable_discoverability">Per utilizzare l\'applicazione è necessario rendere il dispositivo visibile ai dispositivi bluetooth nei dintorni. Procedere?</string>
     <string name="enabling_bluetooth">Bluetooth acceso</string>
+    <string name="practice_video">Video allenamenti</string>
+    <string name="starting_player_info">Premere il pulsante al centro per collegarsi con il coach e iniziare l\'allenamento. \nE\' disponibile una playlist di video relativi ai vari esercizi, premere sul pulsante in basso al centro per visualizzarla.</string>
+    <string name="start_practice">Inizio\nallenamento</string>
+    <string name="select_training_fragment_info">Selezionare l\'allenamento desiderato</string>
+    <string name="no_trainings">No training available</string>
 </resources>
