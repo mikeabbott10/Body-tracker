@@ -6,6 +6,10 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
 
+    <!-- custom -->
+    <color name="AlphaMidnightBlue">#22191970</color>
+    <color name="AlphaMaroon">#22800000</color>
+
     <!-- Android style -->
     <color name="android_green">#A4C639</color>
 

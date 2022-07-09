@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -16,9 +17,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
-
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;
 
@@ -65,7 +65,9 @@ public class BaseActivity extends GUIBaseActivity implements OnBroadcastReceiver
 
         bta = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
 
-        if(showingDialog != Constants.BT_ENABLING_DIALOG)
+        if(showingDialog != Constants.BT_ENABLING_DIALOG &&
+                showingDialog != Constants.BT_PERMISSIONS_DIALOG &&
+                showingDialog != Constants.BT_PERMANENTLY_DENIED_PERMISSIONS_DIALOG)
             checkBTPermissionAndEnableBT();
     }
 
@@ -91,14 +93,6 @@ public class BaseActivity extends GUIBaseActivity implements OnBroadcastReceiver
             bta.enable();
         }
         resetMyBluetoothStatus();
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Unregister broadcast listener
-        unregisterReceiver(mReceiver);
     }
 
     @SuppressLint("MissingPermission")
@@ -157,11 +151,10 @@ public class BaseActivity extends GUIBaseActivity implements OnBroadcastReceiver
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        new MaterialAlertDialogBuilder(this)
-                .setTitle(getString(R.string.bt_not_permitted))
-                .setCancelable(false)
-                .setPositiveButton("OK", ((dialogInterface, i) -> finish()))
-                .create().show();
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms))
+            showMyDialog(Constants.BT_PERMANENTLY_DENIED_PERMISSIONS_DIALOG);
+        else
+            showMyDialog(Constants.BT_PERMISSIONS_DIALOG);
     }
 
     protected void askForDiscoverability() {
@@ -173,5 +166,27 @@ public class BaseActivity extends GUIBaseActivity implements OnBroadcastReceiver
     @Override
     public void onActivityResult(ActivityResult result) {
         //Log.i(TAG, "onActivityResult: " + result.getResultCode() );
+    }
+
+    @Override
+    public void onClick(DialogInterface dialogInterface, int i) {
+        super.onClick(dialogInterface, i);
+        if(showingDialog == Constants.BT_ENABLING_DIALOG){
+            if(i==AlertDialog.BUTTON_POSITIVE) {
+                checkBTPermissionAndEnableBT();
+            }else
+                finishAffinity();
+            return;
+        }
+        if(showingDialog == Constants.BT_PERMISSIONS_DIALOG){
+            if(i== AlertDialog.BUTTON_POSITIVE) {
+                checkBTPermissionAndEnableBT();
+            }else
+                finishAffinity();
+            return;
+        }
+        if(showingDialog == Constants.BT_PERMANENTLY_DENIED_PERMISSIONS_DIALOG){
+            finishAffinity();
+        }
     }
 }

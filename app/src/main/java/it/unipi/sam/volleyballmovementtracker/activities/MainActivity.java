@@ -1,4 +1,4 @@
-package it.unipi.sam.volleyballmovementtracker;
+package it.unipi.sam.volleyballmovementtracker.activities;
 
 import android.app.ActivityOptions;
 import android.bluetooth.BluetoothAdapter;
@@ -15,15 +15,14 @@ import androidx.appcompat.content.res.AppCompatResources;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import it.unipi.sam.volleyballmovementtracker.activities.coach.practices.CoachPracticingActivity;
-import it.unipi.sam.volleyballmovementtracker.activities.player.PlayerPracticingActivity;
-import it.unipi.sam.volleyballmovementtracker.activities.util.GUIBaseActivity;
+import it.unipi.sam.volleyballmovementtracker.R;
+import it.unipi.sam.volleyballmovementtracker.activities.util.BaseActivity;
 import it.unipi.sam.volleyballmovementtracker.databinding.ActivityMainBinding;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.MyTranslateAnimation;
 
-public class MainActivity extends GUIBaseActivity implements View.OnClickListener, Animation.AnimationListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener, Animation.AnimationListener {
     private static final String TAG = "AAAMainActivity";
     private ActivityMainBinding binding;
 
@@ -35,6 +34,7 @@ public class MainActivity extends GUIBaseActivity implements View.OnClickListene
         setContentView(binding.getRoot());
 
         initChoiceViews();
+        initDialog();
 
         // check bt support
         BluetoothAdapter bta = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
@@ -45,7 +45,10 @@ public class MainActivity extends GUIBaseActivity implements View.OnClickListene
                     .setCancelable(false)
                     .setPositiveButton("OK", (dialogInterface, i) -> finish())
                     .create().show();
+            return;
         }
+
+        showMyDialog(showingDialog);
     }
 
     private void initChoiceViews() {
@@ -75,12 +78,12 @@ public class MainActivity extends GUIBaseActivity implements View.OnClickListene
 
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             // code for portrait mode
-            GraphicUtil.slideLeftToOrigin(binding.choice1.choiceTvLayout, -1, null);
-            GraphicUtil.slideRightToOrigin(binding.choice2.choiceTvLayout, -1, null);
+            GraphicUtil.slideLeftToOrigin(binding.choice1.choiceTvLayout, -1, null, 1, true);
+            GraphicUtil.slideRightToOrigin(binding.choice2.choiceTvLayout, -1, null, 1, true);
         } else {
             // code for landscape mode
-            GraphicUtil.slideDownToOrigin(binding.choice1.choiceTvLayout, -1, null);
-            GraphicUtil.slideUpToOrigin(binding.choice2.choiceTvLayout, -1,null);
+            GraphicUtil.slideDownToOrigin(binding.choice1.choiceTvLayout, -1, null, 1, true);
+            GraphicUtil.slideUpToOrigin(binding.choice2.choiceTvLayout, -1,null, 1, true);
         }
     }
 
@@ -110,24 +113,24 @@ public class MainActivity extends GUIBaseActivity implements View.OnClickListene
             // code for portrait mode
             if(view.getId() == binding.choice1.choiceView.getId()){
                 // clicked choice 1
-                GraphicUtil.slideLeft(binding.choice1.choiceTvLayout, Constants.COACH_CHOICE, this);
-                GraphicUtil.slideRight(binding.choice2.choiceTvLayout, -1, null);
+                GraphicUtil.slideLeft(binding.choice1.choiceTvLayout, Constants.COACH_CHOICE, this, 1, true);
+                GraphicUtil.slideRight(binding.choice2.choiceTvLayout, -1, null, 1, true);
             }else{
                 // clicked choice 2
-                GraphicUtil.slideLeft(binding.choice2.choiceTvLayout, Constants.PLAYER_CHOICE, this);
-                GraphicUtil.slideRight(binding.choice1.choiceTvLayout, -1, null);
+                GraphicUtil.slideLeft(binding.choice2.choiceTvLayout, Constants.PLAYER_CHOICE, this, 1, true);
+                GraphicUtil.slideRight(binding.choice1.choiceTvLayout, -1, null, 1, true);
             }
 
         } else {
             // code for landscape mode
             if(view.getId() == binding.choice1.choiceView.getId()){
                 // clicked choice 1
-                GraphicUtil.slideUp(binding.choice2.choiceTvLayout, Constants.COACH_CHOICE, this);
-                GraphicUtil.slideDown(binding.choice1.choiceTvLayout, -1, null);
+                GraphicUtil.slideUp(binding.choice2.choiceTvLayout, Constants.COACH_CHOICE, this, 1, true);
+                GraphicUtil.slideDown(binding.choice1.choiceTvLayout, -1, null, 1, true);
             }else{
                 // clicked choice 2
-                GraphicUtil.slideUp(binding.choice1.choiceTvLayout, Constants.PLAYER_CHOICE, this);
-                GraphicUtil.slideDown(binding.choice2.choiceTvLayout, -1, null);
+                GraphicUtil.slideUp(binding.choice1.choiceTvLayout, Constants.PLAYER_CHOICE, this, 1, true);
+                GraphicUtil.slideDown(binding.choice2.choiceTvLayout, -1, null, 1, true);
             }
         }
     }

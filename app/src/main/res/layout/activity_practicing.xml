@@ -20,8 +20,8 @@
         android:id="@+id/fragment_container_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/top_bar"
-        android:layout_above="@id/bottom_bar"/>
+        android:layout_above="@id/bottom_bar"
+        android:layout_below="@id/top_bar" />
     <!-- /Content -->
 
     <!-- top bar -->
@@ -29,39 +29,38 @@
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        android:background="#aa000000"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="#aa000000">
+        app:layout_constraintTop_toTopOf="parent">
         <!-- back button -->
         <ImageButton
             android:id="@+id/back_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:padding="5dp"
-            android:src="@drawable/ic_back"
             android:layout_margin="8dp"
             android:background="@android:color/transparent"
+            android:contentDescription="@null"
+            android:padding="5dp"
             android:scaleType="centerCrop"
-            android:contentDescription="@null" />
+            android:src="@drawable/ic_back" />
         <!-- info button -->
         <ImageButton
             android:id="@+id/info_btn"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="8dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@null"
             android:padding="5dp"
             android:scaleType="centerCrop"
-            android:layout_margin="8dp"
-            android:src="@drawable/ic_baseline_info_24"
-            android:background="@android:color/transparent"
-            android:layout_alignParentEnd="true"
-            android:contentDescription="@null" />
+            android:src="@drawable/ic_baseline_info_24" />
     </RelativeLayout>
     <!-- info tap gesture -->
     <ImageView
         android:id="@+id/info_tap_gif_iv"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:alpha="0.8"
         android:rotation="40"
         android:layout_alignParentEnd="true"
         android:contentDescription="@null" />

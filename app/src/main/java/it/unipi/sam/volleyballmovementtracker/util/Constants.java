@@ -16,35 +16,37 @@ public class Constants {
     public static String BT_UUID = "be9067f2-c2d5-47a7-be41-8a36a7841cd1";
 
     // coach fragments
-    public static final int SELECT_TRAINING_FRAGMENT = 0;
+    public static final int PICKER_FRAGMENT = 0;
     public static final int GET_CONNECTIONS_FRAGMENT = 1;
-    public static final int PICKER_FRAGMENT = 2;
-    public static final int GET_DATA_FRAGMENT = 3;
-    public static final int SHOW_DATA_FRAGMENT = 4;
+    public static final int GET_DATA_FRAGMENT = 2;
+    public static final int SHOW_DATA_FRAGMENT = 3;
 
     // player fragments
     public static final int PLAYER_STARTING_FRAGMENT = 0;
     public static final int PLAYER_PRACTICING_FRAGMENT = 1;
-    public static final int VIDEO_PLAYER_PLAYLIST_FRAGMENT = 2;
+    public static final int SELECT_TRAINING_FRAGMENT = 2;
+
 
     // actions
     public static final int COACH_CHOICE = 0;
     public static final int PLAYER_CHOICE = 1;
-    public static final int STARTING_MB_TRAINING = 2;
-    public static final int STARTING_MB_HITTER_TRAINING = 3;
+
     //coach
     public static final int GO_TO_START_CONNECTION_FRAGMENT = 4;
     public static final int BACK_TO_INIT_FRAGMENT = 5;
+
 
     // dialogs
     public static final int DISCOVERABILITY_DIALOG = 0;
     public static final int WORK_IN_PROGRESS_DIALOG = 1;
     public static final int BT_ENABLING_DIALOG = 2;
+    public static final int BT_PERMISSIONS_DIALOG = 3;
+    public static final int BT_PERMANENTLY_DENIED_PERMISSIONS_DIALOG = 4;
 
     // videos
-    public static final int MIDDLE_BLOCK_VIDEO = 0;
+    public static final String MIDDLE_BLOCK_VIDEO = "mbBlock";
     public static final String MIDDLE_BLOCK_VIDEO_URL = "http://techslides.com/demos/sample-videos/small.mp4";
-    public static final int SLIDE_MIDDLE_BLOCK_VIDEO = 1;
+    public static final String SLIDE_MIDDLE_BLOCK_VIDEO = "mbhBlock";
     public static final String SLIDE_MIDDLE_BLOCK_VIDEO_URL = "http://techslides.com/demos/sample-videos/small.mp4";
 
     // colors
@@ -76,4 +78,5 @@ public class Constants {
     public static final int TIMESTAMP = 0;
     public static final int PATH = 1;
     public static String trainings_rest_key = "trainings";
+    public static String video_file_name = "video.mp4";
 }

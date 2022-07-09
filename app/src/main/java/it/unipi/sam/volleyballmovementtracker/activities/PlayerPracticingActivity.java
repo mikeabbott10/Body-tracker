@@ -1,7 +1,8 @@
-package it.unipi.sam.volleyballmovementtracker.activities.player;
+package it.unipi.sam.volleyballmovementtracker.activities;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,7 +14,8 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import it.unipi.sam.volleyballmovementtracker.R;
-import it.unipi.sam.volleyballmovementtracker.activities.player.fragments.StartingPlayerFragment;
+import it.unipi.sam.volleyballmovementtracker.activities.fragments.player.PlayerPracticingFragment;
+import it.unipi.sam.volleyballmovementtracker.activities.fragments.player.StartingPlayerFragment;
 import it.unipi.sam.volleyballmovementtracker.activities.util.CommonPracticingActivity;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
@@ -34,8 +36,8 @@ public class PlayerPracticingActivity extends CommonPracticingActivity {
         assert whoAmIDrawableId!=ResourcesCompat.ID_NULL;
         binding.whoAmIIv.setImageDrawable(
                 AppCompatResources.getDrawable(this, whoAmIDrawableId));
-        binding.middleActionIconIv.setImageDrawable( // it's video playlist icon here
-                AppCompatResources.getDrawable(this, currentVideoPlayerId));
+        /*binding.middleActionIconIv.setImageDrawable( // it's video playlist icon here
+                AppCompatResources.getDrawable(this, currentVideoPlayerId));*/
         binding.bluetoothState.setImageDrawable(
                 AppCompatResources.getDrawable(this, currentBtStateDrawableId));
 
@@ -45,7 +47,7 @@ public class PlayerPracticingActivity extends CommonPracticingActivity {
 
     @Override
     public void onBackPressed() {
-        if(currentFragment!=Constants.PLAYER_STARTING_FRAGMENT){
+        if(currentFragment==Constants.PLAYER_PRACTICING_FRAGMENT){
             // are u sure to go back? (bluetooth sta lavorando e magari anche acquisizione di dati)
             // dialog per tornare a picker fragment
             showMyDialog(Constants.WORK_IN_PROGRESS_DIALOG);
@@ -58,17 +60,17 @@ public class PlayerPracticingActivity extends CommonPracticingActivity {
     public void onChanged(Object obj) {
         if(obj instanceof Integer) {
             currentFragment = (int) obj;
-            switch (currentFragment) {
+            /*switch (currentFragment) {
                 case Constants.PLAYER_STARTING_FRAGMENT:
-                case Constants.PLAYER_PRACTICING_FRAGMENT:
-                    binding.middleActionIconIv.setImageDrawable( // it's video playlist icon here
-                            AppCompatResources.getDrawable(this, R.drawable.ic_baseline_video_library_24));
                     break;
-                case Constants.VIDEO_PLAYER_PLAYLIST_FRAGMENT:
-                    binding.middleActionIconIv.setImageDrawable( // it's video playlist icon here
-                            AppCompatResources.getDrawable(this, R.drawable.ic_colored_baseline_video_library_24));
+                case Constants.PLAYER_PRACTICING_FRAGMENT:
+                    break;
+                case Constants.SELECT_TRAINING_FRAGMENT:
                     break;
             }
+            binding.middleActionIconIv.setImageDrawable( // it's video playlist icon here
+                    AppCompatResources.getDrawable(this, currentVideoPlayerId));*/
+            setInfoText(getInfoTextFromFragment(currentFragment));
         }
     }
 
@@ -77,11 +79,23 @@ public class PlayerPracticingActivity extends CommonPracticingActivity {
     public void onClick(View view) {
         super.onClick(view);
         if(view.getId()==binding.middleActionIconIv.getId()){
-            GraphicUtil.fadeOut(binding.middleActionIconIv,
-                    Constants.VIDEO_PLAYER_PLAYLIST_FRAGMENT, this,300);
+            /*GraphicUtil.fadeOut(binding.middleActionIconIv,
+                    Constants.SELECT_TRAINING_FRAGMENT, this,70, false);*/
         }else if(view.getId()==binding.bluetoothState.getId()){
             GraphicUtil.scaleImage(this, view, -1, null);
         }
+    }
+
+    // dialog onclick
+    @Override
+    public void onClick(DialogInterface dialogInterface, int i) {
+        super.onClick(dialogInterface,i);
+        if(showingDialog == Constants.WORK_IN_PROGRESS_DIALOG) {
+            // "Accept" is clicked on workInProgressDialog.
+            GraphicUtil.fadeOut(binding.bluetoothStateLayout,
+                    Constants.BACK_TO_INIT_FRAGMENT, this, 70, true);
+        }
+        showingDialog = -1;
     }
 
     // animation end usata come trigger per l'esecuzione di operazioni come il replace di fragment
@@ -89,31 +103,18 @@ public class PlayerPracticingActivity extends CommonPracticingActivity {
     public void onAnimationEnd(/*MyAlphaAnimation*/Animation animation) {
         switch((int)((MyAlphaAnimation)animation).getObj()){
             case Constants.PLAYER_PRACTICING_FRAGMENT:{
-                /*GraphicUtil.fadein(binding.bluetoothStateLayout, -1, null, 300);
+                GraphicUtil.fadeIn(binding.bluetoothStateLayout, -1, null, 70, true);
                 // start PlayerPracticingFragment
                 transactionToFragment(this, PlayerPracticingFragment.class);
-                break;*/
+                break;
             }
             case Constants.BACK_TO_INIT_FRAGMENT:{
-                GraphicUtil.fadeIn(binding.bluetoothStateLayout, -1, null, 300);
+                GraphicUtil.fadeIn(binding.bluetoothStateLayout, -1, null, 70, true);
 
                 // start StartingPlayerFragment
                 transactionToFragment(this, StartingPlayerFragment.class);
 
                 resetMyBluetoothStatus();
-                break;
-            }
-            case Constants.VIDEO_PLAYER_PLAYLIST_FRAGMENT:{
-                /*GraphicUtil.fadeIn(binding.videoPlayerBtn, -1, null, 300);
-                // start VideoPlayerPlaylistFragment
-                transactionToFragment(this, VideoPlayerPlaylistFragment.class);
-                //todo usa la startActivity in VideoPlayerPlaylistFragment ( click su item di recyclerview (?) )
-                /*
-                // start video player
-                Intent intent = new Intent(this, VideoPlayerActivity.class);
-                intent.putExtra(Constants.play_this_video_key, Constants.MIDDLE_BLOCK_VIDEO);
-                startActivity(intent);
-                */
                 break;
             }
         }
@@ -128,8 +129,9 @@ public class PlayerPracticingActivity extends CommonPracticingActivity {
             updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
                     binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
             if (currentFragment == Constants.PLAYER_PRACTICING_FRAGMENT) {
-                // se ero connesso/paired è necessario tornare a PLAYER_STARTING_FRAGMENT
-                // altrimenti resta (ma anche non restare)
+                // torna a StartingPlayerFragment
+                transactionToFragment(this, StartingPlayerFragment.class);
+                resetMyBluetoothStatus();
             }
         }
     }
@@ -139,11 +141,16 @@ public class PlayerPracticingActivity extends CommonPracticingActivity {
         switch(currentFragment){
             case Constants.PLAYER_STARTING_FRAGMENT:
                 return StartingPlayerFragment.class;
-            /*case Constants.PLAYER_PRACTICING_FRAGMENT:
+            case Constants.PLAYER_PRACTICING_FRAGMENT:
                 return PlayerPracticingFragment.class;
-            case Constants.VIDEO_PLAYER_PLAYLIST_FRAGMENT:
-                return VideoPlayerPlaylistFragment.class;*/
         }
         return StartingPlayerFragment.class;
+    }
+
+    protected String getInfoTextFromFragment(int currentFragment) {
+        if (currentFragment == Constants.PLAYER_STARTING_FRAGMENT) {
+            return getString(R.string.starting_player_info);
+        }
+        return null;
     }
 }

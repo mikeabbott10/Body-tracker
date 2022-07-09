@@ -1,4 +1,4 @@
-package it.unipi.sam.volleyballmovementtracker.activities.coach.practices.fragments;
+package it.unipi.sam.volleyballmovementtracker.activities.fragments.coach;
 
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -28,8 +28,6 @@ public class PickerFragment extends CommonFragment implements NumberPicker.Forma
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentNumberPickerBinding.inflate(getLayoutInflater());
         View root = binding.getRoot();
-
-        initInstanceState(savedInstanceState);
 
         // nota requireActivity() : same scope as in the activity is required or different ViewModel!
         viewModel = new ViewModelProvider(requireActivity()).get(MyViewModel.class);

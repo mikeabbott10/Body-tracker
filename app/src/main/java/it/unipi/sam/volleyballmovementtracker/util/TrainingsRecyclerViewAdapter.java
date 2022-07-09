@@ -1,6 +1,7 @@
-package it.unipi.sam.volleyballmovementtracker.activities.coach.practices.fragments;
+package it.unipi.sam.volleyballmovementtracker.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unipi.sam.volleyballmovementtracker.R;
-import it.unipi.sam.volleyballmovementtracker.util.Constants;
-import it.unipi.sam.volleyballmovementtracker.util.Training;
+import it.unipi.sam.volleyballmovementtracker.activities.VideoPlayerActivity;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.ParamRelativeLayout;
 
 public class TrainingsRecyclerViewAdapter extends RecyclerView.Adapter<TrainingsRecyclerViewAdapter.ViewHolder> implements View.OnClickListener{
@@ -35,17 +35,12 @@ public class TrainingsRecyclerViewAdapter extends RecyclerView.Adapter<Trainings
         }
     }
 
-    private Context context;
+    private final Context context;
     private List<Training> trainings;
-    private String trainingsPath;
-    private String logoPath;
 
-    public TrainingsRecyclerViewAdapter(ArrayList<Training> trainings, Context ctx, String trainingsPath, String logo_path) {
+    public TrainingsRecyclerViewAdapter(ArrayList<Training> trainings, Context ctx) {
         this.trainings = trainings;
         this.context = ctx;
-        // unused:
-        this.trainingsPath = Constants.restBasePath + trainingsPath + "/";
-        this.logoPath = logo_path;
     }
 
     public void setTrainings(List<Training> trainings) {
@@ -64,7 +59,10 @@ public class TrainingsRecyclerViewAdapter extends RecyclerView.Adapter<Trainings
             Toast.makeText(context, "Retry later.", Toast.LENGTH_SHORT).show();
             return;
         }
-        // TODO
+        // start video player
+        Intent intent = new Intent(context, VideoPlayerActivity.class);
+        intent.putExtra(Constants.play_this_video_key, getVideoUrlFromTraining(t));
+        context.startActivity(intent);
     }
 
     @NonNull
@@ -87,7 +85,6 @@ public class TrainingsRecyclerViewAdapter extends RecyclerView.Adapter<Trainings
         viewHolder.image.setImageDrawable( getDrawableFromImageCode(t.getLocalImageCode()) );
         ((ParamRelativeLayout) viewHolder.itemView ).setObject(t);
         viewHolder.itemView.setOnClickListener(this);
-        //DebugUtility.LogDThis(DebugUtility.TOUCH_OR_CLICK_RELATED_LOG, "AAAA", "pos: "+i, null);
     }
 
     private Drawable getDrawableFromImageCode(int localImageCode) {
@@ -103,5 +100,10 @@ public class TrainingsRecyclerViewAdapter extends RecyclerView.Adapter<Trainings
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    private String getVideoUrlFromTraining(Training training) {
+        return Constants.restBasePath + Constants.trainings_rest_key + "/" +
+                training.getCategory() + "/" + training.getCode() + "/" + Constants.video_file_name;
     }
 }

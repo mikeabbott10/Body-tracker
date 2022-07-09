@@ -1,4 +1,4 @@
-package it.unipi.sam.volleyballmovementtracker.activities.coach.practices.fragments;
+package it.unipi.sam.volleyballmovementtracker.activities.fragments;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -12,12 +12,10 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unipi.sam.volleyballmovementtracker.R;
+import it.unipi.sam.volleyballmovementtracker.util.TrainingsRecyclerViewAdapter;
 import it.unipi.sam.volleyballmovementtracker.databinding.FragmentSelectTrainingBinding;
 import it.unipi.sam.volleyballmovementtracker.util.CommonFragment;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
@@ -35,8 +33,7 @@ public class SelectTrainingFragment extends CommonFragment implements Observer<L
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentSelectTrainingBinding.inflate(getLayoutInflater());
         View root = binding.getRoot();
-
-        initInstanceState(savedInstanceState);
+        binding.loadingPanel.setVisibility(View.VISIBLE);
 
         // nota requireActivity() : same scope as in the activity is required or different ViewModel!
         viewModel = new ViewModelProvider(requireActivity()).get(MyViewModel.class);
@@ -45,7 +42,7 @@ public class SelectTrainingFragment extends CommonFragment implements Observer<L
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         binding.trainingsRv.setLayoutManager(llm);
         binding.trainingsRv.setHasFixedSize(true);
-        adapter = new TrainingsRecyclerViewAdapter(new ArrayList<>(), getActivity(), null, null);
+        adapter = new TrainingsRecyclerViewAdapter(new ArrayList<>(), getActivity());
         binding.trainingsRv.setAdapter(adapter);
         viewModel.getTrainingList().observe(getViewLifecycleOwner(), this);
 
@@ -60,9 +57,7 @@ public class SelectTrainingFragment extends CommonFragment implements Observer<L
             // idk quante entries ci sono in più o in meno rispetto a prima (nè dove sono state inserite/eliminate).
             // E' quindi necessario un refresh dell'intero data set:
             adapter.notifyDataSetChanged();
-        }
-        if(trainings==null || trainings.size()==0){
-            Snackbar.make(binding.getRoot(), getString(R.string.no_trainings), 2000).show();
+            binding.loadingPanel.setVisibility(View.GONE);
         }
     }
 }

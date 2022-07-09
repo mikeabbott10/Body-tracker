@@ -1,4 +1,4 @@
-package it.unipi.sam.volleyballmovementtracker.activities.coach.practices.fragments;
+package it.unipi.sam.volleyballmovementtracker.activities.fragments.coach;
 
 import android.os.Bundle;
 import android.util.Log;

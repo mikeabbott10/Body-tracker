@@ -24,8 +24,9 @@
     <string name="enable_discoverability">Per utilizzare l\'applicazione è necessario rendere il dispositivo visibile ai dispositivi bluetooth nei dintorni. Procedere?</string>
     <string name="enabling_bluetooth">Bluetooth acceso</string>
     <string name="practice_video">Video allenamenti</string>
-    <string name="starting_player_info">Premere il pulsante al centro per collegarsi con il coach e iniziare l\'allenamento. \nE\' disponibile una playlist di video relativi ai vari esercizi, premere sul pulsante in basso al centro per visualizzarla.</string>
+    <string name="starting_player_info">Premere su "Inizia allenamento" per collegarsi con il coach e iniziare l\'allenamento. \nE\' disponibile una playlist di video relativi ai vari esercizi: selezionare l\'esercizio desiderato per guardare il video.</string>
     <string name="start_practice">Inizio\nallenamento</string>
     <string name="select_training_fragment_info">Selezionare l\'allenamento desiderato</string>
     <string name="no_trainings">No training available</string>
+    <string name="bt_permanently_not_permitted">Hai scelto di non abilitare i permessi bluetooth più volte. Nel caso si volessero concedere i permessi adesso è necessario recarsi nelle impostazioni.</string>
 </resources>

@@ -15,8 +15,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.3"
             tools:ignore="ContentDescription"
-            app:tint="@color/white"
-            android:alpha="@dimen/sagoma_alpha"/>
+            app:tint="@color/black"/>
 
         <TextView
             android:id="@+id/cv_name"
@@ -25,7 +24,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.7"
             android:gravity="center"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             />
     </LinearLayout>
 

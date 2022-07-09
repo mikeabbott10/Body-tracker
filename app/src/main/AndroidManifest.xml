@@ -40,7 +40,7 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,10 +48,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.coach.CoachActivity" />
-        <activity android:name=".activities.player.PlayerPracticingActivity" />
-        <activity android:name=".activities.util.VideoPlayerActivity"
+        <activity android:name=".activities.PlayerPracticingActivity" />
+        <activity android:name=".activities.VideoPlayerActivity"
             android:theme="@style/Theme.Transparent"/>
-        <activity android:name=".activities.coach.practices.CoachPracticingActivity"/>
+        <activity android:name=".activities.CoachPracticingActivity"/>
     </application>
 
 </manifest>

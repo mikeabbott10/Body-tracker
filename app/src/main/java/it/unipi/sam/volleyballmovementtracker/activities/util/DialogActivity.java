@@ -17,6 +17,8 @@ public class DialogActivity extends AppCompatActivity implements DialogInterface
     protected AlertDialog workInProgressDialog;
     protected AlertDialog discoverabilityDeniedDialog;
     protected AlertDialog btEnablingDialog;
+    protected AlertDialog btPermissionDeniedDialog;
+    protected AlertDialog btPermissionPermanentlyDeniedDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +42,12 @@ public class DialogActivity extends AppCompatActivity implements DialogInterface
                 break;
             case Constants.WORK_IN_PROGRESS_DIALOG:
                 try{ workInProgressDialog.cancel(); }catch (RuntimeException ignored){}
+                break;
+            case Constants.BT_PERMISSIONS_DIALOG:
+                try{ btPermissionDeniedDialog.cancel(); }catch (RuntimeException ignored){}
+                break;
+            case Constants.BT_PERMANENTLY_DENIED_PERMISSIONS_DIALOG:
+                try{ btPermissionPermanentlyDeniedDialog.cancel(); }catch (RuntimeException ignored){}
                 break;
         }
     }
@@ -69,6 +77,19 @@ public class DialogActivity extends AppCompatActivity implements DialogInterface
                 .setPositiveButton(getString(R.string.accept), this)
                 .setNegativeButton(getString(R.string.decline), this)
                 .create();
+
+        btPermissionDeniedDialog = new MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.bt_not_permitted))
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.accept), this)
+                .setNegativeButton(getString(R.string.decline), this)
+                .create();
+
+        btPermissionPermanentlyDeniedDialog = new MaterialAlertDialogBuilder(this)
+                .setMessage(getString(R.string.bt_permanently_not_permitted))
+                .setCancelable(false)
+                .setPositiveButton("OK", this)
+                .create();
     }
 
     protected void showMyDialog(int dialogCode){
@@ -83,17 +104,17 @@ public class DialogActivity extends AppCompatActivity implements DialogInterface
             case Constants.WORK_IN_PROGRESS_DIALOG:
                 workInProgressDialog.show();
                 break;
+            case Constants.BT_PERMISSIONS_DIALOG:
+                btPermissionDeniedDialog.show();
+                break;
+            case Constants.BT_PERMANENTLY_DENIED_PERMISSIONS_DIALOG:
+                btPermissionPermanentlyDeniedDialog.show();
+                break;
         }
     }
 
     // override these
     protected void checkBTPermissionAndEnableBT() {}
     @Override public void onClick(DialogInterface dialogInterface, int i) {
-        if(showingDialog == Constants.BT_ENABLING_DIALOG){
-            if(i==AlertDialog.BUTTON_POSITIVE) {
-                checkBTPermissionAndEnableBT();
-            }else
-                finishAffinity();
-        }
     }
 }

@@ -15,15 +15,16 @@ public class GraphicUtil {
     public static final int fadeDuration = 200;
 
     // slide the view from its current position to above itself
-    public static void slideUp(View view, int key, @Nullable Animation.AnimationListener anListener){
+    public static void slideUp(View view, int key, @Nullable Animation.AnimationListener anListener,
+                               int factor, boolean fillAfter){
         view.setVisibility(View.VISIBLE);
         MyTranslateAnimation animate = new MyTranslateAnimation(
                 0,                 // fromXDelta
                 0,                 // toXDelta
                 0,  // fromYDelta
-                -view.getHeight());                // toYDelta
+                -factor*view.getHeight());                // toYDelta
         animate.setDuration(animationDuration);
-        animate.setFillAfter(true);
+        animate.setFillAfter(fillAfter);
         if(anListener!=null){
             animate.setObj(key);
             animate.setAnimationListener(anListener);
@@ -32,14 +33,15 @@ public class GraphicUtil {
     }
 
     // slide the view from its current position to below itself
-    public static void slideDown(View view, int key, @Nullable Animation.AnimationListener anListener){
+    public static void slideDown(View view, int key, @Nullable Animation.AnimationListener anListener,
+                                 int factor, boolean fillAfter){
         MyTranslateAnimation animate = new MyTranslateAnimation(
                 0,                 // fromXDelta
                 0,                 // toXDelta
                 0,                 // fromYDelta
-                view.getHeight()); // toYDelta
+                factor*view.getHeight()); // toYDelta
         animate.setDuration(animationDuration);
-        animate.setFillAfter(true);
+        animate.setFillAfter(fillAfter);
         if(anListener!=null){
             animate.setObj(key);
             animate.setAnimationListener(anListener);
@@ -48,15 +50,16 @@ public class GraphicUtil {
     }
 
     // slide the view from down to its position
-    public static void slideUpToOrigin(View view, int key, @Nullable Animation.AnimationListener anListener){
+    public static void slideUpToOrigin(View view, int key, @Nullable Animation.AnimationListener anListener,
+                                       int factor, boolean fillAfter){
         view.setVisibility(View.VISIBLE);
         MyTranslateAnimation animate = new MyTranslateAnimation(
                 0,                 // fromXDelta
                 0,                 // toXDelta
-                view.getHeight(),  // fromYDelta
+                factor*view.getHeight(),  // fromYDelta
                 0);                // toYDelta
         animate.setDuration(animationDuration);
-        animate.setFillAfter(true);
+        animate.setFillAfter(fillAfter);
         if(anListener!=null){
             animate.setObj(key);
             animate.setAnimationListener(anListener);
@@ -65,14 +68,15 @@ public class GraphicUtil {
     }
 
     // slide the view from up to its position
-    public static void slideDownToOrigin(View view, int key, @Nullable Animation.AnimationListener anListener){
+    public static void slideDownToOrigin(View view, int key, @Nullable Animation.AnimationListener anListener,
+                                         int factor, boolean fillAfter){
         MyTranslateAnimation animate = new MyTranslateAnimation(
                 0,                 // fromXDelta
                 0,                 // toXDelta
-                -view.getHeight(),                 // fromYDelta
+                -factor*view.getHeight(),                 // fromYDelta
                 0); // toYDelta
         animate.setDuration(animationDuration);
-        animate.setFillAfter(true);
+        //animate.setFillAfter(fillAfter);
         if(anListener!=null){
             animate.setObj(key);
             animate.setAnimationListener(anListener);
@@ -81,16 +85,17 @@ public class GraphicUtil {
     }
 
     // slide the view from its  current position to left
-    public static void slideLeft(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener) {
+    public static void slideLeft(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener,
+                                 int factor, boolean fillAfter) {
         if(view == null) return;
         view.setVisibility(View.VISIBLE);
         MyTranslateAnimation animate = new MyTranslateAnimation(
                 0,                 // fromXDelta
-                - view.getWidth(),           // toXDelta
+                - factor*view.getWidth(),           // toXDelta
                 0,              // fromYDelta
                 0);                // toYDelta
         animate.setDuration(animationDuration);
-        animate.setFillAfter(true);
+        animate.setFillAfter(fillAfter);
         if(anListener!=null){
             animate.setObj(key);
             animate.setAnimationListener(anListener);
@@ -99,15 +104,16 @@ public class GraphicUtil {
     }
 
     // slide the view from its  current position to right
-    public static void slideRight(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener) {
+    public static void slideRight(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener,
+                                  int factor, boolean fillAfter) {
         if(view == null) return;
         MyTranslateAnimation animate = new MyTranslateAnimation(
                 0,                 // fromXDelta
-                view.getWidth(),                 // toXDelta
+                factor*view.getWidth(),                 // toXDelta
                 0,                 // fromYDelta
                 0);                 // toYDelta
         animate.setDuration(animationDuration);
-        animate.setFillAfter(true);
+        animate.setFillAfter(fillAfter);
         if(anListener!=null){
             animate.setObj(key);
             animate.setAnimationListener(anListener);
@@ -116,15 +122,16 @@ public class GraphicUtil {
     }
 
     // slide the view from right to its position
-    public static void slideLeftToOrigin(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener) {
+    public static void slideLeftToOrigin(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener,
+                                         int factor, boolean fillAfter) {
         if(view == null) return;
         MyTranslateAnimation animate = new MyTranslateAnimation(
-                -view.getWidth(),                 // fromXDelta
+                -factor*view.getWidth(),                 // fromXDelta
                 0,                 // toXDelta
                 0,                 // fromYDelta
                 0);                 // toYDelta
         animate.setDuration(animationDuration);
-        animate.setFillAfter(true);
+        animate.setFillAfter(fillAfter);
         if(anListener!=null){
             animate.setObj(key);
             animate.setAnimationListener(anListener);
@@ -133,15 +140,16 @@ public class GraphicUtil {
     }
 
     // slide the view from left to its position
-    public static void slideRightToOrigin(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener) {
+    public static void slideRightToOrigin(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener,
+                                          int factor, boolean fillAfter) {
         if(view == null) return;
         MyTranslateAnimation animate = new MyTranslateAnimation(
-                view.getWidth(),                 // fromXDelta
+                factor*view.getWidth(),                 // fromXDelta
                 0,                 // toXDelta
                 0,                 // fromYDelta
                 0);                 // toYDelta
         animate.setDuration(animationDuration);
-        animate.setFillAfter(true);
+        animate.setFillAfter(fillAfter);
         if(anListener!=null){
             animate.setObj(key);
             animate.setAnimationListener(anListener);
@@ -151,15 +159,16 @@ public class GraphicUtil {
 
 
     // slide the view from its current position to above itself
-    public static void slideUp(View view, int key, @Nullable Animation.AnimationListener anListener, long animationDuration){
+    public static void slideUp(View view, int key, @Nullable Animation.AnimationListener anListener,
+                               int factor, boolean fillAfter, long animationDuration){
         view.setVisibility(View.VISIBLE);
         MyTranslateAnimation animate = new MyTranslateAnimation(
                 0,                 // fromXDelta
                 0,                 // toXDelta
                 0,  // fromYDelta
-                -view.getHeight());                // toYDelta
+                -factor*view.getHeight());                // toYDelta
         animate.setDuration(animationDuration);
-        animate.setFillAfter(true);
+        animate.setFillAfter(fillAfter);
         if(anListener!=null){
             animate.setObj(key);
             animate.setAnimationListener(anListener);
@@ -168,14 +177,15 @@ public class GraphicUtil {
     }
 
     // slide the view from its current position to below itself
-    public static void slideDown(View view, int key, @Nullable Animation.AnimationListener anListener, long animationDuration){
+    public static void slideDown(View view, int key, @Nullable Animation.AnimationListener anListener,
+                                 int factor, boolean fillAfter, long animationDuration){
         MyTranslateAnimation animate = new MyTranslateAnimation(
                 0,                 // fromXDelta
                 0,                 // toXDelta
                 0,                 // fromYDelta
-                view.getHeight()); // toYDelta
+                factor*view.getHeight()); // toYDelta
         animate.setDuration(animationDuration);
-        animate.setFillAfter(true);
+        animate.setFillAfter(fillAfter);
         if(anListener!=null){
             animate.setObj(key);
             animate.setAnimationListener(anListener);
@@ -184,15 +194,16 @@ public class GraphicUtil {
     }
 
     // slide the view from down to its position
-    public static void slideUpToOrigin(View view, int key, @Nullable Animation.AnimationListener anListener, long animationDuration){
+    public static void slideUpToOrigin(View view, int key, @Nullable Animation.AnimationListener anListener,
+                                       int factor, boolean fillAfter, long animationDuration){
         view.setVisibility(View.VISIBLE);
         MyTranslateAnimation animate = new MyTranslateAnimation(
                 0,                 // fromXDelta
                 0,                 // toXDelta
-                view.getHeight(),  // fromYDelta
+                factor*view.getHeight(),  // fromYDelta
                 0);                // toYDelta
         animate.setDuration(animationDuration);
-        animate.setFillAfter(true);
+        animate.setFillAfter(fillAfter);
         if(anListener!=null){
             animate.setObj(key);
             animate.setAnimationListener(anListener);
@@ -201,14 +212,15 @@ public class GraphicUtil {
     }
 
     // slide the view from up to its position
-    public static void slideDownToOrigin(View view, int key, @Nullable Animation.AnimationListener anListener, long animationDuration){
+    public static void slideDownToOrigin(View view, int key, @Nullable Animation.AnimationListener anListener,
+                                         int factor, boolean fillAfter, long animationDuration){
         MyTranslateAnimation animate = new MyTranslateAnimation(
                 0,                 // fromXDelta
                 0,                 // toXDelta
-                -view.getHeight(),                 // fromYDelta
+                -factor*view.getHeight(),                 // fromYDelta
                 0); // toYDelta
         animate.setDuration(animationDuration);
-        animate.setFillAfter(true);
+        animate.setFillAfter(fillAfter);
         if(anListener!=null){
             animate.setObj(key);
             animate.setAnimationListener(anListener);
@@ -217,16 +229,17 @@ public class GraphicUtil {
     }
 
     // slide the view from its  current position to left
-    public static void slideLeft(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener, long animationDuration) {
+    public static void slideLeft(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener,
+                                 int factor, boolean fillAfter, long animationDuration) {
         if(view == null) return;
         view.setVisibility(View.VISIBLE);
         MyTranslateAnimation animate = new MyTranslateAnimation(
                 0,                 // fromXDelta
-                - view.getWidth(),           // toXDelta
+                - factor*view.getWidth(),           // toXDelta
                 0,              // fromYDelta
                 0);                // toYDelta
         animate.setDuration(animationDuration);
-        animate.setFillAfter(true);
+        animate.setFillAfter(fillAfter);
         if(anListener!=null){
             animate.setObj(key);
             animate.setAnimationListener(anListener);
@@ -235,15 +248,16 @@ public class GraphicUtil {
     }
 
     // slide the view from its  current position to right
-    public static void slideRight(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener, long animationDuration) {
+    public static void slideRight(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener,
+                                  int factor, boolean fillAfter, long animationDuration) {
         if(view == null) return;
         MyTranslateAnimation animate = new MyTranslateAnimation(
                 0,                 // fromXDelta
-                view.getWidth(),                 // toXDelta
+                factor*view.getWidth(),                 // toXDelta
                 0,                 // fromYDelta
                 0);                 // toYDelta
         animate.setDuration(animationDuration);
-        animate.setFillAfter(true);
+        animate.setFillAfter(fillAfter);
         if(anListener!=null){
             animate.setObj(key);
             animate.setAnimationListener(anListener);
@@ -252,15 +266,16 @@ public class GraphicUtil {
     }
 
     // slide the view from right to its position
-    public static void slideLeftToOrigin(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener, long animationDuration) {
+    public static void slideLeftToOrigin(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener,
+                                         int factor, boolean fillAfter, long animationDuration) {
         if(view == null) return;
         MyTranslateAnimation animate = new MyTranslateAnimation(
-                -view.getWidth(),                 // fromXDelta
+                -factor*view.getWidth(),                 // fromXDelta
                 0,                 // toXDelta
                 0,                 // fromYDelta
                 0);                 // toYDelta
         animate.setDuration(animationDuration);
-        animate.setFillAfter(true);
+        animate.setFillAfter(fillAfter);
         if(anListener!=null){
             animate.setObj(key);
             animate.setAnimationListener(anListener);
@@ -269,15 +284,16 @@ public class GraphicUtil {
     }
 
     // slide the view from left to its position
-    public static void slideRightToOrigin(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener, long animationDuration) {
+    public static void slideRightToOrigin(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener,
+                                          int factor, boolean fillAfter, long animationDuration) {
         if(view == null) return;
         MyTranslateAnimation animate = new MyTranslateAnimation(
-                view.getWidth(),                 // fromXDelta
+                factor*view.getWidth(),                 // fromXDelta
                 0,                 // toXDelta
                 0,                 // fromYDelta
                 0);                 // toYDelta
         animate.setDuration(animationDuration);
-        animate.setFillAfter(true);
+        animate.setFillAfter(fillAfter);
         if(anListener!=null){
             animate.setObj(key);
             animate.setAnimationListener(anListener);
@@ -291,12 +307,13 @@ public class GraphicUtil {
         view.startAnimation(AnimationUtils.loadAnimation(ctx, R.anim.scale));
     }
 
-    public static void fadeOut(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener, long animationDuration){
+    public static void fadeOut(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener,
+                               long animationDuration, boolean fillAfter){
         if(view == null)
             return;
         MyAlphaAnimation fadeOut = new MyAlphaAnimation(1.0f, 0.0f);
         fadeOut.setDuration(animationDuration>0?animationDuration:fadeDuration);
-        fadeOut.setFillAfter(true);
+        fadeOut.setFillAfter(fillAfter);
         if(anListener!=null) {
             fadeOut.setObj(key);
             fadeOut.setAnimationListener(anListener);
@@ -304,12 +321,13 @@ public class GraphicUtil {
         view.startAnimation(fadeOut);
     }
 
-    public static void fadeIn(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener, long animationDuration){
+    public static void fadeIn(@Nullable View view, int key, @Nullable Animation.AnimationListener anListener,
+                              long animationDuration, boolean fillAfter){
         if(view == null)
             return;
         MyAlphaAnimation fadeIn = new MyAlphaAnimation(0.0f, 1.0f);
         fadeIn.setDuration(animationDuration>0?animationDuration:fadeDuration);
-        fadeIn.setFillAfter(true);
+        fadeIn.setFillAfter(fillAfter);
         if(anListener!=null) {
             fadeIn.setObj(key);
             fadeIn.setAnimationListener(anListener);
@@ -318,12 +336,13 @@ public class GraphicUtil {
     }
 
     public static void alphaChange(ImageView view, float initVal, float finalVal,
-                                   int key, @Nullable Animation.AnimationListener anListener, long animationDuration) {
+                                   int key, @Nullable Animation.AnimationListener anListener,
+                                   long animationDuration, boolean fillAfter) {
         if(view == null)
             return;
         MyAlphaAnimation fadeIn = new MyAlphaAnimation(initVal, finalVal);
         fadeIn.setDuration(animationDuration>0?animationDuration:fadeDuration);
-        fadeIn.setFillAfter(true);
+        fadeIn.setFillAfter(fillAfter);
         if(anListener!=null) {
             fadeIn.setObj(key);
             fadeIn.setAnimationListener(anListener);

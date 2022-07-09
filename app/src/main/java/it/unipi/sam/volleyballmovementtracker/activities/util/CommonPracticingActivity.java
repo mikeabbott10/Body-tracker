@@ -59,6 +59,10 @@ public class CommonPracticingActivity extends DownloadActivity implements Reques
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
+        initBinding();
+        initDialog();
+        initBars();
+        initInfoView();
 
         mReceiver = new MyBroadcastReceiver(this, this);
         registerReceiver(mReceiver, myIntentFilter);
@@ -73,18 +77,6 @@ public class CommonPracticingActivity extends DownloadActivity implements Reques
                     "notUseful", "notUseful", false, false, REST_INFO_JSON,
                     false, null, null));
         }
-
-        initDialog();
-        initBinding();
-        initInfoView();
-    }
-
-    protected void initBinding(){
-        binding = ActivityPracticingBinding.inflate(getLayoutInflater());
-        binding.whoAmIIv.setOnClickListener(this);
-        binding.middleActionIconIv.setOnClickListener(this);
-        binding.bluetoothState.setOnClickListener(this);
-        binding.backBtn.setOnClickListener(this);
     }
 
     @Override
@@ -120,6 +112,12 @@ public class CommonPracticingActivity extends DownloadActivity implements Reques
         Log.i(TAG, "onDestroy");
         super.onDestroy();
         binding = null;
+        try {
+            // Unregister broadcast listener
+            unregisterReceiver(mReceiver);
+        } catch(IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 
     // override this, call super
@@ -136,12 +134,12 @@ public class CommonPracticingActivity extends DownloadActivity implements Reques
             if (binding.infoDescription.getVisibility() != View.VISIBLE) {
                 // make description visible
                 binding.infoBtn.setAlpha(0.5f);
-                GraphicUtil.slideDownToOrigin(binding.infoDescription, -1, null);
+                GraphicUtil.slideDownToOrigin(binding.infoDescription, -1, null, 2, false);
                 binding.infoDescription.setVisibility(View.VISIBLE);
             } else {
                 // make description invisible
                 binding.infoBtn.setAlpha(1.0f);
-                GraphicUtil.slideUp(binding.infoDescription, -1, null);
+                GraphicUtil.slideUp(binding.infoDescription, -1, null, 2, false);
                 binding.infoDescription.setVisibility(View.INVISIBLE);
             }
         }
@@ -219,7 +217,73 @@ public class CommonPracticingActivity extends DownloadActivity implements Reques
     @Override public void onChanged(Object o) {}
 
 
-    // info view stuff ------------------------------------------------
+    // utils-----------------------------------------------------------------
+    private void getTrainings() {
+        Map<String, Object> riiMap = restInfoInstance.getLastModified().get( Constants.trainings_rest_key );
+        ResourcePreferenceWrapper trainingsJsonPreference = null;
+        if(riiMap!=null)
+            trainingsJsonPreference = PreferenceUtils.getResourceUri(this, Constants.trainings_rest_key+TRAININGS_JSON, (Integer) riiMap.get( Constants.trainings_rest_key ));
+
+        Log.d(TAG, "getTrainings. trainingsJsonPreference:"+trainingsJsonPreference);
+        if(trainingsJsonPreference!=null && trainingsJsonPreference.getUri()!=null) {
+            Log.d(TAG, "getTrainings. From local");
+            handleResponseUri(trainingsJsonPreference.getDMResourceId(), TRAININGS_JSON,
+                    trainingsJsonPreference.getUri(), trainingsJsonPreference.getLastModifiedTimestamp(), false);
+        }else {
+            Log.d(TAG, "getTrainings. From net");
+            getTrainingsInfoFileFromNet(
+                    new DMRequestWrapper(Constants.restBasePath + restInfoInstance.getTrainingsUrl(),
+                            "randomTitle", "randomDescription", false, false, TRAININGS_JSON,
+                            false, null, null)
+            );
+        }
+    }
+
+    protected static void transactionToFragment(Context ctx, Class<? extends Fragment> clas) {
+        FragmentManager fragmentManager = ((FragmentActivity)ctx).getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.setCustomAnimations(android.R.anim.fade_in, 0)
+                .replace(R.id.fragment_container_main, clas, null)
+                .setReorderingAllowed(true)
+                .commit();
+    }
+
+    protected void updateBtIcon(ImageView iconView, int iconId,
+                                ImageView overlayView, int overlayId, boolean isOverlayGif){
+        iconView.setImageDrawable(
+                AppCompatResources.getDrawable(this, iconId));
+        if(isOverlayGif){
+            Glide
+                    .with(this)
+                    .load(overlayId)
+                    .into(overlayView);
+            return;
+        }
+        overlayView.setImageDrawable( overlayId == ResourcesCompat.ID_NULL ? null :
+                AppCompatResources.getDrawable(this, overlayId));
+    }
+
+    private void initBars() {
+        assert mainColor != -1;
+        if(mainColor == Constants.BLUE) {
+            binding.topBar.setBackgroundColor(getResources().getColor(R.color.MidnightBlue));
+            binding.bottomBar.setBackgroundColor(getResources().getColor(R.color.MidnightBlue));
+        }
+        if(mainColor ==Constants.RED) {
+            binding.topBar.setBackgroundColor(getResources().getColor(R.color.Maroon));
+            binding.bottomBar.setBackgroundColor(getResources().getColor(R.color.Maroon));
+        }
+    }
+
+    protected void initBinding(){
+        binding = ActivityPracticingBinding.inflate(getLayoutInflater());
+        binding.whoAmIIv.setOnClickListener(this);
+        binding.middleActionIconIv.setOnClickListener(this);
+        binding.bluetoothState.setOnClickListener(this);
+        binding.backBtn.setOnClickListener(this);
+    }
+
+    // info view stuff --------------
     protected void initInfoView(){
         if(PreferenceUtils.getShowGesture(this)) {
             Glide
@@ -253,67 +317,5 @@ public class CommonPracticingActivity extends DownloadActivity implements Reques
             }
         });
         return false;
-    }
-
-    // utils-----------------------------------------------------------------
-    private void getTrainings() {
-        Map<String, Object> riiMap = restInfoInstance.getLastModified().get( Constants.trainings_rest_key );
-        ResourcePreferenceWrapper trainingsJsonPreference = null;
-        if(riiMap!=null)
-            trainingsJsonPreference = PreferenceUtils.getResourceUri(this, Constants.trainings_rest_key+TRAININGS_JSON, (Integer) riiMap.get( Constants.trainings_rest_key ));
-
-        Log.d(TAG, "getTrainings. trainingsJsonPreference:"+trainingsJsonPreference);
-        if(trainingsJsonPreference!=null && trainingsJsonPreference.getUri()!=null) {
-            Log.d(TAG, "getTrainings. From local");
-            handleResponseUri(trainingsJsonPreference.getDMResourceId(), TRAININGS_JSON,
-                    trainingsJsonPreference.getUri(), trainingsJsonPreference.getLastModifiedTimestamp(), false);
-        }else {
-            Log.d(TAG, "getTrainings. From net");
-            getTrainingsInfoFileFromNet(
-                    new DMRequestWrapper(Constants.restBasePath + restInfoInstance.getTrainingsUrl(),
-                            "randomTitle", "randomDescription", false, false, TRAININGS_JSON,
-                            false, null, null)
-            );
-        }
-    }
-
-    protected String getInfoTextFromFragment(int currentFragment) {
-        switch(currentFragment){
-            // coach fragments
-            case Constants.PICKER_FRAGMENT:
-                return getString(R.string.picker_fragment_info);
-            case Constants.SELECT_TRAINING_FRAGMENT:
-                return getString(R.string.select_training_fragment_info);
-            case Constants.GET_CONNECTIONS_FRAGMENT:
-                return getString(R.string.get_connections_fragment_info);
-
-            // player fragments ...
-
-        }
-        return null;
-    }
-
-    protected static void transactionToFragment(Context ctx, Class<? extends Fragment> clas) {
-        FragmentManager fragmentManager = ((FragmentActivity)ctx).getSupportFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.setCustomAnimations(android.R.anim.fade_in, 0)
-                .replace(R.id.fragment_container_main, clas, null)
-                .setReorderingAllowed(true)
-                .commit();
-    }
-
-    protected void updateBtIcon(ImageView iconView, int iconId,
-                                ImageView overlayView, int overlayId, boolean isOverlayGif){
-        iconView.setImageDrawable(
-                AppCompatResources.getDrawable(this, iconId));
-        if(isOverlayGif){
-            Glide
-                    .with(this)
-                    .load(overlayId)
-                    .into(overlayView);
-            return;
-        }
-        overlayView.setImageDrawable( overlayId == ResourcesCompat.ID_NULL ? null :
-                AppCompatResources.getDrawable(this, overlayId));
     }
 }

@@ -1,10 +1,11 @@
-package it.unipi.sam.volleyballmovementtracker.activities.util;
+package it.unipi.sam.volleyballmovementtracker.activities;
 
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.View;
 
@@ -34,7 +35,8 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        videoUrl = getVideoUrl(getIntent().getIntExtra(Constants.play_this_video_key, -1));
+        videoUrl = getIntent().getStringExtra(Constants.play_this_video_key);
+        Log.d(TAG, videoUrl);
         if(videoUrl==null){
             finish();
             return;
@@ -58,16 +60,6 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
         binding.player.fastRewindBtn.setOnClickListener(this);
 
         binding.player.container.setOnClickListener(this);
-    }
-
-    private String getVideoUrl(int id) {
-        switch(id){
-            case Constants.MIDDLE_BLOCK_VIDEO:
-                return Constants.MIDDLE_BLOCK_VIDEO_URL;
-            case Constants.SLIDE_MIDDLE_BLOCK_VIDEO:
-                return Constants.SLIDE_MIDDLE_BLOCK_VIDEO_URL;
-        }
-        return null;
     }
 
     @Override
@@ -212,7 +204,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
 
     private boolean showActionsIfGone(){
         if(binding.player.actions.getVisibility() == View.GONE) {
-            GraphicUtil.fadeIn(binding.player.actions, -1, null, -1);
+            GraphicUtil.fadeIn(binding.player.actions, -1, null, -1, true);
             binding.player.actions.setVisibility(View.VISIBLE);
             return true;
         }
@@ -221,7 +213,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
 
     private void hideActionsIfVisible(){
         if(binding.player.actions.getVisibility() == View.VISIBLE) {
-            GraphicUtil.fadeOut(binding.player.actions, -1, null, -1);
+            GraphicUtil.fadeOut(binding.player.actions, -1, null, -1, true);
             binding.player.actions.setVisibility(View.GONE);
         }
     }
@@ -233,7 +225,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 mediaPlayer.seekTo(seekPosition, MediaPlayer.SEEK_CLOSEST);
             else
-                mediaPlayer.seekTo((int)seekPosition);
+                mediaPlayer.seekTo(seekPosition);
         }
     }
 }

@@ -12,6 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@color/white</item>
     </style>
 
     <style name="TitleTextView" parent="android:Widget.TextView">
@@ -36,11 +37,11 @@
     </style>
 
     <style name="NumberPickerTheme" parent="Theme.AppCompat.Light">
-        <item name="android:colorAccent">@android:color/white</item>
+        <item name="android:colorAccent">@android:color/black</item>
         <!-- To remove divider of the number picker -->
         <item name="colorControlNormal">@android:color/transparent</item>
 
-        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/black</item>
         <item name="android:textSize">32sp</item>
     </style>
 
@@ -67,9 +68,9 @@
     </style>
 
     <style name="AppThemeBlueBackground" parent="AppTheme">
-        <item name="android:windowBackground">@color/MidnightBlue</item>
+        <item name="android:windowBackground">@color/AlphaMidnightBlue</item>
     </style>
     <style name="AppThemeRedBackground" parent="AppTheme">
-    <item name="android:windowBackground">@color/Maroon</item>
-</style>
+        <item name="android:windowBackground">@color/AlphaMaroon</item>
+    </style>
 </resources>

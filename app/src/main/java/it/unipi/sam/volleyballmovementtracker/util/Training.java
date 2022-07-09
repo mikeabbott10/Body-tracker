@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 public class Training implements Parcelable, Comparable<Training>{
     private String name;
-    private String description;
+    private String category;
     private String code;
     private int localImageCode;
 
@@ -13,7 +13,7 @@ public class Training implements Parcelable, Comparable<Training>{
 
     protected Training(Parcel in) {
         name = in.readString();
-        description = in.readString();
+        category = in.readString();
         code = in.readString();
         localImageCode = in.readInt();
     }
@@ -38,12 +38,12 @@ public class Training implements Parcelable, Comparable<Training>{
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getCategory() {
+        return category;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getCode() {
@@ -70,7 +70,7 @@ public class Training implements Parcelable, Comparable<Training>{
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(name);
-        parcel.writeString(description);
+        parcel.writeString(category);
         parcel.writeString(code);
         parcel.writeInt(localImageCode);
     }
