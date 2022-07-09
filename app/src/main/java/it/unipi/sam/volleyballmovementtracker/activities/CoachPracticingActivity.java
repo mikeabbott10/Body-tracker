@@ -18,12 +18,15 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.coach.GetConnectionsFragment;
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.coach.PickerFragment;
 import it.unipi.sam.volleyballmovementtracker.activities.util.CommonPracticingActivity;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import it.unipi.sam.volleyballmovementtracker.util.GetBTConnectionsRunnable;
+import it.unipi.sam.volleyballmovementtracker.util.MyBroadcastReceiver;
 import it.unipi.sam.volleyballmovementtracker.util.OnGetBTConnectionsListener;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.MyAlphaAnimation;
@@ -40,16 +43,19 @@ public class CoachPracticingActivity extends CommonPracticingActivity implements
         if(currentBtStateDrawableId == ResourcesCompat.ID_NULL) {
             currentBtStateDrawableId = R.drawable.ic_disabled_ok;
         }
-        if(currentTrainingDrawableId == ResourcesCompat.ID_NULL) {
+        /*if(currentTrainingDrawableId == ResourcesCompat.ID_NULL) {
             currentTrainingDrawableId = R.drawable.block3;
-        }
+        }*/
         assert whoAmIDrawableId!= ResourcesCompat.ID_NULL;
         binding.whoAmIIv.setImageDrawable(
                 AppCompatResources.getDrawable(this, whoAmIDrawableId));
-        binding.middleActionIconIv.setImageDrawable( // it's current training icon here
-                AppCompatResources.getDrawable(this, currentTrainingDrawableId));
+        //binding.middleActionIconIv.setImageDrawable( // it's current training icon here
+        //        AppCompatResources.getDrawable(this, currentTrainingDrawableId));
         updateBtIcon(binding.bluetoothState, currentBtStateDrawableId,
                 binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
+
+        mReceiver = new MyBroadcastReceiver(this, this);
+        registerReceiver(mReceiver, myIntentFilter);
 
         setContentView(binding.getRoot());
         showMyDialog(showingDialog);
@@ -95,7 +101,7 @@ public class CoachPracticingActivity extends CommonPracticingActivity implements
     public void onClick(View view) {
         super.onClick(view);
         if(view.getId()==binding.middleActionIconIv.getId()){
-            GraphicUtil.scaleImage(this, view, -1, null);
+            //GraphicUtil.scaleImage(this, view, -1, null);
         }else if(view.getId()==binding.bluetoothState.getId()){
             if(currentFragment==Constants.PICKER_FRAGMENT){
                 // click su spunta verde
@@ -195,6 +201,7 @@ public class CoachPracticingActivity extends CommonPracticingActivity implements
     @Override
     public void onNewConnectionEstablished(BluetoothSocket bs) {
         Log.d(TAG, "new bs: "+bs.toString());
+        Snackbar.make(binding.getRoot(), "new bs: "+bs.toString(), 5000).show();
     }
 
     // utils--------------------------------------------------------

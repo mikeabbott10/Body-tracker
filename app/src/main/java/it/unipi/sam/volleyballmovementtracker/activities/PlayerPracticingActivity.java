@@ -1,10 +1,14 @@
 package it.unipi.sam.volleyballmovementtracker.activities;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 
@@ -13,11 +17,16 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.UUID;
+
 import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.player.PlayerPracticingFragment;
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.player.StartingPlayerFragment;
 import it.unipi.sam.volleyballmovementtracker.activities.util.CommonPracticingActivity;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
+import it.unipi.sam.volleyballmovementtracker.util.MyBroadcastReceiver;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.MyAlphaAnimation;
 
@@ -41,6 +50,10 @@ public class PlayerPracticingActivity extends CommonPracticingActivity {
         binding.bluetoothState.setImageDrawable(
                 AppCompatResources.getDrawable(this, currentBtStateDrawableId));
 
+        myIntentFilter.addAction(BluetoothDevice.ACTION_FOUND);
+        mReceiver = new MyBroadcastReceiver(this, this);
+        registerReceiver(mReceiver, myIntentFilter);
+
         setContentView(binding.getRoot());
         showMyDialog(showingDialog);
     }
@@ -56,20 +69,20 @@ public class PlayerPracticingActivity extends CommonPracticingActivity {
         super.onBackPressed();
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onChanged(Object obj) {
         if(obj instanceof Integer) {
             currentFragment = (int) obj;
-            /*switch (currentFragment) {
+            switch (currentFragment) {
                 case Constants.PLAYER_STARTING_FRAGMENT:
                     break;
                 case Constants.PLAYER_PRACTICING_FRAGMENT:
-                    break;
-                case Constants.SELECT_TRAINING_FRAGMENT:
+                    bta.startDiscovery();
                     break;
             }
-            binding.middleActionIconIv.setImageDrawable( // it's video playlist icon here
-                    AppCompatResources.getDrawable(this, currentVideoPlayerId));*/
+            //binding.middleActionIconIv.setImageDrawable( // it's video playlist icon here
+            //        AppCompatResources.getDrawable(this, currentVideoPlayerId));
             setInfoText(getInfoTextFromFragment(currentFragment));
         }
     }
@@ -133,6 +146,35 @@ public class PlayerPracticingActivity extends CommonPracticingActivity {
                 transactionToFragment(this, StartingPlayerFragment.class);
                 resetMyBluetoothStatus();
             }
+        }
+    }
+
+    @Override
+    public void onBluetoothActionFoundEventReceived(BluetoothDevice btDevice) {
+        // todo: funge male
+        try {
+            UUID hisid = UUID.fromString(Constants.BT_UUID);
+            BluetoothSocket bs = btDevice.createRfcommSocketToServiceRecord(hisid);
+            bs.connect(); /* ← exception se la connessione non riesce */
+            Log.d(TAG, "connesso: " + bs);
+        }catch (IOException e) {
+            Log.e("",e.getMessage());
+            try {
+                 // trying fallback
+                // qua non si usa l'uuid.... molto male:
+                // check questo link https://stackoverflow.com/a/41627149/5281046
+                BluetoothSocket bs =(BluetoothSocket) btDevice.getClass().getMethod("createRfcommSocket", int.class).invoke(btDevice,1);
+                if (bs != null) {
+                    bs.connect();
+                    Log.d(TAG,"Connected. bs: "+ bs);
+                }else
+                    Log.d(TAG,"bs: is null");
+            }
+            catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | IOException e2) {
+                Log.e("", "Couldn't establish Bluetooth connection!");
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
         }
     }
 

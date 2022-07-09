@@ -39,7 +39,6 @@ import java.util.Map;
 import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.databinding.ActivityPracticingBinding;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
-import it.unipi.sam.volleyballmovementtracker.util.MyBroadcastReceiver;
 import it.unipi.sam.volleyballmovementtracker.util.MyViewModel;
 import it.unipi.sam.volleyballmovementtracker.util.PreferenceUtils;
 import it.unipi.sam.volleyballmovementtracker.util.ResourcePreferenceWrapper;
@@ -63,9 +62,6 @@ public class CommonPracticingActivity extends DownloadActivity implements Reques
         initDialog();
         initBars();
         initInfoView();
-
-        mReceiver = new MyBroadcastReceiver(this, this);
-        registerReceiver(mReceiver, myIntentFilter);
 
         viewModel = new ViewModelProvider(this).get(MyViewModel.class);
         viewModel.getCurrentFragment().observe(this, this);

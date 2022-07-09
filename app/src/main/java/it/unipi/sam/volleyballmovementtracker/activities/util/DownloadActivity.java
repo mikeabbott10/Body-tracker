@@ -65,7 +65,6 @@ public class DownloadActivity extends BaseActivity implements OnBroadcastReceive
 
     private void enqueueRequest(DMRequestWrapper dmReq){
         long id = dm.enqueue(dmReq.getReq()); // long id
-        //DebugUtility.LogDThis(DebugUtility.SERVER_COMMUNICATION, TAG, "enqueueRequest. id: "+id, null);
         idToResourceType.put(id, dmReq.getResourceType());
     }
 

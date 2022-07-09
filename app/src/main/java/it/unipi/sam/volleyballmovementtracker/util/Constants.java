@@ -13,7 +13,7 @@ public class Constants {
 
     // bt constants
     public static String BT_NAME = "Coach";
-    public static String BT_UUID = "be9067f2-c2d5-47a7-be41-8a36a7841cd1";
+    public static String BT_UUID = "00001101-0000-1000-8000-00805F9B34FB"; //"be9067f2-c2d5-47a7-be41-8a36a7841cd1";
 
     // coach fragments
     public static final int PICKER_FRAGMENT = 0;
@@ -42,12 +42,6 @@ public class Constants {
     public static final int BT_ENABLING_DIALOG = 2;
     public static final int BT_PERMISSIONS_DIALOG = 3;
     public static final int BT_PERMANENTLY_DENIED_PERMISSIONS_DIALOG = 4;
-
-    // videos
-    public static final String MIDDLE_BLOCK_VIDEO = "mbBlock";
-    public static final String MIDDLE_BLOCK_VIDEO_URL = "http://techslides.com/demos/sample-videos/small.mp4";
-    public static final String SLIDE_MIDDLE_BLOCK_VIDEO = "mbhBlock";
-    public static final String SLIDE_MIDDLE_BLOCK_VIDEO_URL = "http://techslides.com/demos/sample-videos/small.mp4";
 
     // colors
     public static final int BLUE = 0;

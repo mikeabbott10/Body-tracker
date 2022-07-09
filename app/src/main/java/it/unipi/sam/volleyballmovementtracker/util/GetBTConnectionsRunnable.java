@@ -15,12 +15,10 @@ import java.util.UUID;
 
 public class GetBTConnectionsRunnable implements Runnable {
     private final Handler mHandler;
-    private BluetoothAdapter bta;
-    private OnGetBTConnectionsListener onGetBTConnectionsListener;
+    private final BluetoothAdapter bta;
 
     public GetBTConnectionsRunnable(BluetoothAdapter bta, OnGetBTConnectionsListener onGetBTConnectionsListener) {
         this.bta = bta;
-        this.onGetBTConnectionsListener = onGetBTConnectionsListener;
         mHandler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(@NonNull Message msg) {

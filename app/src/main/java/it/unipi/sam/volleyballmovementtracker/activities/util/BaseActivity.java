@@ -2,6 +2,7 @@ package it.unipi.sam.volleyballmovementtracker.activities.util;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -129,6 +130,9 @@ public class BaseActivity extends GUIBaseActivity implements OnBroadcastReceiver
         //viewModel.selectScanModeStatus(scanMode);
         currentScanModeStatus = scanMode;
     }
+
+    @Override
+    public void onBluetoothActionFoundEventReceived(BluetoothDevice btDevice) {}
 
     protected void resetMyBluetoothStatus(){
         // chiudere connessioni con tutti (non spegnere BT)

@@ -2,6 +2,7 @@ package it.unipi.sam.volleyballmovementtracker.util;
 
 import android.app.DownloadManager;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -30,13 +31,11 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
                 int scanMode = intent.getExtras().getInt(BluetoothAdapter.EXTRA_SCAN_MODE);
                 Log.d(TAG, scanMode+"");
                 onBTReceiveListener.onBluetoothScanModeChangedEventReceived(scanMode);
-                /*if(scanMode==BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE){
-                    // device discoverable
-                }else if(scanMode==BluetoothAdapter.SCAN_MODE_CONNECTABLE){
-                    // device non discoverable ma può ricevere connessioni
-                }else if(scanMode==BluetoothAdapter.SCAN_MODE_NONE){
-                    // device non discoverbale e non può ricevere connessioni
-                }*/
+            }
+            case BluetoothDevice.ACTION_FOUND:{
+                BluetoothDevice dev =intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                Log.d(TAG, dev+"");
+                onBTReceiveListener.onBluetoothActionFoundEventReceived(dev);
             }
             case DownloadManager.ACTION_DOWNLOAD_COMPLETE:{
                 long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID,0);
