@@ -7,41 +7,51 @@ import androidx.annotation.RequiresApi;
 
 public class Constants {
     // bluetooth
-    public static final int BT_PERMISSION_CODE = 0;
+    public static final int BT_ENABLE_PERMISSION_CODE = 0;
+    public static final int BT_START_DISCOVER_PERMISSION_CODE = 1;
     @RequiresApi(api = Build.VERSION_CODES.S)
-    public static String[] BT_PERMISSIONS = new String[]{Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT};
+    public static final String[] BT_PERMISSIONS = new String[]{Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT};
+
+    // Constants that indicate the current bt state
+    public static final int BT_STATE_DISABLED = 0;      // bt is off
+    public static final int BT_STATE_ENABLED = 1;       // bt is on but we're doing nothing
+    public static final int BT_STATE_DISCOVERABLE = 2;  // bt in discoverable state
+    public static final int BT_STATE_LISTEN = 3;        // now listening for incoming connections
+    public static final int BT_STATE_CONNECTING = 4;    // now initiating an outgoing connection
+    public static final int BT_STATE_CONNECTED = 5;     // now connected to a remote device
+    public static final int BT_STATE_PERMISSION_REQUIRED = 6;     // permissions required
+    public static final int BT_STATE_BADLY_DENIED = 7;  // permissions have been denied manually during service life (close the service)
+    public static final int BT_STATE_UNSOLVED = 8;      // bt unknown error (close the service)
 
     // bt constants
-    public static String BT_NAME = "Coach";
-    public static String BT_UUID = "00001101-0000-1000-8000-00805F9B34FB"; //"be9067f2-c2d5-47a7-be41-8a36a7841cd1";
+    public static final String BT_NAME = "Coach";
+    public static final String BT_UUID = "be9067f2-c2d5-47a7-be41-8a36a7841cd1";
 
     // coach fragments
-    public static final int PICKER_FRAGMENT = 0;
-    public static final int GET_CONNECTIONS_FRAGMENT = 1;
-    public static final int GET_DATA_FRAGMENT = 2;
-    public static final int SHOW_DATA_FRAGMENT = 3;
+    public static final int COACH_STARTING_FRAGMENT = 0;
+    public static final int COACH_PRACTICING_FRAGMENT = 1;
 
     // player fragments
     public static final int PLAYER_STARTING_FRAGMENT = 0;
     public static final int PLAYER_PRACTICING_FRAGMENT = 1;
-    public static final int SELECT_TRAINING_FRAGMENT = 2;
-
 
     // actions
     public static final int COACH_CHOICE = 0;
     public static final int PLAYER_CHOICE = 1;
 
     //coach
-    public static final int GO_TO_START_CONNECTION_FRAGMENT = 4;
+    public static final int GO_TO_PRACTICING_FRAGMENT = 4;
     public static final int BACK_TO_INIT_FRAGMENT = 5;
-
 
     // dialogs
     public static final int DISCOVERABILITY_DIALOG = 0;
     public static final int WORK_IN_PROGRESS_DIALOG = 1;
     public static final int BT_ENABLING_DIALOG = 2;
-    public static final int BT_PERMISSIONS_DIALOG = 3;
-    public static final int BT_PERMANENTLY_DENIED_PERMISSIONS_DIALOG = 4;
+    public static final int BT_ENABLE_PERMISSIONS_DIALOG = 3;
+    public static final int BT_START_DISCOVERY_PERMISSIONS_DIALOG = 4;
+    public static final int BT_PERMANENTLY_DENIED_PERMISSIONS_DIALOG = 5;
+    public static final int NOTIFICATION_ENABLING_DIALOG = 6;
+    public static final int NOTIFICATION_CHANNEL_ENABLING_DIALOG = 7;
 
     // colors
     public static final int BLUE = 0;
@@ -53,8 +63,8 @@ public class Constants {
 
     // keys
     public static final String who_am_i_id_key = "wamiik";
-    public static String timestamp_key = "timestamp";
-    public static String id_key = "_id";
+    public static final String timestamp_key = "timestamp";
+    public static final String id_key = "_id";
     public static final String starting_component_bundle_key = "sabk";
     public static final String current_training_id_key = "ctik";
     public static final String current_video_player_id_key = "cvpik";
@@ -64,13 +74,18 @@ public class Constants {
     public static final String showing_dialog_key = "sdk";
     public static final String play_this_video_key = "ptvk";
     public static final String choice_key = "ck";
+    public static final String should_unbind_key = "suk";
 
     // net
-    public static String restBasePath = "https://donow.cloud/trackerapp/";
-    public static String firstRestReqPath = "restInfo.json";
-    public static String rest_info_instance_key = "riik";
+    public static final String restBasePath = "https://donow.cloud/trackerapp/";
+    public static final String firstRestReqPath = "restInfo.json";
+    public static final String rest_info_instance_key = "riik";
     public static final int TIMESTAMP = 0;
     public static final int PATH = 1;
-    public static String trainings_rest_key = "trainings";
-    public static String video_file_name = "video.mp4";
+    public static final String trainings_rest_key = "trainings";
+    public static final String video_file_name = "video.mp4";
+
+    // notification
+    public static final String NOTIFICATION_CHANNEL_ID = "tracker_channel";
+    public static final String NOTIFICATION_CHANNEL_NAME = "Tracker channel";
 }

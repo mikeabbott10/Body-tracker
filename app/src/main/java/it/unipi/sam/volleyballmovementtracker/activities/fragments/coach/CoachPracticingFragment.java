@@ -12,16 +12,16 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import it.unipi.sam.volleyballmovementtracker.databinding.FragmentGetConnectionsBinding;
-import it.unipi.sam.volleyballmovementtracker.util.CommonFragment;
+import it.unipi.sam.volleyballmovementtracker.activities.fragments.CommonFragment;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import it.unipi.sam.volleyballmovementtracker.util.MyViewModel;
 
-public class GetConnectionsFragment extends CommonFragment implements Observer<Object> {
+public class CoachPracticingFragment extends CommonFragment implements Observer<Object> {
     private static final String TAG = "FRFRGetConnFragment";
     private FragmentGetConnectionsBinding binding;
     private MyViewModel viewModel;
 
-    public GetConnectionsFragment(){}
+    public CoachPracticingFragment(){}
 
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class GetConnectionsFragment extends CommonFragment implements Observer<O
 
         // nota requireActivity() : same scope as in the activity is required or different ViewModel!
         viewModel = new ViewModelProvider(requireActivity()).get(MyViewModel.class);
-        viewModel.selectCurrentFragment(Constants.GET_CONNECTIONS_FRAGMENT);
+        viewModel.selectCurrentFragment(Constants.COACH_PRACTICING_FRAGMENT);
         viewModel.getImDiscoverable().observe(getViewLifecycleOwner(), this);
 
         return root;

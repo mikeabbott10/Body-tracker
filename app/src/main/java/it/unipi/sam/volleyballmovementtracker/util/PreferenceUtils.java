@@ -6,10 +6,9 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 public class PreferenceUtils {
-    private static final String TAG = "CLCLSharedPreference";
+    private static final String TAG = "CLCLPreferenceUtil";
 
     // show gesture info
     public static boolean getShowGesture(Context ctx) {
@@ -29,7 +28,7 @@ public class PreferenceUtils {
         String uri = prefs.getString(key, null);
         long last_modified = prefs.getLong(key+Constants.timestamp_key, -1);
 
-        Log.d(TAG, "last_modified:" + last_modified + ". uri:"+uri);
+        //Log.d(TAG, "last_modified:" + last_modified + ". uri:"+uri);
 
         // se last_update_timestamp è nullo bypasso il confronto tra timestamp
         if(last_update_timestamp != null) {
@@ -37,7 +36,7 @@ public class PreferenceUtils {
                 return null;
         }
 
-        Log.d(TAG, "after timestamp check");
+        //Log.d(TAG, "after timestamp check");
 
         long dm_resource_id = prefs.getLong(key+Constants.id_key, -1);
         if(isValidUri(ctx, uri, last_modified)) {

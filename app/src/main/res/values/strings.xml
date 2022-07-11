@@ -17,16 +17,28 @@
     <string name="current_training_choice">current_training_choice</string>
     <string name="wait_for_n_connections">Numero di connessioni attese</string>
     <string name="picker_fragment_info">Selezionare il numero di connessioni attese. Questo corrisponde al numero di giocatori partecipanti all\'allenamento.</string>
-    <string name="get_connections_fragment_info">In attesa di ottenere tutte le connessioni necessarie…</string>
+    <string name="practicing_coach_info">In attesa di ottenere tutte le connessioni necessarie…</string>
     <string name="work_in_progress_warning">Potrebbe essere in corso un collegamento bluetooth con alcuni dispositivi. Interrompere l\'operazione?</string>
     <string name="work_in_progress_warning_title">Operazione in corso</string>
     <string name="bt_discoverability_not_enabled">Dispositivo non visibile</string>
     <string name="enable_discoverability">Per utilizzare l\'applicazione è necessario rendere il dispositivo visibile ai dispositivi bluetooth nei dintorni. Procedere?</string>
     <string name="enabling_bluetooth">Bluetooth acceso</string>
     <string name="practice_video">Video allenamenti</string>
-    <string name="starting_player_info">Premere su "Inizia allenamento" per collegarsi con il coach e iniziare l\'allenamento. \nE\' disponibile una playlist di video relativi ai vari esercizi: selezionare l\'esercizio desiderato per guardare il video.</string>
+    <string name="starting_player_info">Premere sul tasto "Play" per collegarsi con il coach e iniziare l\'allenamento. \nE\' disponibile una playlist di video relativi ai vari esercizi: selezionare l\'esercizio desiderato per guardare il video.</string>
+    <string name="starting_coach_info">Premere sul tasto "Play" per attivare il bluetooth e restare in attesa di nuove connessioni. \nE\' disponibile una playlist di video relativi ai vari esercizi: selezionare l\'esercizio desiderato per guardare il video.</string>
     <string name="start_practice">Inizio\nallenamento</string>
     <string name="select_training_fragment_info">Selezionare l\'allenamento desiderato</string>
     <string name="no_trainings">No training available</string>
     <string name="bt_permanently_not_permitted">Hai scelto di non abilitare i permessi bluetooth più volte. Nel caso si volessero concedere i permessi adesso è necessario recarsi nelle impostazioni.</string>
+    <string name="activity_restarted">Attendere mentre viene eseguito il riavvio.</string>
+    <string name="make_me_discoverable">Rendimi visibile</string>
+    <string name="to_the_app">Apri l\'applicazione</string>
+    <string name="notification_title">Movement Tracker</string>
+    <string name="coach_state_none_notification">Servizio coach in attesa di istruzioni</string>
+    <string name="player_state_none_notification">Servizio giocatore in attesa di istruzioni</string>
+
+    <string name="ask_enable_notification">Questa applicazione ha bisogno che le notifiche siano abilitate. Ne useremo una per informarti sullo stato della tua connessione. Prego, abilitare le notifiche.</string>
+    <string name="ask_enable_channel_notification">Questa applicazione ha bisogno di un canale di notifica funzionante. Prego, abilitare il canale notifiche.</string>
+    <string name="alert_title">Avviso!</string>
+    <string name="practicing_player_info">Prepararsi all\'esercizio. Attendere il segnale dato dal coach</string>
 </resources>

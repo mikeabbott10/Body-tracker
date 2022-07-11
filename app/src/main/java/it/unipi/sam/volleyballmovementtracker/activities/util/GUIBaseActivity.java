@@ -4,11 +4,12 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 
-public class GUIBaseActivity extends DialogActivity{
+public class GUIBaseActivity extends AppCompatActivity {
     protected int whoAmIDrawableId;
     protected int currentTrainingDrawableId;
     protected int currentBtStateDrawableId;

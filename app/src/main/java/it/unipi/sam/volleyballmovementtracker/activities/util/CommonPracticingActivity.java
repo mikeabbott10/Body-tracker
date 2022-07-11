@@ -1,13 +1,10 @@
 package it.unipi.sam.volleyballmovementtracker.activities.util;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
@@ -17,7 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 
@@ -47,16 +43,17 @@ import it.unipi.sam.volleyballmovementtracker.util.download.DMRequestWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.download.JacksonUtil;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
 
-public class CommonPracticingActivity extends DownloadActivity implements RequestListener<Drawable>, View.OnClickListener, Observer<Object>,
-        Animation.AnimationListener {
+public class CommonPracticingActivity extends BaseActivity implements
+        RequestListener<Drawable>, View.OnClickListener {
     private static final String TAG = "AAAACommPracActivity";
     protected int currentFragment;
     protected ActivityPracticingBinding binding;
     private List<Training> trainingsList;
+    protected MyViewModel viewModel;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         initBinding();
         initDialog();
@@ -64,7 +61,7 @@ public class CommonPracticingActivity extends DownloadActivity implements Reques
         initInfoView();
 
         viewModel = new ViewModelProvider(this).get(MyViewModel.class);
-        viewModel.getCurrentFragment().observe(this, this);
+        viewModel.getCurrentFragment().observe(this, integer -> currentFragment = integer);
 
         // ask for restInfo
         // rest info file is always downloaded at least once
@@ -77,7 +74,6 @@ public class CommonPracticingActivity extends DownloadActivity implements Reques
 
     @Override
     protected void onResume() {
-        Log.i(TAG, "onResume");
         super.onResume();
         binding.fragmentContainerMain.setVisibility(View.VISIBLE);
         // While your activity is in the STARTED lifecycle state
@@ -92,28 +88,9 @@ public class CommonPracticingActivity extends DownloadActivity implements Reques
     }
 
     @Override
-    protected void onPause() {
-        Log.i(TAG, "onPause");
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        Log.i(TAG, "onStop");
-        super.onStop();
-    }
-
-    @Override
     protected void onDestroy() {
-        Log.i(TAG, "onDestroy");
         super.onDestroy();
         binding = null;
-        try {
-            // Unregister broadcast listener
-            unregisterReceiver(mReceiver);
-        } catch(IllegalArgumentException e) {
-            e.printStackTrace();
-        }
     }
 
     // override this, call super
@@ -141,16 +118,6 @@ public class CommonPracticingActivity extends DownloadActivity implements Reques
         }
     }
 
-    @Override public void onBluetoothStateChangedEventReceived(Context context, Intent intent) {
-        super.onBluetoothStateChangedEventReceived(context,intent);
-        final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
-        if (state == BluetoothAdapter.STATE_OFF) {
-            // change icon
-            updateBtIcon(binding.bluetoothState, R.drawable.disabled_bt,
-                    binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
-        }
-    }
-
     @Override
     protected void handleResponseUri(long dm_resource_id, Integer type, String uriString, long lastModifiedTimestamp, boolean updateResourcePreference) {
         super.handleResponseUri(dm_resource_id, type, uriString, lastModifiedTimestamp, updateResourcePreference);
@@ -170,13 +137,13 @@ public class CommonPracticingActivity extends DownloadActivity implements Reques
                 try {
                     Training[] t_arr = (Training[]) JacksonUtil.getObjectFromString(content, Training[].class);
                     trainingsList = new ArrayList<>(Arrays.asList(t_arr));
-                    Log.d(TAG, "handleResponseUri. trainingsList:" + trainingsList);
+                    //Log.d(TAG, "handleResponseUri. trainingsList:" + trainingsList);
 
                     // populate news in news fragment
                     Collections.sort(trainingsList); // date sort
                     viewModel.selectTrainingList(trainingsList);
                 } catch (JsonProcessingException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "", e);
                     Snackbar.make(binding.getRoot(), "ERROR 00. Please retry later.", 5000).show();
                 }
                 break;
@@ -207,11 +174,6 @@ public class CommonPracticingActivity extends DownloadActivity implements Reques
 
     // override these
     protected Class<? extends Fragment> getFragmentClassFromModel() {return null;}
-    @Override public void onAnimationStart(Animation animation) {}
-    @Override public void onAnimationEnd(Animation animation) {}
-    @Override public void onAnimationRepeat(Animation animation) {}
-    @Override public void onChanged(Object o) {}
-
 
     // utils-----------------------------------------------------------------
     private void getTrainings() {
@@ -220,7 +182,7 @@ public class CommonPracticingActivity extends DownloadActivity implements Reques
         if(riiMap!=null)
             trainingsJsonPreference = PreferenceUtils.getResourceUri(this, Constants.trainings_rest_key+TRAININGS_JSON, (Integer) riiMap.get( Constants.trainings_rest_key ));
 
-        Log.d(TAG, "getTrainings. trainingsJsonPreference:"+trainingsJsonPreference);
+        //Log.d(TAG, "getTrainings. trainingsJsonPreference:"+trainingsJsonPreference);
         if(trainingsJsonPreference!=null && trainingsJsonPreference.getUri()!=null) {
             Log.d(TAG, "getTrainings. From local");
             handleResponseUri(trainingsJsonPreference.getDMResourceId(), TRAININGS_JSON,

@@ -16,13 +16,13 @@ import androidx.appcompat.content.res.AppCompatResources;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import it.unipi.sam.volleyballmovementtracker.R;
-import it.unipi.sam.volleyballmovementtracker.activities.util.BaseActivity;
+import it.unipi.sam.volleyballmovementtracker.activities.util.GUIBaseActivity;
 import it.unipi.sam.volleyballmovementtracker.databinding.ActivityMainBinding;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.MyTranslateAnimation;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener, Animation.AnimationListener {
+public class MainActivity extends GUIBaseActivity implements View.OnClickListener, Animation.AnimationListener {
     private static final String TAG = "AAAMainActivity";
     private ActivityMainBinding binding;
 
@@ -34,7 +34,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         setContentView(binding.getRoot());
 
         initChoiceViews();
-        initDialog();
 
         // check bt support
         BluetoothAdapter bta = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
@@ -45,10 +44,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     .setCancelable(false)
                     .setPositiveButton("OK", (dialogInterface, i) -> finish())
                     .create().show();
-            return;
         }
-
-        showMyDialog(showingDialog);
     }
 
     private void initChoiceViews() {

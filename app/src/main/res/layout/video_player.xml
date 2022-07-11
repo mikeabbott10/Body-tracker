@@ -44,6 +44,7 @@
             android:layout_height="50dp"
             android:layout_weight="0.12"
             android:src="@drawable/ic_baseline_fast_rewind_24"
+            android:layout_marginHorizontal="4dp"
             android:contentDescription="@null" />
         <ImageView
             android:id="@+id/play_pause_btn"
@@ -51,6 +52,7 @@
             android:layout_height="50dp"
             android:layout_weight="0.12"
             android:src="@drawable/ic_baseline_pause_24"
+            android:layout_marginHorizontal="4dp"
             android:contentDescription="@null" />
         <ImageView
             android:id="@+id/fast_forward_btn"
@@ -58,6 +60,7 @@
             android:layout_height="50dp"
             android:layout_weight="0.12"
             android:src="@drawable/ic_baseline_fast_forward_24"
+            android:layout_marginHorizontal="4dp"
             android:contentDescription="@null" />
 
         <View

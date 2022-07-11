@@ -1,6 +1,8 @@
 package it.unipi.sam.volleyballmovementtracker.activities.util;
 
 import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,13 +20,16 @@ import java.io.InputStreamReader;
 import java.util.concurrent.ConcurrentHashMap;
 
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
+import it.unipi.sam.volleyballmovementtracker.util.MyDMBroadcastReceiver;
 import it.unipi.sam.volleyballmovementtracker.util.download.DMRequestWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.download.JacksonUtil;
 import it.unipi.sam.volleyballmovementtracker.util.download.OnBroadcastReceiverOnDMReceiveListener;
 import it.unipi.sam.volleyballmovementtracker.util.download.RestInfo;
 
-public class DownloadActivity extends BaseActivity implements OnBroadcastReceiverOnDMReceiveListener {
+public class DownloadActivity extends DialogActivity implements OnBroadcastReceiverOnDMReceiveListener {
     private static final String TAG = "AAADownloadActivity";
+    protected BroadcastReceiver mDMReceiver;
+    protected IntentFilter myIntentFilter;
 
     //overall
     protected static final int REST_INFO_JSON = 0;
@@ -46,13 +51,27 @@ public class DownloadActivity extends BaseActivity implements OnBroadcastReceive
 
         idToResourceType = new ConcurrentHashMap<>(); // fill it with ids of requests (takes count of resources which are requested from this context)
         dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-
+        // Register for broadcasts on BluetoothAdapter state and scan mode change
+        myIntentFilter = new IntentFilter();
         myIntentFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        mDMReceiver = new MyDMBroadcastReceiver(this);
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mDMReceiver, myIntentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            // Unregister broadcast listener
+            unregisterReceiver(mDMReceiver);
+        } catch(IllegalArgumentException e) {
+            Log.e(TAG, "", e);
+        }
     }
 
     protected void getRestInfoFileFromNet(DMRequestWrapper dmRequestWrapper) {
@@ -88,7 +107,7 @@ public class DownloadActivity extends BaseActivity implements OnBroadcastReceive
                     c.close();
                     return;
                 }
-                Log.d( TAG, "onDownloadCompleted. "+resources_type+" ready: "+ uriString);
+                //Log.d( TAG, "onDownloadCompleted. "+resources_type+" ready: "+ uriString);
                 handleResponseUri(id, resources_type, uriString, lastModifiedTimestamp, true);
                 if(resources_type==REST_INFO_JSON) // rest info file content is in memory now and we don't want to keep the file
                     dm.remove(id); // delete last downloaded restInfo record from dm
@@ -129,7 +148,7 @@ public class DownloadActivity extends BaseActivity implements OnBroadcastReceive
                 restInfoInstance =
                         (RestInfo) JacksonUtil.getObjectFromString(content, RestInfo.class);
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                Log.e(TAG, "", e);
             }
         }
     }
@@ -139,7 +158,7 @@ public class DownloadActivity extends BaseActivity implements OnBroadcastReceive
         try {
             is = getContentResolver().openInputStream(Uri.parse(uriString));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Log.e(TAG, "", e);
             return null;
         }
 
@@ -153,7 +172,7 @@ public class DownloadActivity extends BaseActivity implements OnBroadcastReceive
                 content.append(System.lineSeparator());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "", e);
             try {
                 is.close();
             } catch (IOException ignored) {}
@@ -163,7 +182,7 @@ public class DownloadActivity extends BaseActivity implements OnBroadcastReceive
         try {
             is.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "", e);
             return null;
         }
         return content.toString();

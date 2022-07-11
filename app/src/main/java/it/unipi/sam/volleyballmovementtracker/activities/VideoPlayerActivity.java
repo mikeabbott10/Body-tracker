@@ -108,7 +108,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
                     .build());
             mediaPlayer.prepareAsync();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "", e);
         }
     }
 
