@@ -1,4 +1,4 @@
-package it.unipi.sam.volleyballmovementtracker.activities.util;
+package it.unipi.sam.volleyballmovementtracker.activities.base;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
@@ -24,18 +24,26 @@ import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class BaseActivity extends DownloadActivity implements
+public abstract class BaseActivity extends DownloadActivity implements
         EasyPermissions.PermissionCallbacks, ActivityResultCallback<ActivityResult> {
     private static final String TAG = "AAAABaseActivity";
     protected BluetoothAdapter bta;
     public static final int extraDiscoverableDuration = 240;
 
     protected ActivityResultLauncher<Intent> requestDiscoverabilityLauncher;
-    private ActivityResultLauncher<Intent> requestBluetoothLauncher;
+    protected ActivityResultLauncher<Intent> requestBluetoothLauncher;
+    protected boolean isRequestDiscoverabilityLaunched;
+    protected boolean isRequestBluetoothLaunched;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(savedInstanceState!=null){
+            isRequestDiscoverabilityLaunched = savedInstanceState.getBoolean(Constants.req_discoverability_launched_key, false);
+            isRequestBluetoothLaunched = savedInstanceState.getBoolean(Constants.req_bt_launched_key, false);
+        }
+
         requestDiscoverabilityLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), this);
 
@@ -45,13 +53,22 @@ public class BaseActivity extends DownloadActivity implements
                         //granted
                         if (!bta.isEnabled())
                             enableBT();
+                        handleBTEnabled();
                     } else {
                         //deny
-                        //finishAffinity();
+                        handleDeniedBTEnabling();
                     }
+                    isRequestBluetoothLaunched = false;
                 });
 
         bta = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(Constants.req_discoverability_launched_key, isRequestDiscoverabilityLaunched);
+        outState.putBoolean(Constants.req_bt_launched_key, isRequestBluetoothLaunched);
     }
 
     @Override
@@ -70,6 +87,7 @@ public class BaseActivity extends DownloadActivity implements
                 if (!bta.isEnabled()) {
                     enableBT();
                 }
+                handleBTEnabled();
                 break;
             }
             case Constants.BT_START_DISCOVER_PERMISSION_CODE:{
@@ -96,30 +114,23 @@ public class BaseActivity extends DownloadActivity implements
         }
     }
 
-
-    @Override
-    public void onActivityResult(ActivityResult result) {
-        //Log.i(TAG, "onActivityResult: " + result.getResultCode() );
-    }
-
     @Override
     public void onClick(DialogInterface dialogInterface, int i) {
-        super.onClick(dialogInterface, i);
+        // todo check dialog flow
         if(showingDialog == Constants.BT_ENABLING_DIALOG){
             if(i==AlertDialog.BUTTON_POSITIVE) {
                 askForEnablingBt();
-            }//else finishAffinity();
-            return;
-        }
-        if(showingDialog == Constants.BT_ENABLE_PERMISSIONS_DIALOG){
+            }else
+                handleDeniedBTEnabling();
+        }else if(showingDialog == Constants.BT_ENABLE_PERMISSIONS_DIALOG){
             if(i== AlertDialog.BUTTON_POSITIVE) {
                 askForEnablingBt();
-            }//else finishAffinity();
-            return;
+            }else
+                handleDeniedBTEnabling();
+        }else if(showingDialog == Constants.BT_PERMANENTLY_DENIED_PERMISSIONS_DIALOG){
+            handleDeniedBTEnabling();
         }
-        if(showingDialog == Constants.BT_PERMANENTLY_DENIED_PERMISSIONS_DIALOG){
-            //finishAffinity();
-        }
+        super.onClick(dialogInterface, i);
     }
 
     // utils --------------------------------------------------------
@@ -132,11 +143,13 @@ public class BaseActivity extends DownloadActivity implements
                         Constants.BT_ENABLE_PERMISSION_CODE, Constants.BT_PERMISSIONS);
             } else {
                 if(!bta.isEnabled()) {
+                    isRequestBluetoothLaunched = true;
                     requestBluetoothLauncher.launch(enableBtIntent);
                 }
             }
         }else{
             if(!bta.isEnabled()) {
+                isRequestBluetoothLaunched = true;
                 requestBluetoothLauncher.launch(enableBtIntent);
             }
         }
@@ -151,14 +164,12 @@ public class BaseActivity extends DownloadActivity implements
                 EasyPermissions.requestPermissions(this, getString(R.string.bt_permissions_request),
                         Constants.BT_ENABLE_PERMISSION_CODE, Constants.BT_PERMISSIONS);
             } else {
-                if(!bta.isEnabled()) {
-                    requestDiscoverabilityLauncher.launch(i);
-                }
-            }
-        }else{
-            if(!bta.isEnabled()) {
+                isRequestDiscoverabilityLaunched = true;
                 requestDiscoverabilityLauncher.launch(i);
             }
+        }else{
+            isRequestDiscoverabilityLaunched = true;
+            requestDiscoverabilityLauncher.launch(i);
         }
     }
 
@@ -169,4 +180,8 @@ public class BaseActivity extends DownloadActivity implements
             Log.e(TAG, "No permissions (Should never reach this)", e);
         }
     }
+
+    // abstract
+    protected abstract void handleDeniedBTEnabling();
+    protected abstract void handleBTEnabled();
 }

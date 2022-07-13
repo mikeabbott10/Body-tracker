@@ -1,4 +1,4 @@
-package it.unipi.sam.volleyballmovementtracker.activities.util;
+package it.unipi.sam.volleyballmovementtracker.activities.base;
 
 import android.os.Bundle;
 
@@ -22,19 +22,27 @@ public class GUIBaseActivity extends AppCompatActivity {
         Bundle startingThisActivityBundle = getIntent().getBundleExtra(Constants.starting_component_bundle_key);
         if(startingThisActivityBundle != null){
             super.onCreate(savedInstanceState);
-            mainColor = startingThisActivityBundle.getInt(Constants.choice_key, -1);
-            whoAmIDrawableId = startingThisActivityBundle.getInt(Constants.who_am_i_id_key, ResourcesCompat.ID_NULL);
-            currentTrainingDrawableId = startingThisActivityBundle.getInt(Constants.current_training_id_key, ResourcesCompat.ID_NULL);
+            mainColor =
+                    startingThisActivityBundle.getInt(Constants.choice_key, -1);
+            whoAmIDrawableId =
+                    startingThisActivityBundle.getInt(Constants.who_am_i_id_key, ResourcesCompat.ID_NULL);
+            currentTrainingDrawableId =
+                    startingThisActivityBundle.getInt(Constants.current_training_id_key, ResourcesCompat.ID_NULL);
             currentVideoPlayerId = ResourcesCompat.ID_NULL;
             currentBtStateDrawableId = ResourcesCompat.ID_NULL;
             //initTheme();
         }else if(savedInstanceState!=null){
             super.onCreate(savedInstanceState);
-            mainColor = savedInstanceState.getInt(Constants.choice_key, -1);
-            whoAmIDrawableId = savedInstanceState.getInt(Constants.who_am_i_id_key, ResourcesCompat.ID_NULL);
-            currentTrainingDrawableId = savedInstanceState.getInt(Constants.current_training_id_key, ResourcesCompat.ID_NULL);
-            currentVideoPlayerId = savedInstanceState.getInt(Constants.current_video_player_id_key, ResourcesCompat.ID_NULL);
-            currentBtStateDrawableId = savedInstanceState.getInt(Constants.current_bt_state_id_key, ResourcesCompat.ID_NULL);
+            mainColor =
+                    savedInstanceState.getInt(Constants.choice_key, -1);
+            whoAmIDrawableId =
+                    savedInstanceState.getInt(Constants.who_am_i_id_key, ResourcesCompat.ID_NULL);
+            currentTrainingDrawableId =
+                    savedInstanceState.getInt(Constants.current_training_id_key, ResourcesCompat.ID_NULL);
+            currentVideoPlayerId =
+                    savedInstanceState.getInt(Constants.current_video_player_id_key, ResourcesCompat.ID_NULL);
+            currentBtStateDrawableId =
+                    savedInstanceState.getInt(Constants.current_bt_state_id_key, ResourcesCompat.ID_NULL);
             //initTheme();
         }else {
             super.onCreate(null);

@@ -1,7 +1,6 @@
-package it.unipi.sam.volleyballmovementtracker.activities.util;
+package it.unipi.sam.volleyballmovementtracker.activities.base;
 
 import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
@@ -20,15 +19,13 @@ import java.io.InputStreamReader;
 import java.util.concurrent.ConcurrentHashMap;
 
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
-import it.unipi.sam.volleyballmovementtracker.util.MyDMBroadcastReceiver;
 import it.unipi.sam.volleyballmovementtracker.util.download.DMRequestWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.download.JacksonUtil;
 import it.unipi.sam.volleyballmovementtracker.util.download.OnBroadcastReceiverOnDMReceiveListener;
 import it.unipi.sam.volleyballmovementtracker.util.download.RestInfo;
 
-public class DownloadActivity extends DialogActivity implements OnBroadcastReceiverOnDMReceiveListener {
+public abstract class DownloadActivity extends DialogActivity implements OnBroadcastReceiverOnDMReceiveListener {
     private static final String TAG = "AAADownloadActivity";
-    protected BroadcastReceiver mDMReceiver;
     protected IntentFilter myIntentFilter;
 
     //overall
@@ -54,24 +51,6 @@ public class DownloadActivity extends DialogActivity implements OnBroadcastRecei
         // Register for broadcasts on BluetoothAdapter state and scan mode change
         myIntentFilter = new IntentFilter();
         myIntentFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-        mDMReceiver = new MyDMBroadcastReceiver(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        registerReceiver(mDMReceiver, myIntentFilter);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        try {
-            // Unregister broadcast listener
-            unregisterReceiver(mDMReceiver);
-        } catch(IllegalArgumentException e) {
-            Log.e(TAG, "", e);
-        }
     }
 
     protected void getRestInfoFileFromNet(DMRequestWrapper dmRequestWrapper) {
@@ -125,9 +104,6 @@ public class DownloadActivity extends DialogActivity implements OnBroadcastRecei
         c.close();
     }
 
-    // override this in activities
-    protected void handle404(long dm_resource_id, Integer type, String uriString) {}
-
     /**
      * Handle uri.
      * @param type type of the resource
@@ -136,7 +112,8 @@ public class DownloadActivity extends DialogActivity implements OnBroadcastRecei
      * @param updateResourcePreference set it to true if you are handling a just downloaded resource
      */
     // override this in activities (call super.handleResponseUri(...))
-    protected void handleResponseUri(long dm_resource_id, Integer type, String uriString, long lastModifiedTimestamp, boolean updateResourcePreference) {
+    protected void handleResponseUri(long dm_resource_id, Integer type, String uriString,
+                                     long lastModifiedTimestamp, boolean updateResourcePreference) {
         if (type == REST_INFO_JSON) {
             // here after sending the first request. We got the rest service info.
 
@@ -187,5 +164,8 @@ public class DownloadActivity extends DialogActivity implements OnBroadcastRecei
         }
         return content.toString();
     }
+
+    // abstract
+    protected abstract void handle404(long dm_resource_id, Integer type, String uriString);
 }
 

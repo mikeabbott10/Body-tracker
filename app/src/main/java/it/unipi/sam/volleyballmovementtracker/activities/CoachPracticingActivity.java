@@ -1,6 +1,8 @@
 package it.unipi.sam.volleyballmovementtracker.activities;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,14 +15,20 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import it.unipi.sam.volleyballmovementtracker.R;
+import it.unipi.sam.volleyballmovementtracker.activities.base.CommonPracticingActivity;
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.SelectTrainingFragment;
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.coach.CoachPracticingFragment;
-import it.unipi.sam.volleyballmovementtracker.services.BluetoothService;
+import it.unipi.sam.volleyballmovementtracker.services.coach.CoachService;
+import it.unipi.sam.volleyballmovementtracker.util.BtAndServiceStatesWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
+import it.unipi.sam.volleyballmovementtracker.util.OnBroadcastReceiverOnBTReceiveListener;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
 
-public class CoachPracticingActivity extends ServiceBTActivity{
+public class CoachPracticingActivity extends CommonPracticingActivity
+        implements OnBroadcastReceiverOnBTReceiveListener {
     private static final String TAG = "AAAACoachPracAct";
 
     @Override
@@ -30,7 +38,7 @@ public class CoachPracticingActivity extends ServiceBTActivity{
 
         // init coach practicing activity bar
         if(currentBtStateDrawableId == ResourcesCompat.ID_NULL) {
-            currentBtStateDrawableId = R.drawable.ic_baseline_play_arrow_24;
+            currentBtStateDrawableId = bta.isEnabled()?R.drawable.ic_bluetooth1:R.drawable.disabled_bt;
         }
         assert whoAmIDrawableId != ResourcesCompat.ID_NULL;
         binding.whoAmIIv.setImageDrawable(
@@ -43,15 +51,22 @@ public class CoachPracticingActivity extends ServiceBTActivity{
     }
 
     @Override
-    public void onPause() {
-        Log.i(TAG, "onPause");
-        super.onPause();
-    }
-
-    @Override
     public void onResume() {
         Log.i(TAG, "onResume");
         super.onResume();
+        registerReceiver(mReceiver, myIntentFilter);
+    }
+
+    @Override
+    public void onPause() {
+        Log.i(TAG, "onPause");
+        super.onPause();
+        try {
+            // Unregister broadcast receiver
+            unregisterReceiver(mReceiver);
+        } catch(IllegalArgumentException e) {
+            Log.e(TAG, "", e);
+        }
     }
 
     @Override
@@ -67,34 +82,56 @@ public class CoachPracticingActivity extends ServiceBTActivity{
     }
 
     @Override
-    public void onChanged(Integer bt_state) {
-        super.onChanged(bt_state);
-        // bt state changed
-        switch(bt_state){
-            case Constants.BT_STATE_DISABLED:{
-                // ask for enabling bluetooth
-                askForEnablingBt();
-                break;
+    public void onChanged(BtAndServiceStatesWrapper btAndServiceStatesWrapper) {
+        super.onChanged(btAndServiceStatesWrapper);
+        if(btAndServiceStatesWrapper.getServiceState()==-1){
+            // bt state changed
+            int bt_state = btAndServiceStatesWrapper.getBtState();
+            switch(bt_state){
+                case Constants.BT_STATE_DISABLED:{
+                    // ask for enabling bluetooth
+                    if(showingDialog!=Constants.BT_ENABLING_DIALOG && !isRequestBluetoothLaunched)
+                        askForEnablingBt();
+                    break;
+                }
+                case Constants.BT_STATE_ENABLED:{
+                    // ask for discoverability
+                    if(showingDialog!=Constants.DISCOVERABILITY_DIALOG && !isRequestDiscoverabilityLaunched)
+                        askForDiscoverability();
+                    break;
+                }
+                case Constants.BT_STATE_DISCOVERABLE:{
+                    break;
+                }
+                case Constants.BT_STATE_LISTEN:{
+                    break;
+                }
+                case Constants.BT_STATE_CONNECTED:{
+                    break;
+                }
+                case Constants.BT_STATE_BADLY_DENIED:{
+                    break;
+                }
+                case Constants.BT_STATE_UNSOLVED: {
+                    break;
+                }
             }
-            case Constants.BT_STATE_ENABLED:{
-                // ask for discoverability
-                askForDiscoverability();
-                break;
-            }
-            case Constants.BT_STATE_DISCOVERABLE:{
-                break;
-            }
-            case Constants.BT_STATE_LISTEN:{
-                break;
-            }
-            case Constants.BT_STATE_CONNECTED:{
-                break;
-            }
-            case Constants.BT_STATE_BADLY_DENIED:{
-                break;
-            }
-            case Constants.BT_STATE_UNSOLVED: {
-                break;
+            return;
+        }
+        if(btAndServiceStatesWrapper.getBtState()==-1){
+            // service state changed
+            int serviceState = btAndServiceStatesWrapper.getServiceState();
+            switch (serviceState){
+                case Constants.STARTING_SERVICE:{
+                    break;
+                }
+                case Constants.CLOSING_SERVICE:{
+                    myStopService();
+                    transactionToFragment(this,
+                            SelectTrainingFragment.class, false);
+                    updateBtIconWithCurrentState(bta.isEnabled());
+                    break;
+                }
             }
         }
     }
@@ -106,10 +143,10 @@ public class CoachPracticingActivity extends ServiceBTActivity{
         if(view.getId()==binding.bluetoothState.getId()){
             if(currentFragment==Constants.COACH_STARTING_FRAGMENT){
                 // start CoachPracticingFragment
-                transactionToFragment(this, CoachPracticingFragment.class);
+                transactionToFragment(this, CoachPracticingFragment.class, true);
                 // start servizio
-                doStartService(Constants.COACH_CHOICE);
-                doBindService(BluetoothService.class);
+                doStartService(Constants.COACH_CHOICE); // idempotent
+                doBindService(CoachService.class); // idempotent
             }else{
                 // todo v1.1: mostra stato bt
                 GraphicUtil.scaleImage(this, view, -1, null);
@@ -120,34 +157,77 @@ public class CoachPracticingActivity extends ServiceBTActivity{
     // dialog onclick
     @Override
     public void onClick(DialogInterface dialogInterface, int i) {
-        super.onClick(dialogInterface,i);
         if(showingDialog == Constants.WORK_IN_PROGRESS_DIALOG) {
             // "Accept" is clicked on workInProgressDialog.
-            transactionToFragment(this, SelectTrainingFragment.class);
+            transactionToFragment(this, SelectTrainingFragment.class, false);
         }else if(showingDialog == Constants.DISCOVERABILITY_DIALOG){
             if(i== AlertDialog.BUTTON_POSITIVE) {
                 askForEnablingBt();
                 askForDiscoverability();
-            }else
-                finishAffinity();
+            }else{
+                myStopService();
+            }
         }
-        showingDialog = -1;
+        super.onClick(dialogInterface,i);
+    }
+
+    @Override
+    protected void onServiceAlreadyStarted() {
+        assert mBoundService!=null;
+        if(mBoundService.role != Constants.COACH_CHOICE){
+            Snackbar.make(binding.getRoot(), "ERROR 04: role inconsistency", 2000).show();
+            Log.e(TAG, "ERROR 04: role inconsistency");
+            myStopService();
+        }
+    }
+
+    @Override
+    protected void handleDeniedBTEnabling(){
+        Log.d(TAG, "handleDeniedBTEnabling");
+        super.handleDeniedBTEnabling();
+        transactionToFragment(this, SelectTrainingFragment.class, false);
+    }
+
+    @Override
+    protected void myStopService() {
+        super.myStopService();
+        transactionToFragment(this, SelectTrainingFragment.class, false);
     }
 
     @Override
     public void onActivityResult(ActivityResult result) {
-        super.onActivityResult(result);
         // handle discoverability request
         if (result.getResultCode() != Activity.RESULT_CANCELED) {
             // i'm now discoverable
             Log.d(TAG, "I'm discoverable");
             if(mBoundService!=null)
-                mBoundService.onMeDiscoverable();
+                ((CoachService)mBoundService).onMeDiscoverable();
         } else{
             // not discoverable
             showMyDialog(Constants.DISCOVERABILITY_DIALOG);
         }
+        isRequestDiscoverabilityLaunched = false;
     }
+
+    // OnBroadcastReceiverOnBTReceiveListener ------------------------------------------------------
+    @Override
+    public void onBluetoothStateChangedEventReceived(int state) {
+        switch(state){
+            case BluetoothAdapter.STATE_OFF:{
+                updateBtIcon(binding.bluetoothState, R.drawable.disabled_bt,
+                        binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
+                break;
+            }
+            case BluetoothAdapter.STATE_ON:{
+                updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
+                        binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
+                break;
+            }
+        }
+    }
+
+    // unused here
+    @Override public void onBluetoothActionFoundEventReceived(BluetoothDevice btDevice) {}
 
     // utils--------------------------------------------------------
     protected Class<? extends Fragment> getFragmentClassFromModel() {

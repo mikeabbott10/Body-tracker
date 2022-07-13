@@ -1,5 +1,6 @@
-package it.unipi.sam.volleyballmovementtracker.activities.util;
+package it.unipi.sam.volleyballmovementtracker.activities.base;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -34,8 +35,11 @@ import java.util.Map;
 
 import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.databinding.ActivityPracticingBinding;
+import it.unipi.sam.volleyballmovementtracker.util.BtAndServiceStatesWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
+import it.unipi.sam.volleyballmovementtracker.util.MyBroadcastReceiver;
 import it.unipi.sam.volleyballmovementtracker.util.MyViewModel;
+import it.unipi.sam.volleyballmovementtracker.util.OnBroadcastReceiverOnBTReceiveListener;
 import it.unipi.sam.volleyballmovementtracker.util.PreferenceUtils;
 import it.unipi.sam.volleyballmovementtracker.util.ResourcePreferenceWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.Training;
@@ -43,14 +47,14 @@ import it.unipi.sam.volleyballmovementtracker.util.download.DMRequestWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.download.JacksonUtil;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
 
-public class CommonPracticingActivity extends BaseActivity implements
-        RequestListener<Drawable>, View.OnClickListener {
+public abstract class CommonPracticingActivity extends ServiceBTActivity implements
+        RequestListener<Drawable>, View.OnClickListener, OnBroadcastReceiverOnBTReceiveListener {
     private static final String TAG = "AAAACommPracActivity";
     protected int currentFragment;
     protected ActivityPracticingBinding binding;
     private List<Training> trainingsList;
     protected MyViewModel viewModel;
-
+    protected MyBroadcastReceiver mReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,36 +65,45 @@ public class CommonPracticingActivity extends BaseActivity implements
         initInfoView();
 
         viewModel = new ViewModelProvider(this).get(MyViewModel.class);
-        viewModel.getCurrentFragment().observe(this, integer -> currentFragment = integer);
 
         // ask for restInfo
         // rest info file is always downloaded at least once
         if(restInfoInstance==null){
             getRestInfoFileFromNet(new DMRequestWrapper(Constants.restBasePath + Constants.firstRestReqPath,
-                    "notUseful", "notUseful", false, false, REST_INFO_JSON,
+                    "notUseful", "notUseful", false,
+                    false, REST_INFO_JSON,
                     false, null, null));
         }
+
+        viewModel.getCurrentFragment().observe(this, fragment_id -> {
+            currentFragment = fragment_id;
+            setInfoText(getInfoTextFromFragment(currentFragment));
+        });
+
+        // get bt state even without service on
+        myIntentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        mReceiver = new MyBroadcastReceiver(this, this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        binding.fragmentContainerMain.setVisibility(View.VISIBLE);
+        //binding.fragmentContainerMain.setVisibility(View.VISIBLE);
         // While your activity is in the STARTED lifecycle state
         // or higher, fragments can be added, replaced, or removed
-        transactionToFragment(this, getFragmentClassFromModel());
+        transactionToFragment(this, getFragmentClassFromModel(), false);
     }
 
     @Override
     public void onBackPressed() {
-        binding.fragmentContainerMain.setVisibility(View.INVISIBLE);
+        //binding.fragmentContainerMain.setVisibility(View.INVISIBLE);
         super.onBackPressed();
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         binding = null;
+        super.onDestroy();
     }
 
     // override this, call super
@@ -119,13 +132,69 @@ public class CommonPracticingActivity extends BaseActivity implements
     }
 
     @Override
-    protected void handleResponseUri(long dm_resource_id, Integer type, String uriString, long lastModifiedTimestamp, boolean updateResourcePreference) {
+    public void onChanged(BtAndServiceStatesWrapper btAndServiceStatesWrapper) {
+        //Log.d(TAG, "btstate:"+btServiceStatesWrapper.getBtState() +
+        //        ", servicestate:" +btServiceStatesWrapper.getServiceState());
+        if(btAndServiceStatesWrapper.getServiceState()==-1){
+            // bt state changed
+            int bt_state = btAndServiceStatesWrapper.getBtState();
+            switch(bt_state){
+                case Constants.BT_STATE_DISABLED:
+                case Constants.BT_STATE_BADLY_DENIED:
+                case Constants.BT_STATE_UNSOLVED: {
+                    updateBtIcon(binding.bluetoothState, R.drawable.disabled_bt,
+                            binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
+                    break;
+                }
+                case Constants.BT_STATE_ENABLED:{
+                    updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
+                            binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
+                    break;
+                }
+                case Constants.BT_STATE_DISCOVERABLE:
+                case Constants.BT_STATE_LISTEN:
+                case Constants.BT_STATE_CONNECTING: {
+                    updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
+                            binding.bluetoothStateOverlay, R.drawable.waiting, true);
+                    break;
+                }
+                case Constants.BT_STATE_CONNECTED:{
+                    updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
+                            binding.bluetoothStateOverlay, R.drawable.ic_disabled_ok, false);
+                    break;
+                }
+                case Constants.BT_STATE_PERMISSION_REQUIRED:{
+                    updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
+                            binding.bluetoothStateOverlay, R.drawable.ic_wrong, false);
+                    break;
+                }
+            }
+            return;
+        }
+        if(btAndServiceStatesWrapper.getBtState()==-1){
+            // service state changed
+            int serviceState = btAndServiceStatesWrapper.getServiceState();
+            switch (serviceState){
+                case Constants.STARTING_SERVICE:{
+                    break;
+                }
+                case Constants.CLOSING_SERVICE:{
+                    break;
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void handleResponseUri(long dm_resource_id, Integer type, String uriString,
+                                     long lastModifiedTimestamp, boolean updateResourcePreference) {
         super.handleResponseUri(dm_resource_id, type, uriString, lastModifiedTimestamp, updateResourcePreference);
         switch(type) {
             case TRAININGS_JSON: {
                 // update resource preference if needed
                 if(updateResourcePreference)
-                    PreferenceUtils.setResourceUri(this, Constants.trainings_rest_key+type, uriString, lastModifiedTimestamp, dm_resource_id);
+                    PreferenceUtils.setResourceUri(this, Constants.trainings_rest_key+type, uriString,
+                            lastModifiedTimestamp, dm_resource_id);
 
                 if(!updateResourcePreference && trainingsList!=null && trainingsList.size()>0){
                     // se non devo salvare la Preference e trainingsList è già una lista con elementi,
@@ -157,7 +226,6 @@ public class CommonPracticingActivity extends BaseActivity implements
 
     @Override
     protected void handle404(long dm_resource_id, Integer type, String uriString) {
-        super.handle404(dm_resource_id, type, uriString);
         if (type == null) {
             Snackbar.make(binding.getRoot(), "ERROR 01. Please retry later.", 5000).show();
             return;
@@ -172,38 +240,60 @@ public class CommonPracticingActivity extends BaseActivity implements
         }
     }
 
-    // override these
-    protected Class<? extends Fragment> getFragmentClassFromModel() {return null;}
+    @Override
+    public void onBluetoothStateChangedEventReceived(int state) {
+        switch(state){
+            case BluetoothAdapter.STATE_OFF:{
+                updateBtIcon(binding.bluetoothState, R.drawable.disabled_bt,
+                        binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
+                break;
+            }
+            case BluetoothAdapter.STATE_ON:{
+                updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
+                        binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
+                break;
+            }
+        }
+    }
+
+    // unused here
+    @Override public void onBluetoothScanModeChangedEventReceived(int scanMode) {}
 
     // utils-----------------------------------------------------------------
     private void getTrainings() {
         Map<String, Object> riiMap = restInfoInstance.getLastModified().get( Constants.trainings_rest_key );
         ResourcePreferenceWrapper trainingsJsonPreference = null;
         if(riiMap!=null)
-            trainingsJsonPreference = PreferenceUtils.getResourceUri(this, Constants.trainings_rest_key+TRAININGS_JSON, (Integer) riiMap.get( Constants.trainings_rest_key ));
+            trainingsJsonPreference = PreferenceUtils.getResourceUri(this,
+                    Constants.trainings_rest_key+TRAININGS_JSON,
+                    (Integer) riiMap.get( Constants.trainings_rest_key ));
 
         //Log.d(TAG, "getTrainings. trainingsJsonPreference:"+trainingsJsonPreference);
         if(trainingsJsonPreference!=null && trainingsJsonPreference.getUri()!=null) {
             Log.d(TAG, "getTrainings. From local");
             handleResponseUri(trainingsJsonPreference.getDMResourceId(), TRAININGS_JSON,
-                    trainingsJsonPreference.getUri(), trainingsJsonPreference.getLastModifiedTimestamp(), false);
+                    trainingsJsonPreference.getUri(), trainingsJsonPreference.getLastModifiedTimestamp(),
+                    false);
         }else {
             Log.d(TAG, "getTrainings. From net");
             getTrainingsInfoFileFromNet(
                     new DMRequestWrapper(Constants.restBasePath + restInfoInstance.getTrainingsUrl(),
-                            "randomTitle", "randomDescription", false, false, TRAININGS_JSON,
+                            "randomTitle", "randomDescription", false,
+                            false, TRAININGS_JSON,
                             false, null, null)
             );
         }
     }
 
-    protected static void transactionToFragment(Context ctx, Class<? extends Fragment> clas) {
+    protected void transactionToFragment(Context ctx, Class<? extends Fragment> clas, boolean addToBackStack) {
         FragmentManager fragmentManager = ((FragmentActivity)ctx).getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.setCustomAnimations(android.R.anim.fade_in, 0)
                 .replace(R.id.fragment_container_main, clas, null)
-                .setReorderingAllowed(true)
-                .commit();
+                .setReorderingAllowed(true);
+        if(addToBackStack)
+            ft.addToBackStack(null);
+        ft.commit();
     }
 
     protected void updateBtIcon(ImageView iconView, int iconId,
@@ -219,6 +309,11 @@ public class CommonPracticingActivity extends BaseActivity implements
         }
         overlayView.setImageDrawable( overlayId == ResourcesCompat.ID_NULL ? null :
                 AppCompatResources.getDrawable(this, overlayId));
+    }
+
+    protected void updateBtIconWithCurrentState(boolean state) {
+        onBluetoothStateChangedEventReceived(state ?
+                BluetoothAdapter.STATE_ON:BluetoothAdapter.STATE_OFF);
     }
 
     private void initBars() {
@@ -259,12 +354,14 @@ public class CommonPracticingActivity extends BaseActivity implements
 
     // glide related callbacks
     @Override
-    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target,
+                                boolean isFirstResource) {
         return false;
     }
 
     @Override
-    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource,
+                                   boolean isFirstResource) {
         ((GifDrawable)resource).setLoopCount(2);
         ((GifDrawable)resource).registerAnimationCallback(new Animatable2Compat.AnimationCallback() {
             @Override
@@ -276,4 +373,10 @@ public class CommonPracticingActivity extends BaseActivity implements
         });
         return false;
     }
+
+
+    // abstract
+    protected abstract String getInfoTextFromFragment(int currentFragment);
+    protected abstract Class<? extends Fragment> getFragmentClassFromModel();
+
 }

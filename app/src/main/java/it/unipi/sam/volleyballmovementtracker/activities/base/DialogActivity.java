@@ -1,4 +1,4 @@
-package it.unipi.sam.volleyballmovementtracker.activities.util;
+package it.unipi.sam.volleyballmovementtracker.activities.base;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 
-public class DialogActivity extends GUIBaseActivity implements DialogInterface.OnClickListener{
+public abstract class DialogActivity extends GUIBaseActivity implements DialogInterface.OnClickListener{
     protected int showingDialog;
     protected AlertDialog workInProgressDialog;
     protected AlertDialog discoverabilityDeniedDialog;
@@ -41,7 +41,6 @@ public class DialogActivity extends GUIBaseActivity implements DialogInterface.O
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         switch (showingDialog) {
             case Constants.BT_ENABLING_DIALOG:
                 try{ btEnablingDialog.cancel(); }catch (RuntimeException ignored){}
@@ -68,6 +67,7 @@ public class DialogActivity extends GUIBaseActivity implements DialogInterface.O
                 try{ notificationChannelEnablingDialog.cancel(); }catch (RuntimeException ignored){}
                 break;
         }
+        super.onDestroy();
     }
 
     // dialog
@@ -85,7 +85,7 @@ public class DialogActivity extends GUIBaseActivity implements DialogInterface.O
                 .setMessage(getString(R.string.work_in_progress_warning))
                 .setCancelable(false)
                 .setPositiveButton(getString(R.string.accept), this)
-                .setNegativeButton(getString(R.string.decline), null)
+                .setNegativeButton(getString(R.string.decline), this)
                 .create();
 
         discoverabilityDeniedDialog = new MaterialAlertDialogBuilder(this)
@@ -161,9 +161,11 @@ public class DialogActivity extends GUIBaseActivity implements DialogInterface.O
         }
     }
 
-    // override these
-    protected void askForEnablingBt() {}
     @Override public void onClick(DialogInterface dialogInterface, int i) {
         dialogInterface.cancel();
+        showingDialog =- 1;
     }
+
+    // abstract
+    protected abstract void askForEnablingBt();
 }

@@ -4,21 +4,23 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class BaseService extends Service {
-    protected boolean isRunning;
+    public boolean isStarted;
     protected int handleRestartCode = START_NOT_STICKY;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        isRunning = false;
+        isStarted = false;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        isRunning = true;
+        super.onStartCommand(intent, flags, startId);
+        isStarted = true;
         return handleRestartCode;
     }
 
@@ -28,7 +30,11 @@ public class BaseService extends Service {
     }
 
     @Nullable @Override
-    public IBinder onBind(Intent intent) {
+    public IBinder onBind(@NonNull Intent intent) {
         return null;
+    }
+
+    public void myStop() {
+        stopSelf();
     }
 }

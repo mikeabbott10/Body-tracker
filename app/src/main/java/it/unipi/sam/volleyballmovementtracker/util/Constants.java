@@ -23,6 +23,10 @@ public class Constants {
     public static final int BT_STATE_BADLY_DENIED = 7;  // permissions have been denied manually during service life (close the service)
     public static final int BT_STATE_UNSOLVED = 8;      // bt unknown error (close the service)
 
+    // Constants that indicate the current service state
+    public static final int CLOSING_SERVICE = 0;
+    public static final int STARTING_SERVICE = 1;
+
     // bt constants
     public static final String BT_NAME = "Coach";
     public static final String BT_UUID = "be9067f2-c2d5-47a7-be41-8a36a7841cd1";
@@ -38,10 +42,6 @@ public class Constants {
     // actions
     public static final int COACH_CHOICE = 0;
     public static final int PLAYER_CHOICE = 1;
-
-    //coach
-    public static final int GO_TO_PRACTICING_FRAGMENT = 4;
-    public static final int BACK_TO_INIT_FRAGMENT = 5;
 
     // dialogs
     public static final int DISCOVERABILITY_DIALOG = 0;
@@ -75,6 +75,8 @@ public class Constants {
     public static final String play_this_video_key = "ptvk";
     public static final String choice_key = "ck";
     public static final String should_unbind_key = "suk";
+    public static String req_discoverability_launched_key = "rdlk";
+    public static String req_bt_launched_key = "rblk";
 
     // net
     public static final String restBasePath = "https://donow.cloud/trackerapp/";

@@ -1,4 +1,4 @@
-package it.unipi.sam.volleyballmovementtracker.activities;
+package it.unipi.sam.volleyballmovementtracker.activities.base;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -18,11 +18,10 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationManagerCompat;
 
-import it.unipi.sam.volleyballmovementtracker.activities.util.CommonPracticingActivity;
 import it.unipi.sam.volleyballmovementtracker.services.BluetoothService;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 
-public class ServiceCommunicationActivity extends CommonPracticingActivity {
+public abstract class ServiceCommunicationActivity extends BaseActivity {
     private static final String TAG = "AAAAServiceCommActiv";
     protected ServiceConnection mConnection;
     protected boolean mShouldUnbind;
@@ -60,8 +59,8 @@ public class ServiceCommunicationActivity extends CommonPracticingActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         doUnbindService();
+        super.onDestroy();
     }
 
 
@@ -76,8 +75,6 @@ public class ServiceCommunicationActivity extends CommonPracticingActivity {
         }
     }
     protected void doBindService(Class<? extends Service> clas) {
-        if(mShouldUnbind)
-            return;
         // Attempts to establish a connection with the service.  We use an
         // explicit class name because we want a specific service
         // implementation that we know will be running in our own process
@@ -93,9 +90,12 @@ public class ServiceCommunicationActivity extends CommonPracticingActivity {
     }
 
     void doUnbindService() {
+        Log.d(TAG, "shouldUnbind:"+mShouldUnbind);
         if (mShouldUnbind) {
             // Release information about the service's state.
-            unbindService(mConnection);
+            try{
+                unbindService(mConnection);
+            }catch(Exception ignored){}
             mShouldUnbind = false;
         }
     }
@@ -174,7 +174,6 @@ public class ServiceCommunicationActivity extends CommonPracticingActivity {
 
     @Override
     public void onClick(DialogInterface dialogInterface, int i) {
-        super.onClick(dialogInterface, i);
         if (showingDialog == Constants.NOTIFICATION_ENABLING_DIALOG){
             openNotificationSettings();
         } else if(showingDialog == Constants.NOTIFICATION_CHANNEL_ENABLING_DIALOG) {
@@ -184,5 +183,6 @@ public class ServiceCommunicationActivity extends CommonPracticingActivity {
                 }
             }
         }
+        super.onClick(dialogInterface, i);
     }
 }

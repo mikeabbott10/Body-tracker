@@ -56,6 +56,7 @@
         <activity android:name=".activities.CoachPracticingActivity"/>
 
         <service android:name=".services.BluetoothService" />
+        <receiver android:name=".util.MyNotificationBroadcastReceiver" />
     </application>
 
 </manifest>

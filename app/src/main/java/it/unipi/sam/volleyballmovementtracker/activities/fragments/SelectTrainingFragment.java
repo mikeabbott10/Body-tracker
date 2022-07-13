@@ -23,7 +23,7 @@ import it.unipi.sam.volleyballmovementtracker.util.Training;
 import it.unipi.sam.volleyballmovementtracker.util.TrainingsRecyclerViewAdapter;
 
 public class SelectTrainingFragment extends CommonFragment implements Observer<List<Training>> {
-    private static final String TAG = "FRFRStartPlayeFragm";
+    private static final String TAG = "FRFRSelecTraininFragm";
     private FragmentLoadRecyclerViewBinding binding;
     private TrainingsRecyclerViewAdapter adapter;
 
