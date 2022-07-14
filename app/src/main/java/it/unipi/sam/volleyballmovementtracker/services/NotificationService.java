@@ -26,7 +26,6 @@ public class NotificationService extends BaseService {
 
     @Override
     public void onCreate() {
-        Log.i( TAG, "onCreate");
         super.onCreate();
     }
 
@@ -42,7 +41,6 @@ public class NotificationService extends BaseService {
 
     @Override
     public void onDestroy() {
-        Log.i( TAG, "onDestroy");
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.cancelAll();
         super.onDestroy();

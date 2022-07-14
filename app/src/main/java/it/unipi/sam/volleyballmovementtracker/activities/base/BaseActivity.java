@@ -75,7 +75,6 @@ public abstract class BaseActivity extends DownloadActivity implements
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-
     }
 
     @SuppressLint("MissingPermission")
@@ -91,7 +90,7 @@ public abstract class BaseActivity extends DownloadActivity implements
                 break;
             }
             case Constants.BT_START_DISCOVER_PERMISSION_CODE:{
-                bta.startDiscovery();
+                startDiscoveryAfterPermissionCheck();
             }
         }
     }
@@ -119,12 +118,12 @@ public abstract class BaseActivity extends DownloadActivity implements
         // todo check dialog flow
         if(showingDialog == Constants.BT_ENABLING_DIALOG){
             if(i==AlertDialog.BUTTON_POSITIVE) {
-                askForEnablingBt();
+                askForEnablingBtAfterPermissionCheck();
             }else
                 handleDeniedBTEnabling();
         }else if(showingDialog == Constants.BT_ENABLE_PERMISSIONS_DIALOG){
             if(i== AlertDialog.BUTTON_POSITIVE) {
-                askForEnablingBt();
+                askForEnablingBtAfterPermissionCheck();
             }else
                 handleDeniedBTEnabling();
         }else if(showingDialog == Constants.BT_PERMANENTLY_DENIED_PERMISSIONS_DIALOG){
@@ -134,7 +133,7 @@ public abstract class BaseActivity extends DownloadActivity implements
     }
 
     // utils --------------------------------------------------------
-    protected void askForEnablingBt() {
+    protected void askForEnablingBtAfterPermissionCheck() {
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         // check bt permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -155,7 +154,7 @@ public abstract class BaseActivity extends DownloadActivity implements
         }
     }
 
-    protected void askForDiscoverability() {// check bt permissions
+    protected void askForDiscoverabilityAfterPermissionCheck() {// check bt permissions
         Intent i = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         i.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, extraDiscoverableDuration);
 
@@ -170,6 +169,30 @@ public abstract class BaseActivity extends DownloadActivity implements
         }else{
             isRequestDiscoverabilityLaunched = true;
             requestDiscoverabilityLauncher.launch(i);
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    protected void startDiscoveryAfterPermissionCheck() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (!EasyPermissions.hasPermissions(this, Constants.BT_PERMISSIONS)) {
+                EasyPermissions.requestPermissions(this, getString(R.string.bt_permissions_request),
+                        Constants.BT_START_DISCOVER_PERMISSION_CODE, Constants.BT_PERMISSIONS);
+            } else {
+                if(!bta.isEnabled()) {
+                    enableBT();
+                }
+                if(bta.isDiscovering())
+                    bta.cancelDiscovery();
+                bta.startDiscovery();
+            }
+        }else{
+            if(!bta.isEnabled()) {
+                enableBT();
+            }
+            if(bta.isDiscovering())
+                bta.cancelDiscovery();
+            bta.startDiscovery();
         }
     }
 

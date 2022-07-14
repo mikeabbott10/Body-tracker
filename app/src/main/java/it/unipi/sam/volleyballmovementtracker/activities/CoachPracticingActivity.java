@@ -1,10 +1,10 @@
 package it.unipi.sam.volleyballmovementtracker.activities;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
@@ -21,10 +21,9 @@ import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.activities.base.CommonPracticingActivity;
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.SelectTrainingFragment;
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.coach.CoachPracticingFragment;
-import it.unipi.sam.volleyballmovementtracker.services.coach.CoachService;
-import it.unipi.sam.volleyballmovementtracker.util.BtAndServiceStatesWrapper;
+import it.unipi.sam.volleyballmovementtracker.services.BluetoothService;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
-import it.unipi.sam.volleyballmovementtracker.util.OnBroadcastReceiverOnBTReceiveListener;
+import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnBroadcastReceiverOnBTReceiveListener;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
 
 public class CoachPracticingActivity extends CommonPracticingActivity
@@ -81,57 +80,85 @@ public class CoachPracticingActivity extends CommonPracticingActivity
         super.onDestroy();
     }
 
-    @Override
-    public void onChanged(BtAndServiceStatesWrapper btAndServiceStatesWrapper) {
-        super.onChanged(btAndServiceStatesWrapper);
-        if(btAndServiceStatesWrapper.getServiceState()==-1){
-            // bt state changed
-            int bt_state = btAndServiceStatesWrapper.getBtState();
-            switch(bt_state){
-                case Constants.BT_STATE_DISABLED:{
-                    // ask for enabling bluetooth
-                    if(showingDialog!=Constants.BT_ENABLING_DIALOG && !isRequestBluetoothLaunched)
-                        askForEnablingBt();
-                    break;
-                }
-                case Constants.BT_STATE_ENABLED:{
-                    // ask for discoverability
-                    if(showingDialog!=Constants.DISCOVERABILITY_DIALOG && !isRequestDiscoverabilityLaunched)
-                        askForDiscoverability();
-                    break;
-                }
-                case Constants.BT_STATE_DISCOVERABLE:{
-                    break;
-                }
-                case Constants.BT_STATE_LISTEN:{
-                    break;
-                }
-                case Constants.BT_STATE_CONNECTED:{
-                    break;
-                }
-                case Constants.BT_STATE_BADLY_DENIED:{
-                    break;
-                }
-                case Constants.BT_STATE_UNSOLVED: {
-                    break;
-                }
+    /**
+     * Triggered on service BT state change
+     * @param bt_state
+     */
+    protected void handleServiceBTStateChange(int bt_state) {
+        switch(bt_state){
+            case Constants.BT_STATE_DISABLED:{
+                // ask for enabling bluetooth
+                if(showingDialog!=Constants.BT_ENABLING_DIALOG && !isRequestBluetoothLaunched)
+                    askForEnablingBtAfterPermissionCheck();
+                break;
             }
-            return;
+            case Constants.BT_STATE_ENABLED:{
+                // ask for discoverability
+                if(showingDialog!=Constants.DISCOVERABILITY_DIALOG && !isRequestDiscoverabilityLaunched)
+                    askForDiscoverabilityAfterPermissionCheck();
+                break;
+            }
+            case Constants.BT_STATE_DISCOVERABLE_AND_LISTENING:{
+                Log.d(TAG, "discoverable and listening!");
+                break;
+            }
+            case Constants.BT_STATE_JUST_DISCONNECTED:{
+                Log.d(TAG, "remote device disconnected!");
+                break;
+            }
+            case Constants.BT_STATE_CONNECTED:{
+                Log.d(TAG, "remote device connected!");
+
+                break;
+            }
+            case Constants.BT_STATE_BADLY_DENIED:{
+                break;
+            }
+            case Constants.BT_STATE_UNSOLVED: {
+                break;
+            }
         }
-        if(btAndServiceStatesWrapper.getBtState()==-1){
-            // service state changed
-            int serviceState = btAndServiceStatesWrapper.getServiceState();
-            switch (serviceState){
-                case Constants.STARTING_SERVICE:{
-                    break;
-                }
-                case Constants.CLOSING_SERVICE:{
-                    myStopService();
-                    transactionToFragment(this,
-                            SelectTrainingFragment.class, false);
-                    updateBtIconWithCurrentState(bta.isEnabled());
-                    break;
-                }
+    }
+
+    /**
+     * Triggered on service state change
+     * @param serviceState
+     */
+    protected void handleServiceStateChange(int serviceState) {
+        switch (serviceState){
+            case Constants.STARTING_SERVICE:{
+                break;
+            }
+            case Constants.CLOSING_SERVICE:{
+                myStopService();
+                getSupportFragmentManager().popBackStack();
+                //transactionToFragment(this,
+                //        SelectTrainingFragment.class, false);
+                updateBtIconWithCurrentState(bta.isEnabled());
+                break;
+            }
+        }
+    }
+
+    /**
+     * Triggered on new message from service
+     * @param msg
+     */
+    protected void handleReceivedDataFromMessage(Message msg) {
+        switch(msg.what){
+            case Constants.MESSAGE_READ:{
+                // show received message
+                String s = new String((byte[]) msg.obj);
+                Log.d(TAG, s);
+                break;
+            }
+            case Constants.MESSAGE_WRITE:{
+                // idk what to do here
+                break;
+            }
+            case Constants.MESSAGE_TOAST:{
+                Snackbar.make(binding.getRoot(), msg.getData().getString("toast"), 2000).show();
+                break;
             }
         }
     }
@@ -146,7 +173,7 @@ public class CoachPracticingActivity extends CommonPracticingActivity
                 transactionToFragment(this, CoachPracticingFragment.class, true);
                 // start servizio
                 doStartService(Constants.COACH_CHOICE); // idempotent
-                doBindService(CoachService.class); // idempotent
+                doBindService(BluetoothService.class); // idempotent
             }else{
                 // todo v1.1: mostra stato bt
                 GraphicUtil.scaleImage(this, view, -1, null);
@@ -162,8 +189,8 @@ public class CoachPracticingActivity extends CommonPracticingActivity
             transactionToFragment(this, SelectTrainingFragment.class, false);
         }else if(showingDialog == Constants.DISCOVERABILITY_DIALOG){
             if(i== AlertDialog.BUTTON_POSITIVE) {
-                askForEnablingBt();
-                askForDiscoverability();
+                askForEnablingBtAfterPermissionCheck();
+                askForDiscoverabilityAfterPermissionCheck();
             }else{
                 myStopService();
             }
@@ -199,9 +226,8 @@ public class CoachPracticingActivity extends CommonPracticingActivity
         // handle discoverability request
         if (result.getResultCode() != Activity.RESULT_CANCELED) {
             // i'm now discoverable
-            Log.d(TAG, "I'm discoverable");
             if(mBoundService!=null)
-                ((CoachService)mBoundService).onMeDiscoverable();
+                mBoundService.onMeDiscoverable();
         } else{
             // not discoverable
             showMyDialog(Constants.DISCOVERABILITY_DIALOG);
@@ -210,24 +236,10 @@ public class CoachPracticingActivity extends CommonPracticingActivity
     }
 
     // OnBroadcastReceiverOnBTReceiveListener ------------------------------------------------------
-    @Override
-    public void onBluetoothStateChangedEventReceived(int state) {
-        switch(state){
-            case BluetoothAdapter.STATE_OFF:{
-                updateBtIcon(binding.bluetoothState, R.drawable.disabled_bt,
-                        binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
-                break;
-            }
-            case BluetoothAdapter.STATE_ON:{
-                updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
-                        binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
-                break;
-            }
-        }
-    }
-
     // unused here
     @Override public void onBluetoothActionFoundEventReceived(BluetoothDevice btDevice) {}
+    @Override public void onBluetoothActionDiscoveryEventReceived(boolean isDiscoveryFinished) {}
+    @Override public void onBluetoothDeviceConnectionEventReceived(boolean isDeviceConnected) {}
 
     // utils--------------------------------------------------------
     protected Class<? extends Fragment> getFragmentClassFromModel() {

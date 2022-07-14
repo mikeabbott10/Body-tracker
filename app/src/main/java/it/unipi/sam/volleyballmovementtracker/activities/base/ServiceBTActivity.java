@@ -10,9 +10,9 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 
 import it.unipi.sam.volleyballmovementtracker.services.BluetoothService;
-import it.unipi.sam.volleyballmovementtracker.util.BtAndServiceStatesWrapper;
+import it.unipi.sam.volleyballmovementtracker.util.bluetooth.ServiceStatesAndDataWrapper;
 
-public abstract class ServiceBTActivity extends ServiceCommunicationActivity implements Observer<BtAndServiceStatesWrapper>{
+public abstract class ServiceBTActivity extends ServiceCommunicationActivity implements Observer<ServiceStatesAndDataWrapper>{
     private static final String TAG = "AAAServicBTActivit";
     protected BluetoothService mBoundService;
 
@@ -26,13 +26,15 @@ public abstract class ServiceBTActivity extends ServiceCommunicationActivity imp
                 // interact with the service.  Because we have bound to a explicit
                 // service that we know is running in our own process, we can
                 // cast its IBinder to a concrete class and directly access it.
+                Log.d(TAG, "onServiceConnected");
                 mBoundService = ((BluetoothService.LocalBinder)service).getService();
                 if(mBoundService.isStarted){
+                    Log.d(TAG, "isStarted!");
                     mBoundService.getLive_state().observe(ServiceBTActivity.this, ServiceBTActivity.this);
                     onServiceAlreadyStarted(); // check role consistency
                     return;
                 }
-                unbindService(this);
+                doUnbindService();
                 mBoundService = null;
             }
             public void onServiceDisconnected(ComponentName className) {
@@ -41,9 +43,11 @@ public abstract class ServiceBTActivity extends ServiceCommunicationActivity imp
                 // Because it is running in our same process, we should never
                 // see this happen.
                 mBoundService = null;
+                mShouldUnbind = false;
             }
         };
     }
+    protected abstract void onServiceAlreadyStarted();
 
     @Override
     protected void onResume() {
@@ -80,7 +84,4 @@ public abstract class ServiceBTActivity extends ServiceCommunicationActivity imp
             mBoundService.myStop();
         doUnbindService();
     }
-
-    // abstract
-    protected abstract void onServiceAlreadyStarted();
 }

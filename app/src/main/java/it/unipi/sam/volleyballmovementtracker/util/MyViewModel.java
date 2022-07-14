@@ -1,7 +1,5 @@
 package it.unipi.sam.volleyballmovementtracker.util;
 
-import android.bluetooth.BluetoothDevice;
-
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
@@ -12,11 +10,10 @@ import java.util.List;
 public class MyViewModel extends ViewModel {
     private final SavedStateHandle savedStateHandle;
     private static final String currentFragmentKey = "cfk";
-    private static final String currentNumberPickerKey = "cnpk";
+    /*private static final String currentNumberPickerKey = "cnpk";
     private static final String imDiscoverableKey = "imdk";
-    private static final String scanModeStatusKey = "sssk";
+    private static final String scanModeStatusKey = "sssk";*/
     private static final String trainingListKey = "tlk";
-    private static final String btdevicesListKey = "btdlk";
 
     public MyViewModel(SavedStateHandle savedStateHandle) {
         this.savedStateHandle = savedStateHandle;
@@ -30,6 +27,7 @@ public class MyViewModel extends ViewModel {
         savedStateHandle.set(currentFragmentKey, frag_id);
     }
 
+    /*
     public MutableLiveData<Integer> getCurrentPickerValue(){
         return savedStateHandle.getLiveData(currentNumberPickerKey, 0);
     }
@@ -49,7 +47,7 @@ public class MyViewModel extends ViewModel {
     }
     public void selectScanModeStatus(int newValue) {
         savedStateHandle.set(scanModeStatusKey, newValue);
-    }
+    }*/
 
     public MutableLiveData<List<Training>> getTrainingList(){
         return savedStateHandle.getLiveData(trainingListKey, new ArrayList<>());
@@ -58,11 +56,14 @@ public class MyViewModel extends ViewModel {
         savedStateHandle.set(trainingListKey, newValue);
     }
 
-    public MutableLiveData<List<BluetoothDevice>> getBtDevicesList(){
-        return savedStateHandle.getLiveData(btdevicesListKey, new ArrayList<>());
+    /*
+    // cannot use it because BluetoothDevice not serializable
+    private static final String btdevicesListKey = "btdlk";
+    public MutableLiveData<Set<BluetoothDevice>> getBtDevicesList(){
+        return savedStateHandle.getLiveData(btdevicesListKey, new HashSet<>());
     }
-    public void selectBtDevicesList(List<BluetoothDevice> newValue) {
+    public void selectBtDevicesList(Set<BluetoothDevice> newValue) {
         savedStateHandle.set(btdevicesListKey, newValue);
-    }
+    }*/
 
 }

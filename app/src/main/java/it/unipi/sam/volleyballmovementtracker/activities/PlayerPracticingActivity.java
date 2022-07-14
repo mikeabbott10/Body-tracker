@@ -3,6 +3,7 @@ package it.unipi.sam.volleyballmovementtracker.activities;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
@@ -11,32 +12,33 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.activities.base.CommonPracticingActivity;
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.SelectTrainingFragment;
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.player.PlayerPracticingFragment;
-import it.unipi.sam.volleyballmovementtracker.services.player.PlayerService;
-import it.unipi.sam.volleyballmovementtracker.util.BtAndServiceStatesWrapper;
+import it.unipi.sam.volleyballmovementtracker.services.BluetoothService;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
+import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnFoundDeviceSelectedListener;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
 
-public class PlayerPracticingActivity extends CommonPracticingActivity {
+public class PlayerPracticingActivity extends CommonPracticingActivity implements OnFoundDeviceSelectedListener{
     private static final String TAG = "AAAPlayerPracAct";
-    private List<BluetoothDevice> currentFoundDevicesList;
+    public MutableLiveData<Set<BluetoothDevice>> currentFoundDevicesList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
 
-        currentFoundDevicesList = new ArrayList<>();
-        viewModel.selectBtDevicesList(currentFoundDevicesList);
+        currentFoundDevicesList = new MutableLiveData<>();
+        currentFoundDevicesList.setValue(new HashSet<>());
 
         // init player practicing activity bar
         if(currentBtStateDrawableId == ResourcesCompat.ID_NULL) {
@@ -84,54 +86,89 @@ public class PlayerPracticingActivity extends CommonPracticingActivity {
         super.onDestroy();
     }
 
-    @Override
-    public void onChanged(BtAndServiceStatesWrapper btAndServiceStatesWrapper) {
-        super.onChanged(btAndServiceStatesWrapper);
-        if(btAndServiceStatesWrapper.getServiceState()==-1){
-            // bt state changed
-            int bt_state = btAndServiceStatesWrapper.getBtState();
-            switch(bt_state){
-                case Constants.BT_STATE_DISABLED:{
-                    // ask for enabling bluetooth
-                    if(showingDialog!=Constants.BT_ENABLING_DIALOG && !isRequestBluetoothLaunched)
-                        askForEnablingBt();
-                    break;
-                }
-                case Constants.BT_STATE_ENABLED:{
-                    break;
-                }
-                case Constants.BT_STATE_CONNECTING:{
-                    break;
-                }
-                case Constants.BT_STATE_CONNECTED:{
-                    break;
-                }
-                case Constants.BT_STATE_PERMISSION_REQUIRED:{
-                    break;
-                }
-                case Constants.BT_STATE_BADLY_DENIED:{
-                    break;
-                }
-                case Constants.BT_STATE_UNSOLVED: {
-                    break;
-                }
+    /**
+     * Triggered on service BT state change
+     * @param bt_state
+     */
+    protected void handleServiceBTStateChange(int bt_state) {
+        switch(bt_state){
+            case Constants.BT_STATE_DISABLED:{
+                // ask for enabling bluetooth
+                if(showingDialog!=Constants.BT_ENABLING_DIALOG && !isRequestBluetoothLaunched)
+                    askForEnablingBtAfterPermissionCheck();
+                break;
             }
-            return;
+            case Constants.BT_STATE_ENABLED:{
+                // ask for enabling bluetooth
+                if(showingDialog!=Constants.BT_START_DISCOVERY_PERMISSIONS_DIALOG)
+                    startDiscoveryAfterPermissionCheck();
+                break;
+            }
+            case Constants.BT_STATE_DISCOVERING:{
+                Log.d(TAG, "discovering!");
+                break;
+            }
+            case Constants.BT_STATE_JUST_DISCONNECTED:{
+                Log.d(TAG, "remote device disconnected!");
+                break;
+            }
+            case Constants.BT_STATE_CONNECTED:{
+                Log.d(TAG, "remote device connected!");
+                mBoundService.connectedDeviceThread.write("messaggio inviatooooo".getBytes());
+                mBoundService.connectedDeviceThread.cancel();
+                break;
+            }
+            case Constants.BT_STATE_PERMISSION_REQUIRED:{
+                break;
+            }
+            case Constants.BT_STATE_BADLY_DENIED:{
+                break;
+            }
+            case Constants.BT_STATE_UNSOLVED: {
+                break;
+            }
         }
-        if(btAndServiceStatesWrapper.getBtState()==-1){
-            // service state changed
-            int serviceState = btAndServiceStatesWrapper.getServiceState();
-            switch (serviceState){
-                case Constants.STARTING_SERVICE:{
-                    break;
-                }
-                case Constants.CLOSING_SERVICE:{
-                    myStopService();
-                    transactionToFragment(this,
-                            SelectTrainingFragment.class, false);
-                    updateBtIconWithCurrentState(bta.isEnabled());
-                    break;
-                }
+    }
+
+    /**
+     * Triggered on service state change
+     * @param serviceState
+     */
+    protected void handleServiceStateChange(int serviceState) {
+        switch (serviceState){
+            case Constants.STARTING_SERVICE:{
+                break;
+            }
+            case Constants.CLOSING_SERVICE:{
+                myStopService();
+                getSupportFragmentManager().popBackStack();
+                //transactionToFragment(this,
+                //        SelectTrainingFragment.class, false);
+                updateBtIconWithCurrentState(bta.isEnabled());
+                break;
+            }
+        }
+    }
+
+    /**
+     * Triggered on new message from service
+     * @param msg
+     */
+    protected void handleReceivedDataFromMessage(Message msg) {
+        switch(msg.what){
+            case Constants.MESSAGE_READ:{
+                // show received message
+                String s = new String((byte[]) msg.obj);
+                Log.d(TAG, s);
+                break;
+            }
+            case Constants.MESSAGE_WRITE:{
+                // idk what to do here
+                break;
+            }
+            case Constants.MESSAGE_TOAST:{
+                Snackbar.make(binding.getRoot(), msg.getData().getString("toast"), 2000).show();
+                break;
             }
         }
     }
@@ -146,7 +183,7 @@ public class PlayerPracticingActivity extends CommonPracticingActivity {
                 transactionToFragment(this, PlayerPracticingFragment.class, true);
                 // start servizio
                 doStartService(Constants.PLAYER_CHOICE); // idempotent
-                doBindService(PlayerService.class); // idempotent
+                doBindService(BluetoothService.class); // idempotent
             }else{
                 // todo v1.1: mostra stato bt
                 GraphicUtil.scaleImage(this, view, -1, null);
@@ -175,8 +212,8 @@ public class PlayerPracticingActivity extends CommonPracticingActivity {
         }
         // retrive so far found devices
         try{
-            currentFoundDevicesList = ((PlayerService)mBoundService).retriveFoundDeviceList();
-            viewModel.selectBtDevicesList(currentFoundDevicesList);
+            if(mBoundService.retriveFoundDeviceList()!=null)
+                currentFoundDevicesList.setValue(mBoundService.retriveFoundDeviceList());
         }catch(Exception e){
             Log.e(TAG, "", e);
         }
@@ -195,17 +232,30 @@ public class PlayerPracticingActivity extends CommonPracticingActivity {
         transactionToFragment(this, SelectTrainingFragment.class, false);
     }
 
+    @Override
+    public void onDeviceSelected(BluetoothDevice btd) {
+        if(mBoundService!=null)
+            mBoundService.onBTServerSelected(btd);
+    }
+
     // OnBroadcastReceiverOnBTReceiveListener ------------------------------------------------------
     @Override
     public void onBluetoothActionFoundEventReceived(BluetoothDevice btDevice) {
         try{
-            currentFoundDevicesList.add(btDevice);
-            viewModel.selectBtDevicesList(currentFoundDevicesList);
-            ((PlayerService)mBoundService).saveFoundDevicesList(currentFoundDevicesList);
+            Set<BluetoothDevice> btDevicesSet = currentFoundDevicesList.getValue();
+            if (btDevicesSet != null) {
+                btDevicesSet.add(btDevice);
+            }
+            currentFoundDevicesList.setValue(btDevicesSet);
+            mBoundService.saveFoundDevicesList(btDevicesSet);
         }catch(Exception e){
             Log.e(TAG, "", e);
         }
     }
+
+    // unused here
+    @Override public void onBluetoothActionDiscoveryEventReceived(boolean isDiscoveryFinished) {}
+    @Override public void onBluetoothDeviceConnectionEventReceived(boolean isDeviceConnected) {}
 
     // utils--------------------------------------------------------
     protected Class<? extends Fragment> getFragmentClassFromModel() {

@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -35,11 +36,12 @@ import java.util.Map;
 
 import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.databinding.ActivityPracticingBinding;
-import it.unipi.sam.volleyballmovementtracker.util.BtAndServiceStatesWrapper;
+import it.unipi.sam.volleyballmovementtracker.util.MessageWrapper;
+import it.unipi.sam.volleyballmovementtracker.util.bluetooth.ServiceStatesAndDataWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import it.unipi.sam.volleyballmovementtracker.util.MyBroadcastReceiver;
 import it.unipi.sam.volleyballmovementtracker.util.MyViewModel;
-import it.unipi.sam.volleyballmovementtracker.util.OnBroadcastReceiverOnBTReceiveListener;
+import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnBroadcastReceiverOnBTReceiveListener;
 import it.unipi.sam.volleyballmovementtracker.util.PreferenceUtils;
 import it.unipi.sam.volleyballmovementtracker.util.ResourcePreferenceWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.Training;
@@ -60,7 +62,6 @@ public abstract class CommonPracticingActivity extends ServiceBTActivity impleme
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initBinding();
-        initDialog();
         initBars();
         initInfoView();
 
@@ -84,6 +85,7 @@ public abstract class CommonPracticingActivity extends ServiceBTActivity impleme
         myIntentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         mReceiver = new MyBroadcastReceiver(this, this);
     }
+    protected abstract String getInfoTextFromFragment(int currentFragment);
 
     @Override
     protected void onResume() {
@@ -93,6 +95,7 @@ public abstract class CommonPracticingActivity extends ServiceBTActivity impleme
         // or higher, fragments can be added, replaced, or removed
         transactionToFragment(this, getFragmentClassFromModel(), false);
     }
+    protected abstract Class<? extends Fragment> getFragmentClassFromModel();
 
     @Override
     public void onBackPressed() {
@@ -132,28 +135,27 @@ public abstract class CommonPracticingActivity extends ServiceBTActivity impleme
     }
 
     @Override
-    public void onChanged(BtAndServiceStatesWrapper btAndServiceStatesWrapper) {
+    public void onChanged(ServiceStatesAndDataWrapper serviceStatesAndDataWrapper) {
         //Log.d(TAG, "btstate:"+btServiceStatesWrapper.getBtState() +
         //        ", servicestate:" +btServiceStatesWrapper.getServiceState());
-        if(btAndServiceStatesWrapper.getServiceState()==-1){
+        if(serviceStatesAndDataWrapper.getServiceState()==-1 && serviceStatesAndDataWrapper.getMsg()==null){
             // bt state changed
-            int bt_state = btAndServiceStatesWrapper.getBtState();
+            int bt_state = serviceStatesAndDataWrapper.getBtState();
             switch(bt_state){
                 case Constants.BT_STATE_DISABLED:
-                case Constants.BT_STATE_BADLY_DENIED:
                 case Constants.BT_STATE_UNSOLVED: {
                     updateBtIcon(binding.bluetoothState, R.drawable.disabled_bt,
                             binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
                     break;
                 }
-                case Constants.BT_STATE_ENABLED:{
+                case Constants.BT_STATE_ENABLED:
+                case Constants.BT_STATE_JUST_DISCONNECTED:{
                     updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
                             binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
                     break;
                 }
-                case Constants.BT_STATE_DISCOVERABLE:
-                case Constants.BT_STATE_LISTEN:
-                case Constants.BT_STATE_CONNECTING: {
+                case Constants.BT_STATE_DISCOVERABLE_AND_LISTENING:
+                case Constants.BT_STATE_DISCOVERING:{
                     updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
                             binding.bluetoothStateOverlay, R.drawable.waiting, true);
                     break;
@@ -163,17 +165,18 @@ public abstract class CommonPracticingActivity extends ServiceBTActivity impleme
                             binding.bluetoothStateOverlay, R.drawable.ic_disabled_ok, false);
                     break;
                 }
+                case Constants.BT_STATE_BADLY_DENIED:
                 case Constants.BT_STATE_PERMISSION_REQUIRED:{
                     updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
                             binding.bluetoothStateOverlay, R.drawable.ic_wrong, false);
                     break;
                 }
             }
+            handleServiceBTStateChange(serviceStatesAndDataWrapper.getBtState());
             return;
-        }
-        if(btAndServiceStatesWrapper.getBtState()==-1){
+        }else if(serviceStatesAndDataWrapper.getBtState()==-1 && serviceStatesAndDataWrapper.getMsg()==null){
             // service state changed
-            int serviceState = btAndServiceStatesWrapper.getServiceState();
+            int serviceState = serviceStatesAndDataWrapper.getServiceState();
             switch (serviceState){
                 case Constants.STARTING_SERVICE:{
                     break;
@@ -182,8 +185,17 @@ public abstract class CommonPracticingActivity extends ServiceBTActivity impleme
                     break;
                 }
             }
+            handleServiceStateChange(serviceStatesAndDataWrapper.getServiceState());
         }
+        assert serviceStatesAndDataWrapper.getServiceState()==-1 && serviceStatesAndDataWrapper.getBtState()==-1;
+        // new message incoming
+        MessageWrapper mw = serviceStatesAndDataWrapper.getMsg();
+        if(mw.msg!=null)
+            handleReceivedDataFromMessage(mw.msg);
     }
+    protected abstract void handleReceivedDataFromMessage(Message msg);
+    protected abstract void handleServiceStateChange(int serviceState);
+    protected abstract void handleServiceBTStateChange(int btState);
 
     @Override
     protected void handleResponseUri(long dm_resource_id, Integer type, String uriString,
@@ -373,10 +385,4 @@ public abstract class CommonPracticingActivity extends ServiceBTActivity impleme
         });
         return false;
     }
-
-
-    // abstract
-    protected abstract String getInfoTextFromFragment(int currentFragment);
-    protected abstract Class<? extends Fragment> getFragmentClassFromModel();
-
 }

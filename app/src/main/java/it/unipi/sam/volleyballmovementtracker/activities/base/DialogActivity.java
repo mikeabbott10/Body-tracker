@@ -31,6 +31,7 @@ public abstract class DialogActivity extends GUIBaseActivity implements DialogIn
         if(savedInstanceState!=null){
             showingDialog = savedInstanceState.getInt(Constants.showing_dialog_key);
         }
+        initDialog();
     }
 
     @Override
@@ -120,14 +121,14 @@ public abstract class DialogActivity extends GUIBaseActivity implements DialogIn
                 .setMessage(getString(R.string.ask_enable_notification))
                 .setTitle(getString(R.string.alert_title))
                 .setCancelable(false)
-                .setPositiveButton("", this)
+                .setPositiveButton(getString(R.string.accept), this)
                 .create();
 
         notificationChannelEnablingDialog = new MaterialAlertDialogBuilder(this)
                 .setMessage(getString(R.string.ask_enable_channel_notification))
                 .setTitle(getString(R.string.alert_title))
                 .setCancelable(false)
-                .setPositiveButton("",this)
+                .setPositiveButton(getString(R.string.accept),this)
                 .create();
     }
 
@@ -165,7 +166,4 @@ public abstract class DialogActivity extends GUIBaseActivity implements DialogIn
         dialogInterface.cancel();
         showingDialog =- 1;
     }
-
-    // abstract
-    protected abstract void askForEnablingBt();
 }

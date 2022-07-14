@@ -44,7 +44,6 @@ public class MainActivity extends DialogActivity implements View.OnClickListener
         setContentView(binding.getRoot());
 
         initChoiceViews();
-        initDialog();
 
         // check bt support
         BluetoothAdapter bta = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
@@ -67,6 +66,7 @@ public class MainActivity extends DialogActivity implements View.OnClickListener
                 // cast its IBinder to a concrete class and directly access it.
                 mBoundService = ((BluetoothService.LocalBinder)service).getService();
                 if(mBoundService.isStarted){
+                    unbindService(this);
                     showMyDialog(Constants.WORK_IN_PROGRESS_DIALOG);
                     return;
                 }
@@ -156,11 +156,14 @@ public class MainActivity extends DialogActivity implements View.OnClickListener
                 // "Accept" is clicked on workInProgressDialog.
                 if(mBoundService!=null)
                     mBoundService.myStop();
-                unbindService(mConnection);
             }else{
-                // go to practicing activity
-                unbindService(mConnection);
-                startPracticingActivity(mBoundService.role==Constants.COACH_CHOICE);
+                // go to practicing activity if service still started
+                try {
+                    if (mBoundService.isStarted)
+                        startPracticingActivity(mBoundService.role == Constants.COACH_CHOICE);
+                }catch(Exception e){
+                    Log.w(TAG, "trying to artificially go to practicing activity with no service", e);
+                }
             }
         }
         super.onClick(dialogInterface,i);
@@ -239,7 +242,4 @@ public class MainActivity extends DialogActivity implements View.OnClickListener
             startActivity(i, options.toBundle());
         }
     }
-
-    // unused here
-    @Override protected void askForEnablingBt() {}
 }

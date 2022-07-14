@@ -10,18 +10,23 @@ public class Constants {
     public static final int BT_ENABLE_PERMISSION_CODE = 0;
     public static final int BT_START_DISCOVER_PERMISSION_CODE = 1;
     @RequiresApi(api = Build.VERSION_CODES.S)
-    public static final String[] BT_PERMISSIONS = new String[]{Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT};
+    public static final String[] BT_PERMISSIONS =
+            new String[]{Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT,
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION};
 
     // Constants that indicate the current bt state
     public static final int BT_STATE_DISABLED = 0;      // bt is off
     public static final int BT_STATE_ENABLED = 1;       // bt is on but we're doing nothing
-    public static final int BT_STATE_DISCOVERABLE = 2;  // bt in discoverable state
-    public static final int BT_STATE_LISTEN = 3;        // now listening for incoming connections
-    public static final int BT_STATE_CONNECTING = 4;    // now initiating an outgoing connection
-    public static final int BT_STATE_CONNECTED = 5;     // now connected to a remote device
-    public static final int BT_STATE_PERMISSION_REQUIRED = 6;     // permissions required
-    public static final int BT_STATE_BADLY_DENIED = 7;  // permissions have been denied manually during service life (close the service)
-    public static final int BT_STATE_UNSOLVED = 8;      // bt unknown error (close the service)
+    public static final int BT_STATE_DISCOVERABLE_AND_LISTENING = 2;  // bt in discoverable state
+    public static final int BT_STATE_DISCOVERING = 3;  // bt in discovering state
+    public static final int BT_STATE_LISTEN = 4;        // now listening for incoming connections
+    public static final int BT_STATE_CONNECTING = 5;    // now initiating an outgoing connection
+    public static final int BT_STATE_CONNECTED = 6;     // now connected to a remote device
+    public static final int BT_STATE_JUST_DISCONNECTED = 7; // just disconnected from remote device
+    public static final int BT_STATE_PERMISSION_REQUIRED = 8;     // permissions required
+    public static final int BT_STATE_BADLY_DENIED = 9;  // permissions have been denied manually during service life (close the service)
+    public static final int BT_STATE_UNSOLVED = 10;      // bt unknown error (close the service)
 
     // Constants that indicate the current service state
     public static final int CLOSING_SERVICE = 0;
@@ -73,6 +78,7 @@ public class Constants {
     public static final String scan_mode_status_key = "sssk";
     public static final String showing_dialog_key = "sdk";
     public static final String play_this_video_key = "ptvk";
+    public static String video_current_position_key = "vcpk";
     public static final String choice_key = "ck";
     public static final String should_unbind_key = "suk";
     public static String req_discoverability_launched_key = "rdlk";
@@ -86,6 +92,11 @@ public class Constants {
     public static final int PATH = 1;
     public static final String trainings_rest_key = "trainings";
     public static final String video_file_name = "video.mp4";
+
+    // ConnectedThread message
+    public static final int MESSAGE_READ = 0;
+    public static final int MESSAGE_WRITE = 1;
+    public static final int MESSAGE_TOAST = 2;
 
     // notification
     public static final String NOTIFICATION_CHANNEL_ID = "tracker_channel";

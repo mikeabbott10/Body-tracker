@@ -14,16 +14,17 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import it.unipi.sam.volleyballmovementtracker.activities.PlayerPracticingActivity;
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.CommonFragment;
 import it.unipi.sam.volleyballmovementtracker.databinding.FragmentLoadRecyclerViewBinding;
 import it.unipi.sam.volleyballmovementtracker.util.BTDevicesRecyclerViewAdapter;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import it.unipi.sam.volleyballmovementtracker.util.MyViewModel;
 
-public class PlayerPracticingFragment extends CommonFragment implements Observer<List<BluetoothDevice>> {
+public class PlayerPracticingFragment extends CommonFragment implements Observer<Set<BluetoothDevice>> {
     private static final String TAG = "FRFRPlayePractFragm";
     private FragmentLoadRecyclerViewBinding binding;
     private BTDevicesRecyclerViewAdapter adapter;
@@ -45,10 +46,10 @@ public class PlayerPracticingFragment extends CommonFragment implements Observer
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         binding.rv.setLayoutManager(llm);
         binding.rv.setHasFixedSize(true);
-        adapter = new BTDevicesRecyclerViewAdapter(new ArrayList<>(), getActivity());
+        adapter = new BTDevicesRecyclerViewAdapter(new HashSet<>(), getActivity(), ((PlayerPracticingActivity)requireActivity()));
         binding.rv.setAdapter(adapter);
-        viewModel.getBtDevicesList().observe(requireActivity(), this);
-        return super.onCreateView(inflater,container,savedInstanceState);
+        ((PlayerPracticingActivity)requireActivity()).currentFoundDevicesList.observe(requireActivity(), this);
+        return root;
     }
 
     @Override
@@ -83,8 +84,9 @@ public class PlayerPracticingFragment extends CommonFragment implements Observer
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
-    public void onChanged(List<BluetoothDevice> btDevices) {
+    public void onChanged(Set<BluetoothDevice> btDevices) {
         if(btDevices!=null) {
+            Log.d(TAG, "found btDevices changed");
             adapter.setBtDevices(btDevices);
             // idk quante entries ci sono in più o in meno rispetto a prima (nè dove sono state inserite/eliminate).
             // E' quindi necessario un refresh dell'intero data set:

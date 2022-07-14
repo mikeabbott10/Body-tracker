@@ -103,6 +103,7 @@ public abstract class DownloadActivity extends DialogActivity implements OnBroad
         }
         c.close();
     }
+    protected abstract void handle404(long dm_resource_id, Integer type, String uriString);
 
     /**
      * Handle uri.
@@ -164,8 +165,5 @@ public abstract class DownloadActivity extends DialogActivity implements OnBroad
         }
         return content.toString();
     }
-
-    // abstract
-    protected abstract void handle404(long dm_resource_id, Integer type, String uriString);
 }
 

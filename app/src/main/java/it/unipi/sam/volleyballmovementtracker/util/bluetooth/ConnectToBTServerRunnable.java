@@ -1,4 +1,4 @@
-package it.unipi.sam.volleyballmovementtracker.util;
+package it.unipi.sam.volleyballmovementtracker.util.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import java.util.UUID;
+
+import it.unipi.sam.volleyballmovementtracker.util.Constants;
 
 public class ConnectToBTServerRunnable implements Runnable {
     private static final String TAG = "CLCLConnToBTSerRunnab";

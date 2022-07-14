@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnBroadcastReceiverOnBTReceiveListener;
 import it.unipi.sam.volleyballmovementtracker.util.download.OnBroadcastReceiverOnDMReceiveListener;
 
 
@@ -36,17 +37,37 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
                 int scanMode = intent.getExtras().getInt(BluetoothAdapter.EXTRA_SCAN_MODE);
                 Log.d(TAG, scanMode + "");
                 onBTReceiveListener.onBluetoothScanModeChangedEventReceived(scanMode);
+                break;
             }
             case BluetoothDevice.ACTION_FOUND: {
                 BluetoothDevice dev = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 Log.d(TAG, dev + "");
                 onBTReceiveListener.onBluetoothActionFoundEventReceived(dev);
+                break;
+            }
+            case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:{
+                onBTReceiveListener.onBluetoothActionDiscoveryEventReceived(true);
+                break;
+            }
+            case BluetoothAdapter.ACTION_DISCOVERY_STARTED:{
+                onBTReceiveListener.onBluetoothActionDiscoveryEventReceived(false);
+                break;
+            }
+            case BluetoothDevice.ACTION_ACL_DISCONNECTED:{
+                onBTReceiveListener.onBluetoothDeviceConnectionEventReceived(false);
+                break;
+            }
+            case BluetoothDevice.ACTION_ACL_CONNECTED:{
+                onBTReceiveListener.onBluetoothDeviceConnectionEventReceived(true);
+                break;
             }
             // DM ----------------------------------------------------------------------------------
             case DownloadManager.ACTION_DOWNLOAD_COMPLETE: {
                 long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
                 // qui gestiamo il completamento del download
-                onDMReceiveListener.onDownloadCompleted(id);
+                if(onDMReceiveListener!=null)
+                    onDMReceiveListener.onDownloadCompleted(id);
+                break;
             }
         }
     }

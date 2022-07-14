@@ -90,7 +90,6 @@ public abstract class ServiceCommunicationActivity extends BaseActivity {
     }
 
     void doUnbindService() {
-        Log.d(TAG, "shouldUnbind:"+mShouldUnbind);
         if (mShouldUnbind) {
             // Release information about the service's state.
             try{

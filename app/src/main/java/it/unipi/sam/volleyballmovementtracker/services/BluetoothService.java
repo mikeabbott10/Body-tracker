@@ -9,23 +9,28 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
-import java.io.IOException;
+import java.util.Set;
 
-import it.unipi.sam.volleyballmovementtracker.util.BtAndServiceStatesWrapper;
-import it.unipi.sam.volleyballmovementtracker.util.ConnectToBTServerRunnable;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
-import it.unipi.sam.volleyballmovementtracker.util.GetBTConnectionsRunnable;
+import it.unipi.sam.volleyballmovementtracker.util.MessageWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.MyBroadcastReceiver;
-import it.unipi.sam.volleyballmovementtracker.util.OnBroadcastReceiverOnBTReceiveListener;
-import it.unipi.sam.volleyballmovementtracker.util.OnConnectToBTServerListener;
-import it.unipi.sam.volleyballmovementtracker.util.OnGetBTConnectionsListener;
+import it.unipi.sam.volleyballmovementtracker.util.bluetooth.ServiceStatesAndDataWrapper;
+import it.unipi.sam.volleyballmovementtracker.util.bluetooth.ConnectToBTServerRunnable;
+import it.unipi.sam.volleyballmovementtracker.util.bluetooth.ConnectedThread;
+import it.unipi.sam.volleyballmovementtracker.util.bluetooth.GetBTConnectionsRunnable;
+import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnBroadcastReceiverOnBTReceiveListener;
+import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnConnectToBTServerListener;
+import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnGetBTConnectionsListener;
 
 public class BluetoothService extends NotificationService implements OnGetBTConnectionsListener,
         OnConnectToBTServerListener, OnBroadcastReceiverOnBTReceiveListener {
@@ -36,6 +41,19 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
     protected ConnectToBTServerRunnable connectToBTServerRunnable;
     public int role;
 
+    public ConnectedThread connectedDeviceThread;
+    private final Handler connectedDeviceHandler = new Handler(Looper.getMainLooper()) {
+        boolean oscillator = true;
+        @Override
+        public void handleMessage(Message msg) {
+            // msg potrebbe essere uguale al precedente
+            // (dati ricevuti dal device remoto possono essere uguali tra loro).
+            oscillator = !oscillator; // questo rende il valore del LiveData diverso dal precedente
+            updateMessageData(new MessageWrapper(msg, oscillator));
+        }
+    };
+
+
     // binder
     public class LocalBinder extends Binder {
         public BluetoothService getService() {
@@ -45,9 +63,9 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
     private final IBinder mBinder = new LocalBinder();
 
     // communication service to activity
-    BtAndServiceStatesWrapper thisServiceState, thisBtState;
-    private MutableLiveData<BtAndServiceStatesWrapper> live_state;
-    public MutableLiveData<BtAndServiceStatesWrapper> getLive_state() {
+    ServiceStatesAndDataWrapper thisServiceState, thisBtState, messageData;
+    private MutableLiveData<ServiceStatesAndDataWrapper> live_state;
+    public MutableLiveData<ServiceStatesAndDataWrapper> getLive_state() {
         return live_state;
     }
 
@@ -56,12 +74,14 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
         Log.i( TAG, "onCreate");
         super.onCreate();
         live_state = new MutableLiveData<>();
-        thisServiceState = new BtAndServiceStatesWrapper(-1,-1);
-        thisBtState = new BtAndServiceStatesWrapper(-1,-1);
+        thisServiceState = new ServiceStatesAndDataWrapper(-1,-1, null);
+        thisBtState = new ServiceStatesAndDataWrapper(-1,-1, null);
+        messageData = new ServiceStatesAndDataWrapper(-1,-1, null);
     }
 
     @Override public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i( TAG, "onStartCommand");
+        Log.d( TAG, "isStarted:" + isStarted);
         if(!isStarted) {
             role = intent.getIntExtra(Constants.choice_key, -1);
             bta = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
@@ -73,8 +93,12 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
             }
             mReceiver = new MyBroadcastReceiver(this, null);
             IntentFilter intentFilters = new IntentFilter();
-            intentFilters.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-            intentFilters.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+            intentFilters.addAction(BluetoothAdapter.ACTION_STATE_CHANGED); // bt on/off
+            intentFilters.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED); // (coach) status changed: discoverable/connectable/none
+            intentFilters.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED); // (player) discovery has finished
+            intentFilters.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED); // (player) discovery has started
+            intentFilters.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED); // remote device disconnected
+            intentFilters.addAction(BluetoothDevice.ACTION_ACL_CONNECTED); // remote device connected
             registerReceiver(mReceiver, intentFilters);
             return super.onStartCommand(intent, flags, startId);
         }else {
@@ -105,16 +129,25 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
     }
 
     // OnBroadcastReceiverOnBTReceiveListener ------------------------------------------------------
+    /**
+     * Triggered on bt state changed
+     * @param state
+     */
     @Override
     public void onBluetoothStateChangedEventReceived(int state) {
         switch(state){
             case BluetoothAdapter.STATE_OFF:{
+                Log.d(TAG, "BT OFF");
                 myStop();
                 break;
             }
         }
     }
 
+    /**
+     * Triggered on bt scan mode changed
+     * @param scanMode
+     */
     @Override
     public void onBluetoothScanModeChangedEventReceived(int scanMode) {
         switch(scanMode){
@@ -124,7 +157,7 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
             }
             case BluetoothAdapter.SCAN_MODE_CONNECTABLE: {
                 // device non discoverable ma può ricevere connessioni
-                if(thisBtState.getBtState() == Constants.BT_STATE_DISCOVERABLE){
+                if(thisBtState.getBtState() == Constants.BT_STATE_DISCOVERABLE_AND_LISTENING){
                     assert role == Constants.COACH_CHOICE;
                     // still waiting for client
                     updateBTState(Constants.BT_STATE_ENABLED);
@@ -133,7 +166,7 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
             }
             case BluetoothAdapter.SCAN_MODE_NONE:{
                 // device non discoverbale e non può ricevere connessioni
-                if(thisBtState.getBtState() == Constants.BT_STATE_DISCOVERABLE){
+                if(thisBtState.getBtState() == Constants.BT_STATE_DISCOVERABLE_AND_LISTENING){
                     assert role == Constants.COACH_CHOICE;
                     // still waiting for client
                     updateBTState(Constants.BT_STATE_ENABLED);
@@ -142,38 +175,87 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
         }
     }
 
+    /**
+     * (just for player)
+     * Triggered on bt discovery status changed
+     * @param isDiscoveryFinished
+     */
+    @Override
+    public void onBluetoothActionDiscoveryEventReceived(boolean isDiscoveryFinished) {
+        Log.d(TAG, "i'm discovering:"+!isDiscoveryFinished);
+        if(role == Constants.PLAYER_CHOICE) {
+            if(thisBtState.getBtState() == Constants.BT_STATE_DISCOVERING) {
+                if (isDiscoveryFinished){
+                    // need to start discovering again
+                    updateBTState(Constants.BT_STATE_ENABLED);
+                }
+            }else{
+                if(!isDiscoveryFinished) {
+                    // just started discovering
+                    updateBTState(Constants.BT_STATE_DISCOVERING);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onBluetoothDeviceConnectionEventReceived(boolean isDeviceConnected) {
+        if(!isDeviceConnected) {
+            updateBTState(Constants.BT_STATE_JUST_DISCONNECTED);
+            return;
+        }
+        //updateBTState(Constants.BT_STATE_CONNECTED);
+    }
+
     // unused here
     @Override public void onBluetoothActionFoundEventReceived(BluetoothDevice btDevice) {}
 
-    // OnConnectToBTServerListener ------------------------------------------------------------------
-    // (player callbacks)
-    @Override
-    public void onConnectionEstablished(BluetoothSocket bs) {
-        Log.d(TAG, "coach bs: "+bs);
-        updateBTState(Constants.BT_STATE_CONNECTED);
+    // utils ---------------------------------------------------------------------------------------
+    protected void updateBTState(int btState) {
+        thisBtState.setBtState(btState);
+        live_state.setValue(thisBtState);
     }
 
-    @Override
-    public void onPermissionError(String obj) {
-        // permissions removed during service life
-        updateBTState(Constants.BT_STATE_BADLY_DENIED);
-        stopSelf();
+    private void updateServiceState(int serviceState) {
+        thisServiceState.setServiceState(serviceState);
+        live_state.setValue(thisServiceState);
     }
 
-    // OnGetBTConnectionsListener ------------------------------------------------------------------
+    private void updateMessageData(MessageWrapper msgWrapper){
+        messageData.setMsg(msgWrapper);
+        live_state.setValue(messageData);
+    }
+
+    /**
+     * Called from bound activity after bt got enabled
+     */
+    public void onMeEnabled() {
+        updateBTState(Constants.BT_STATE_ENABLED);
+    }
+
+    // coach ---------------------------------------------------------------------------------------
+    /**
+     * Called from bound coach activity after bt got discoverable
+     */
+    public void onMeDiscoverable() {
+        updateBTState(Constants.BT_STATE_DISCOVERABLE_AND_LISTENING);
+        // get this listening for incoming connections
+        getBTConnectionsRunnable =
+                new GetBTConnectionsRunnable(this, bta, this);
+        new Thread(getBTConnectionsRunnable).start();
+    }
+    // OnGetBTConnectionsListener -----
     // (coach callbacks)
     @Override
     public void onNewConnectionEstablished(BluetoothSocket bs) {
         // A connection was accepted. Perform work associated with
         // the connection in a separate thread.
         Log.d(TAG, "new bs: "+bs);
-        updateBTState(Constants.BT_STATE_CONNECTED);
-        // todo: che si fa?? si va a letto?
-        try {
-            bs.close();
-        } catch (IOException e) {
-            Log.e(TAG, "", e);
+        if(bs!=null){
+            connectedDeviceThread = new ConnectedThread(bs, connectedDeviceHandler);
+            connectedDeviceThread.start();
         }
+        updateBTState(Constants.BT_STATE_CONNECTED);
     }
 
     @Override
@@ -183,21 +265,43 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
         stopSelf();
     }
 
-    // utils ---------------------------------------------------------------------------------------
+    @Override
+    public void onPermissionError(String obj) {
+        // permissions removed during service life
+        updateBTState(Constants.BT_STATE_BADLY_DENIED);
+        stopSelf();
+    }
+
+    // player --------------------------------------------------------------------------------------
+    private Set<BluetoothDevice> currentFoundDevicesList;
+
+    public void saveFoundDevicesList(Set<BluetoothDevice> list){
+        currentFoundDevicesList = list;
+    }
+    public Set<BluetoothDevice> retriveFoundDeviceList(){
+        return currentFoundDevicesList;
+    }
+
     /**
-     * Called from bound activity after bt got enabled
+     * Called from bound player activity after user manually selected the device of the coach
+     * @param btDevice the device we are gonna connect to
      */
-    public void onMeEnabled() {
-        updateBTState(Constants.BT_STATE_ENABLED);
+    public void onBTServerSelected(BluetoothDevice btDevice){
+        // get this listening for incoming connections
+        connectToBTServerRunnable =
+                new ConnectToBTServerRunnable(this, btDevice, bta, this);
+        new Thread(connectToBTServerRunnable).start();
     }
 
-    protected void updateBTState(int btState) {
-        thisBtState.setBtState(btState);
-        live_state.setValue(thisBtState);
-    }
-
-    private void updateServiceState(int serviceState) {
-        thisServiceState.setServiceState(serviceState);
-        live_state.setValue(thisServiceState);
+    // OnConnectToBTServerListener -----
+    // (player callbacks)
+    @Override
+    public void onConnectionEstablished(BluetoothSocket bs) {
+        Log.d(TAG, "coach bs: "+bs);
+        if(bs!=null){
+            connectedDeviceThread = new ConnectedThread(bs, connectedDeviceHandler);
+            connectedDeviceThread.start();
+        }
+        updateBTState(Constants.BT_STATE_CONNECTED);
     }
 }

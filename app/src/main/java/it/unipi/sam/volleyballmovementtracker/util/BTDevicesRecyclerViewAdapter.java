@@ -13,12 +13,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import it.unipi.sam.volleyballmovementtracker.R;
+import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnFoundDeviceSelectedListener;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.ParamRelativeLayout;
 
 public class BTDevicesRecyclerViewAdapter extends RecyclerView.Adapter<BTDevicesRecyclerViewAdapter.ViewHolder>
         implements View.OnClickListener{
+    //private static final String TAG = "CLCLBtDevicRecycVieAdap";
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView name;
         TextView desc;
@@ -31,15 +35,17 @@ public class BTDevicesRecyclerViewAdapter extends RecyclerView.Adapter<BTDevices
     }
 
     private final Context context;
+    private final OnFoundDeviceSelectedListener onFoundDeviceSelectedListener;
     private List<BluetoothDevice> btDevices;
 
-    public BTDevicesRecyclerViewAdapter(ArrayList<BluetoothDevice> btDevices, Context ctx) {
-        this.btDevices = btDevices;
+    public BTDevicesRecyclerViewAdapter(Set<BluetoothDevice> btDevices, Context ctx, OnFoundDeviceSelectedListener onFoundDeviceSelectedListener) {
+        this.btDevices = new ArrayList<>(btDevices);
         this.context = ctx;
+        this.onFoundDeviceSelectedListener = onFoundDeviceSelectedListener;
     }
 
-    public void setBtDevices(List<BluetoothDevice> btDevices) {
-        this.btDevices = btDevices;
+    public void setBtDevices(Set<BluetoothDevice> btDevices) {
+        this.btDevices = new ArrayList<>(btDevices);
     }
 
     @Override
@@ -54,7 +60,7 @@ public class BTDevicesRecyclerViewAdapter extends RecyclerView.Adapter<BTDevices
             Toast.makeText(context, "Retry later.", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        onFoundDeviceSelectedListener.onDeviceSelected(btd);
     }
 
     @NonNull @Override
@@ -70,7 +76,7 @@ public class BTDevicesRecyclerViewAdapter extends RecyclerView.Adapter<BTDevices
             viewHolder.name.setText(btd.getName());
         }catch(SecurityException ignored){}
         viewHolder.desc.setText(btd.getAddress());
-        ((ParamRelativeLayout) viewHolder.itemView ).setObject(btd);
+        ((ParamRelativeLayout) viewHolder.itemView).setObject(btd);
         viewHolder.itemView.setOnClickListener(this);
     }
 

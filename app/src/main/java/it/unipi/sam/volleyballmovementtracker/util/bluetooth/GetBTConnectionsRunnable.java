@@ -1,4 +1,4 @@
-package it.unipi.sam.volleyballmovementtracker.util;
+package it.unipi.sam.volleyballmovementtracker.util.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import java.util.UUID;
+
+import it.unipi.sam.volleyballmovementtracker.util.Constants;
 
 public class GetBTConnectionsRunnable implements Runnable {
     private static final String TAG = "CLCLGetBTConnRunnab";
@@ -68,7 +70,7 @@ public class GetBTConnectionsRunnable implements Runnable {
             try {
                 socket = mBTSSocket.accept();
             } catch (IOException e) {
-                Log.e(TAG, "Socket's accept() method failed", e);
+                Log.w(TAG, "Socket's accept() method failed", e);
                 break;
             }
 

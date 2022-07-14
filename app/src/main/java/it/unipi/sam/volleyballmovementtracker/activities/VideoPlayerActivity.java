@@ -29,13 +29,22 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
     private ActivityVideoPlayerBinding binding;
     private SurfaceHolder surfaceHolder;
     private MediaPlayer mediaPlayer;
+
     private String videoUrl;
+    private int lastVideoPosition;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        videoUrl = getIntent().getStringExtra(Constants.play_this_video_key);
+        if(savedInstanceState!=null) {
+            videoUrl = savedInstanceState.getString(Constants.play_this_video_key);
+            lastVideoPosition = savedInstanceState.getInt(Constants.video_current_position_key, 0);
+        }else {
+            videoUrl = getIntent().getStringExtra(Constants.play_this_video_key);
+            lastVideoPosition = 0;
+        }
+
         Log.d(TAG, videoUrl);
         if(videoUrl==null){
             finish();
@@ -63,6 +72,13 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
     }
 
     @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(Constants.play_this_video_key, videoUrl);
+        outState.putInt(Constants.video_current_position_key, lastVideoPosition);
+    }
+
+    @Override
     protected void onResume() {
         binding.player.container.setVisibility(View.VISIBLE);
         super.onResume();
@@ -77,6 +93,8 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
     @Override
     public void onPause() {
         super.onPause();
+        if(mediaPlayer!=null)
+            lastVideoPosition = mediaPlayer.getCurrentPosition();
         releaseMediaPlayer();
     }
 
@@ -122,6 +140,11 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
     public void onPrepared(MediaPlayer mediaPlayer) {
         setPlayerSize();
         binding.player.loadingIv.setVisibility(View.GONE);
+        Log.d(TAG, "lastVideoPosition:"+lastVideoPosition);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            mediaPlayer.seekTo(lastVideoPosition, MediaPlayer.SEEK_CLOSEST);
+        else
+            mediaPlayer.seekTo(lastVideoPosition);
         mediaPlayer.start();
     }
 

@@ -26,6 +26,7 @@ public class BaseService extends Service {
 
     @Override
     public void onDestroy() {
+        isStarted = false;
         super.onDestroy();
     }
 

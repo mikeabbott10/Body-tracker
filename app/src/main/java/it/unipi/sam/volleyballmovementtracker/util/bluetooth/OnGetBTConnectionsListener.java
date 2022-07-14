@@ -1,4 +1,4 @@
-package it.unipi.sam.volleyballmovementtracker.util;
+package it.unipi.sam.volleyballmovementtracker.util.bluetooth;
 
 import android.bluetooth.BluetoothSocket;
 
