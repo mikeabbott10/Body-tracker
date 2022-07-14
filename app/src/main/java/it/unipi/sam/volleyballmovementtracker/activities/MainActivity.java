@@ -22,7 +22,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.activities.base.DialogActivity;
 import it.unipi.sam.volleyballmovementtracker.databinding.ActivityMainBinding;
-import it.unipi.sam.volleyballmovementtracker.services.BluetoothService;
+import it.unipi.sam.volleyballmovementtracker.services.SensorService;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.MyTranslateAnimation;
@@ -34,7 +34,7 @@ public class MainActivity extends DialogActivity implements View.OnClickListener
 
     // check service state
     protected ServiceConnection mConnection;
-    protected BluetoothService mBoundService;
+    protected SensorService mBoundService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +64,7 @@ public class MainActivity extends DialogActivity implements View.OnClickListener
                 // interact with the service.  Because we have bound to a explicit
                 // service that we know is running in our own process, we can
                 // cast its IBinder to a concrete class and directly access it.
-                mBoundService = ((BluetoothService.LocalBinder)service).getService();
+                mBoundService = ((SensorService.LocalBinder)service).getService();
                 if(mBoundService.isStarted){
                     unbindService(this);
                     showMyDialog(Constants.WORK_IN_PROGRESS_DIALOG);
@@ -120,7 +120,7 @@ public class MainActivity extends DialogActivity implements View.OnClickListener
             GraphicUtil.slideUpToOrigin(binding.choice2.choiceTvLayout, -1,null, 1, true);
         }
 
-        if (bindService(new Intent(this, BluetoothService.class),
+        if (bindService(new Intent(this, SensorService.class),
                 mConnection, Context.BIND_AUTO_CREATE)) {
         } else {
             Log.e(TAG, "Error: The requested service doesn't " +

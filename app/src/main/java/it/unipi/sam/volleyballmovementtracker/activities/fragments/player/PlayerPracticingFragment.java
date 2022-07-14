@@ -24,7 +24,7 @@ import it.unipi.sam.volleyballmovementtracker.util.BTDevicesRecyclerViewAdapter;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import it.unipi.sam.volleyballmovementtracker.util.MyViewModel;
 
-public class PlayerPracticingFragment extends CommonFragment implements Observer<Set<BluetoothDevice>> {
+public class PlayerPracticingFragment extends CommonFragment implements Observer<Set<BluetoothDevice>>, View.OnClickListener {
     private static final String TAG = "FRFRPlayePractFragm";
     private FragmentLoadRecyclerViewBinding binding;
     private BTDevicesRecyclerViewAdapter adapter;
@@ -37,6 +37,8 @@ public class PlayerPracticingFragment extends CommonFragment implements Observer
         Log.i(TAG, "onCreateView");
         binding = FragmentLoadRecyclerViewBinding.inflate(getLayoutInflater());
         View root = binding.getRoot();
+
+        hideConnectingContainer();
         binding.loadingPanel.setVisibility(View.VISIBLE);
 
         // nota requireActivity() : same scope as in the activity is required or different ViewModel!
@@ -46,9 +48,25 @@ public class PlayerPracticingFragment extends CommonFragment implements Observer
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         binding.rv.setLayoutManager(llm);
         binding.rv.setHasFixedSize(true);
-        adapter = new BTDevicesRecyclerViewAdapter(new HashSet<>(), getActivity(), ((PlayerPracticingActivity)requireActivity()));
+        adapter = new BTDevicesRecyclerViewAdapter(new HashSet<>(), getActivity(), ((PlayerPracticingActivity)requireActivity()), this);
         binding.rv.setAdapter(adapter);
         ((PlayerPracticingActivity)requireActivity()).currentFoundDevicesList.observe(requireActivity(), this);
+
+        ((PlayerPracticingActivity)requireActivity()).mBoundService.getLive_bt_state().observe(requireActivity(), btState -> {
+            switch(btState) {
+                case Constants.BT_STATE_CONNECTED: {
+                    showConnected();
+                    break;
+                }
+                case Constants.BT_STATE_CONNECTION_FAILED:{
+                    hideConnectingContainer();
+                    break;
+                }
+            }
+        });
+
+        binding.closeBtn.setOnClickListener(this);
+
         return root;
     }
 
@@ -88,10 +106,35 @@ public class PlayerPracticingFragment extends CommonFragment implements Observer
         if(btDevices!=null) {
             Log.d(TAG, "found btDevices changed");
             adapter.setBtDevices(btDevices);
-            // idk quante entries ci sono in più o in meno rispetto a prima (nè dove sono state inserite/eliminate).
+            // idk quante entries ci sono in più o in meno rispetto a
+            // prima (nè dove sono state inserite/eliminate).
             // E' quindi necessario un refresh dell'intero data set:
             adapter.notifyDataSetChanged();
             binding.loadingPanel.setVisibility(View.GONE);
         }
     }
+
+    @Override
+    public void onClick(View view) {
+        ((PlayerPracticingActivity)requireActivity()).myStopService();
+    }
+
+    // utils ---------------------------------------------------------------------------------------
+    private void hideConnectingContainer(){
+        binding.connectionTvContainer.setVisibility(View.GONE);
+        binding.connectingTv.setVisibility(View.VISIBLE);
+        binding.connectedTv.setVisibility(View.INVISIBLE);
+    }
+    public void showConnecting(){
+        binding.connectionTvContainer.setVisibility(View.VISIBLE);
+        binding.connectingTv.setVisibility(View.VISIBLE);
+        binding.connectedTv.setVisibility(View.INVISIBLE);
+    }
+    private void showConnected(){
+        binding.connectionTvContainer.setVisibility(View.VISIBLE);
+        binding.connectingTv.setVisibility(View.INVISIBLE);
+        binding.connectedTv.setVisibility(View.VISIBLE);
+    }
+
+
 }

@@ -15,6 +15,7 @@ import it.unipi.sam.volleyballmovementtracker.util.Constants;
 public abstract class DialogActivity extends GUIBaseActivity implements DialogInterface.OnClickListener{
     protected int showingDialog;
     protected AlertDialog workInProgressDialog;
+    protected AlertDialog closedConnectionDialog;
     protected AlertDialog discoverabilityDeniedDialog;
     protected AlertDialog btEnablingDialog;
     protected AlertDialog btPermissionDeniedDialog;
@@ -52,6 +53,9 @@ public abstract class DialogActivity extends GUIBaseActivity implements DialogIn
             case Constants.WORK_IN_PROGRESS_DIALOG:
                 try{ workInProgressDialog.cancel(); }catch (RuntimeException ignored){}
                 break;
+            case Constants.CONNECTION_CLOSED_DIALOG:
+                try{ closedConnectionDialog.cancel(); }catch (RuntimeException ignored){}
+                break;
             case Constants.BT_ENABLE_PERMISSIONS_DIALOG:
                 try{ btPermissionDeniedDialog.cancel(); }catch (RuntimeException ignored){}
                 break;
@@ -87,6 +91,13 @@ public abstract class DialogActivity extends GUIBaseActivity implements DialogIn
                 .setCancelable(false)
                 .setPositiveButton(getString(R.string.accept), this)
                 .setNegativeButton(getString(R.string.decline), this)
+                .create();
+
+        closedConnectionDialog = new MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.alert_title))
+                .setMessage(getString(R.string.connection_closed_warning))
+                .setCancelable(false)
+                .setPositiveButton("OK", this)
                 .create();
 
         discoverabilityDeniedDialog = new MaterialAlertDialogBuilder(this)
@@ -143,6 +154,9 @@ public abstract class DialogActivity extends GUIBaseActivity implements DialogIn
                 break;
             case Constants.WORK_IN_PROGRESS_DIALOG:
                 workInProgressDialog.show();
+                break;
+            case Constants.CONNECTION_CLOSED_DIALOG:
+                closedConnectionDialog.show();
                 break;
             case Constants.BT_ENABLE_PERMISSIONS_DIALOG:
                 btPermissionDeniedDialog.show();

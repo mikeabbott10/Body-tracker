@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -36,15 +35,13 @@ import java.util.Map;
 
 import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.databinding.ActivityPracticingBinding;
-import it.unipi.sam.volleyballmovementtracker.util.MessageWrapper;
-import it.unipi.sam.volleyballmovementtracker.util.bluetooth.ServiceStatesAndDataWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import it.unipi.sam.volleyballmovementtracker.util.MyBroadcastReceiver;
 import it.unipi.sam.volleyballmovementtracker.util.MyViewModel;
-import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnBroadcastReceiverOnBTReceiveListener;
 import it.unipi.sam.volleyballmovementtracker.util.PreferenceUtils;
 import it.unipi.sam.volleyballmovementtracker.util.ResourcePreferenceWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.Training;
+import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnBroadcastReceiverOnBTReceiveListener;
 import it.unipi.sam.volleyballmovementtracker.util.download.DMRequestWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.download.JacksonUtil;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
@@ -134,68 +131,51 @@ public abstract class CommonPracticingActivity extends ServiceBTActivity impleme
         }
     }
 
-    @Override
-    public void onChanged(ServiceStatesAndDataWrapper serviceStatesAndDataWrapper) {
-        //Log.d(TAG, "btstate:"+btServiceStatesWrapper.getBtState() +
-        //        ", servicestate:" +btServiceStatesWrapper.getServiceState());
-        if(serviceStatesAndDataWrapper.getServiceState()==-1 && serviceStatesAndDataWrapper.getMsg()==null){
-            // bt state changed
-            int bt_state = serviceStatesAndDataWrapper.getBtState();
-            switch(bt_state){
-                case Constants.BT_STATE_DISABLED:
-                case Constants.BT_STATE_UNSOLVED: {
-                    updateBtIcon(binding.bluetoothState, R.drawable.disabled_bt,
-                            binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
-                    break;
-                }
-                case Constants.BT_STATE_ENABLED:
-                case Constants.BT_STATE_JUST_DISCONNECTED:{
-                    updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
-                            binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
-                    break;
-                }
-                case Constants.BT_STATE_DISCOVERABLE_AND_LISTENING:
-                case Constants.BT_STATE_DISCOVERING:{
-                    updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
-                            binding.bluetoothStateOverlay, R.drawable.waiting, true);
-                    break;
-                }
-                case Constants.BT_STATE_CONNECTED:{
-                    updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
-                            binding.bluetoothStateOverlay, R.drawable.ic_disabled_ok, false);
-                    break;
-                }
-                case Constants.BT_STATE_BADLY_DENIED:
-                case Constants.BT_STATE_PERMISSION_REQUIRED:{
-                    updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
-                            binding.bluetoothStateOverlay, R.drawable.ic_wrong, false);
-                    break;
-                }
+    protected void handleServiceStateChange(int serviceState){
+        switch (serviceState){
+            case Constants.STARTING_SERVICE:{
+                break;
             }
-            handleServiceBTStateChange(serviceStatesAndDataWrapper.getBtState());
-            return;
-        }else if(serviceStatesAndDataWrapper.getBtState()==-1 && serviceStatesAndDataWrapper.getMsg()==null){
-            // service state changed
-            int serviceState = serviceStatesAndDataWrapper.getServiceState();
-            switch (serviceState){
-                case Constants.STARTING_SERVICE:{
-                    break;
-                }
-                case Constants.CLOSING_SERVICE:{
-                    break;
-                }
+            case Constants.CLOSING_SERVICE:{
+                break;
             }
-            handleServiceStateChange(serviceStatesAndDataWrapper.getServiceState());
         }
-        assert serviceStatesAndDataWrapper.getServiceState()==-1 && serviceStatesAndDataWrapper.getBtState()==-1;
-        // new message incoming
-        MessageWrapper mw = serviceStatesAndDataWrapper.getMsg();
-        if(mw.msg!=null)
-            handleReceivedDataFromMessage(mw.msg);
     }
-    protected abstract void handleReceivedDataFromMessage(Message msg);
-    protected abstract void handleServiceStateChange(int serviceState);
-    protected abstract void handleServiceBTStateChange(int btState);
+
+    protected void handleServiceBTStateChange(int bt_state){
+        switch(bt_state){
+            case Constants.BT_STATE_DISABLED:
+            case Constants.BT_STATE_UNSOLVED: {
+                updateBtIcon(binding.bluetoothState, R.drawable.disabled_bt,
+                        binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
+                break;
+            }
+            case Constants.BT_STATE_ENABLED:
+            case Constants.BT_STATE_CONNECTION_FAILED:
+            case Constants.BT_STATE_JUST_DISCONNECTED:{
+                updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
+                        binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
+                break;
+            }
+            case Constants.BT_STATE_DISCOVERABLE_AND_LISTENING:
+            case Constants.BT_STATE_DISCOVERING:{
+                updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
+                        binding.bluetoothStateOverlay, R.drawable.waiting, true);
+                break;
+            }
+            case Constants.BT_STATE_CONNECTED:{
+                updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
+                        binding.bluetoothStateOverlay, R.drawable.ic_disabled_ok, false);
+                break;
+            }
+            case Constants.BT_STATE_BADLY_DENIED:
+            case Constants.BT_STATE_PERMISSION_REQUIRED:{
+                updateBtIcon(binding.bluetoothState, R.drawable.ic_bluetooth1,
+                        binding.bluetoothStateOverlay, R.drawable.ic_wrong, false);
+                break;
+            }
+        }
+    }
 
     @Override
     protected void handleResponseUri(long dm_resource_id, Integer type, String uriString,

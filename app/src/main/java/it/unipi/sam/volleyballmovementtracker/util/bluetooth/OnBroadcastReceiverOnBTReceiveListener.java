@@ -7,5 +7,4 @@ public interface OnBroadcastReceiverOnBTReceiveListener {
     void onBluetoothScanModeChangedEventReceived(int scanMode);
     void onBluetoothActionFoundEventReceived(BluetoothDevice btDevice);
     void onBluetoothActionDiscoveryEventReceived(boolean isDiscoveryFinished);
-    void onBluetoothDeviceConnectionEventReceived(boolean isDeviceConnected);
 }

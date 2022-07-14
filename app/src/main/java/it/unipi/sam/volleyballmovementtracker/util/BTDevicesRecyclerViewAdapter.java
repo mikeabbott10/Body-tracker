@@ -16,7 +16,9 @@ import java.util.List;
 import java.util.Set;
 
 import it.unipi.sam.volleyballmovementtracker.R;
+import it.unipi.sam.volleyballmovementtracker.activities.fragments.player.PlayerPracticingFragment;
 import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnFoundDeviceSelectedListener;
+import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.ParamRelativeLayout;
 
 public class BTDevicesRecyclerViewAdapter extends RecyclerView.Adapter<BTDevicesRecyclerViewAdapter.ViewHolder>
@@ -36,12 +38,14 @@ public class BTDevicesRecyclerViewAdapter extends RecyclerView.Adapter<BTDevices
 
     private final Context context;
     private final OnFoundDeviceSelectedListener onFoundDeviceSelectedListener;
+    private PlayerPracticingFragment playerPracticingFragment;
     private List<BluetoothDevice> btDevices;
 
-    public BTDevicesRecyclerViewAdapter(Set<BluetoothDevice> btDevices, Context ctx, OnFoundDeviceSelectedListener onFoundDeviceSelectedListener) {
+    public BTDevicesRecyclerViewAdapter(Set<BluetoothDevice> btDevices, Context ctx, OnFoundDeviceSelectedListener onFoundDeviceSelectedListener, PlayerPracticingFragment playerPracticingFragment) {
         this.btDevices = new ArrayList<>(btDevices);
         this.context = ctx;
         this.onFoundDeviceSelectedListener = onFoundDeviceSelectedListener;
+        this.playerPracticingFragment = playerPracticingFragment;
     }
 
     public void setBtDevices(Set<BluetoothDevice> btDevices) {
@@ -60,6 +64,8 @@ public class BTDevicesRecyclerViewAdapter extends RecyclerView.Adapter<BTDevices
             Toast.makeText(context, "Retry later.", Toast.LENGTH_SHORT).show();
             return;
         }
+        GraphicUtil.scaleImage(context, view, -1, null);
+        playerPracticingFragment.showConnecting();
         onFoundDeviceSelectedListener.onDeviceSelected(btd);
     }
 

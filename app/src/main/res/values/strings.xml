@@ -41,4 +41,7 @@
     <string name="ask_enable_channel_notification">Questa applicazione ha bisogno di un canale di notifica funzionante. Prego, abilitare il canale notifiche.</string>
     <string name="alert_title">Avviso!</string>
     <string name="practicing_player_info">Prepararsi all\'esercizio. Attendere il segnale dal coach</string>
+    <string name="connected">Connesso!</string>
+    <string name="connecting">In connessione…</string>
+    <string name="connection_closed_warning">La connessione è stata interrotta</string>
 </resources>

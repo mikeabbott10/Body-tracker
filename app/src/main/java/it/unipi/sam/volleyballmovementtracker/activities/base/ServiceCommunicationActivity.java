@@ -18,7 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationManagerCompat;
 
-import it.unipi.sam.volleyballmovementtracker.services.BluetoothService;
+import it.unipi.sam.volleyballmovementtracker.services.SensorService;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 
 public abstract class ServiceCommunicationActivity extends BaseActivity {
@@ -66,7 +66,7 @@ public abstract class ServiceCommunicationActivity extends BaseActivity {
 
     // service communication -----------------------------------------------------------------------
     protected void doStartService(int role){
-        Intent inte = new Intent(getApplicationContext(), BluetoothService.class);
+        Intent inte = new Intent(getApplicationContext(), SensorService.class);
         inte.putExtra(Constants.choice_key, role);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(inte);

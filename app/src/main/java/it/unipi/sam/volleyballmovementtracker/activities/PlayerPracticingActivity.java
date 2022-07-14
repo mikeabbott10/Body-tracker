@@ -23,8 +23,9 @@ import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.activities.base.CommonPracticingActivity;
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.SelectTrainingFragment;
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.player.PlayerPracticingFragment;
-import it.unipi.sam.volleyballmovementtracker.services.BluetoothService;
+import it.unipi.sam.volleyballmovementtracker.services.SensorService;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
+import it.unipi.sam.volleyballmovementtracker.util.SensorData;
 import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnFoundDeviceSelectedListener;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
 
@@ -91,9 +92,11 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
      * @param bt_state
      */
     protected void handleServiceBTStateChange(int bt_state) {
+        super.handleServiceBTStateChange(bt_state);
         switch(bt_state){
             case Constants.BT_STATE_DISABLED:{
                 // ask for enabling bluetooth
+                Log.d(TAG, "BT_STATE_DISABLED");
                 if(showingDialog!=Constants.BT_ENABLING_DIALOG && !isRequestBluetoothLaunched)
                     askForEnablingBtAfterPermissionCheck();
                 break;
@@ -112,10 +115,13 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
                 Log.d(TAG, "remote device disconnected!");
                 break;
             }
+            case Constants.BT_STATE_CONNECTION_FAILED:{
+                Log.d(TAG, "remote connection failed!");
+                break;
+            }
             case Constants.BT_STATE_CONNECTED:{
                 Log.d(TAG, "remote device connected!");
-                mBoundService.connectedDeviceThread.write("messaggio inviatooooo".getBytes());
-                mBoundService.connectedDeviceThread.cancel();
+                mBoundService.connectedDeviceThread.write(new SensorData(123456));
                 break;
             }
             case Constants.BT_STATE_PERMISSION_REQUIRED:{
@@ -135,13 +141,20 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
      * @param serviceState
      */
     protected void handleServiceStateChange(int serviceState) {
+        super.handleServiceStateChange(serviceState);
         switch (serviceState){
-            case Constants.STARTING_SERVICE:{
+            case Constants.STARTING_SERVICE:
+            case Constants.ALREADY_STARTED_SERVICE:{
+                assert mBoundService!=null;
+                if(currentFragment!=Constants.PLAYER_PRACTICING_FRAGMENT) {
+                    // start PlayerPracticingFragment
+                    transactionToFragment(this, PlayerPracticingFragment.class, true);
+                }
                 break;
             }
             case Constants.CLOSING_SERVICE:{
                 myStopService();
-                getSupportFragmentManager().popBackStack();
+                //getSupportFragmentManager().popBackStack();
                 //transactionToFragment(this,
                 //        SelectTrainingFragment.class, false);
                 updateBtIconWithCurrentState(bta.isEnabled());
@@ -158,8 +171,6 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
         switch(msg.what){
             case Constants.MESSAGE_READ:{
                 // show received message
-                String s = new String((byte[]) msg.obj);
-                Log.d(TAG, s);
                 break;
             }
             case Constants.MESSAGE_WRITE:{
@@ -179,11 +190,9 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
         super.onClick(view);
         if(view.getId()==binding.bluetoothState.getId()){
             if(currentFragment==Constants.PLAYER_STARTING_FRAGMENT){
-                // start PlayerPracticingFragment
-                transactionToFragment(this, PlayerPracticingFragment.class, true);
                 // start servizio
                 doStartService(Constants.PLAYER_CHOICE); // idempotent
-                doBindService(BluetoothService.class); // idempotent
+                doBindService(SensorService.class); // idempotent
             }else{
                 // todo v1.1: mostra stato bt
                 GraphicUtil.scaleImage(this, view, -1, null);
@@ -227,7 +236,7 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
     }
 
     @Override
-    protected void myStopService() {
+    public void myStopService() {
         super.myStopService();
         transactionToFragment(this, SelectTrainingFragment.class, false);
     }
@@ -255,7 +264,6 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
 
     // unused here
     @Override public void onBluetoothActionDiscoveryEventReceived(boolean isDiscoveryFinished) {}
-    @Override public void onBluetoothDeviceConnectionEventReceived(boolean isDeviceConnected) {}
 
     // utils--------------------------------------------------------
     protected Class<? extends Fragment> getFragmentClassFromModel() {

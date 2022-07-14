@@ -4,17 +4,16 @@ import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
 
-import it.unipi.sam.volleyballmovementtracker.services.BluetoothService;
-import it.unipi.sam.volleyballmovementtracker.util.bluetooth.ServiceStatesAndDataWrapper;
+import it.unipi.sam.volleyballmovementtracker.services.SensorService;
 
-public abstract class ServiceBTActivity extends ServiceCommunicationActivity implements Observer<ServiceStatesAndDataWrapper>{
+public abstract class ServiceBTActivity extends ServiceCommunicationActivity{
     private static final String TAG = "AAAServicBTActivit";
-    protected BluetoothService mBoundService;
+    public SensorService mBoundService;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,10 +26,18 @@ public abstract class ServiceBTActivity extends ServiceCommunicationActivity imp
                 // service that we know is running in our own process, we can
                 // cast its IBinder to a concrete class and directly access it.
                 Log.d(TAG, "onServiceConnected");
-                mBoundService = ((BluetoothService.LocalBinder)service).getService();
+                mBoundService = ((SensorService.LocalBinder)service).getService();
                 if(mBoundService.isStarted){
                     Log.d(TAG, "isStarted!");
-                    mBoundService.getLive_state().observe(ServiceBTActivity.this, ServiceBTActivity.this);
+                    mBoundService.getLive_service_state().observe(ServiceBTActivity.this,
+                            serviceState -> handleServiceStateChange(serviceState));
+                    mBoundService.getLive_bt_state().observe(ServiceBTActivity.this,
+                            btState -> handleServiceBTStateChange(btState));
+                    mBoundService.getLive_message_data().observe(ServiceBTActivity.this,
+                            messageWrapper -> {
+                                if(messageWrapper!=null)
+                                    handleReceivedDataFromMessage(messageWrapper.msg);
+                            });
                     onServiceAlreadyStarted(); // check role consistency
                     return;
                 }
@@ -47,12 +54,15 @@ public abstract class ServiceBTActivity extends ServiceCommunicationActivity imp
             }
         };
     }
+    protected abstract void handleReceivedDataFromMessage(Message msg);
+    protected abstract void handleServiceStateChange(int serviceState);
+    protected abstract void handleServiceBTStateChange(int btState);
     protected abstract void onServiceAlreadyStarted();
 
     @Override
     protected void onResume() {
         super.onResume();
-        doBindService(BluetoothService.class);
+        doBindService(SensorService.class);
     }
 
 
@@ -61,7 +71,9 @@ public abstract class ServiceBTActivity extends ServiceCommunicationActivity imp
         if (mShouldUnbind) {
             // Release information about the service's state.
             try{
-                mBoundService.getLive_state().removeObservers(this);
+                mBoundService.getLive_bt_state().removeObservers(this);
+                mBoundService.getLive_service_state().removeObservers(this);
+                mBoundService.getLive_message_data().removeObservers(this);
             }catch(Exception ignored){}
             super.doUnbindService();
         }

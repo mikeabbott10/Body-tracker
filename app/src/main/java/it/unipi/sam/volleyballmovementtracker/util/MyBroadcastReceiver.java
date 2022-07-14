@@ -53,14 +53,6 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
                 onBTReceiveListener.onBluetoothActionDiscoveryEventReceived(false);
                 break;
             }
-            case BluetoothDevice.ACTION_ACL_DISCONNECTED:{
-                onBTReceiveListener.onBluetoothDeviceConnectionEventReceived(false);
-                break;
-            }
-            case BluetoothDevice.ACTION_ACL_CONNECTED:{
-                onBTReceiveListener.onBluetoothDeviceConnectionEventReceived(true);
-                break;
-            }
             // DM ----------------------------------------------------------------------------------
             case DownloadManager.ACTION_DOWNLOAD_COMPLETE: {
                 long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);

@@ -21,8 +21,9 @@ import it.unipi.sam.volleyballmovementtracker.R;
 import it.unipi.sam.volleyballmovementtracker.activities.base.CommonPracticingActivity;
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.SelectTrainingFragment;
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.coach.CoachPracticingFragment;
-import it.unipi.sam.volleyballmovementtracker.services.BluetoothService;
+import it.unipi.sam.volleyballmovementtracker.services.SensorService;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
+import it.unipi.sam.volleyballmovementtracker.util.SensorData;
 import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnBroadcastReceiverOnBTReceiveListener;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
 
@@ -85,6 +86,7 @@ public class CoachPracticingActivity extends CommonPracticingActivity
      * @param bt_state
      */
     protected void handleServiceBTStateChange(int bt_state) {
+        super.handleServiceBTStateChange(bt_state);
         switch(bt_state){
             case Constants.BT_STATE_DISABLED:{
                 // ask for enabling bluetooth
@@ -104,6 +106,7 @@ public class CoachPracticingActivity extends CommonPracticingActivity
             }
             case Constants.BT_STATE_JUST_DISCONNECTED:{
                 Log.d(TAG, "remote device disconnected!");
+                showMyDialog(Constants.CONNECTION_CLOSED_DIALOG);
                 break;
             }
             case Constants.BT_STATE_CONNECTED:{
@@ -125,8 +128,15 @@ public class CoachPracticingActivity extends CommonPracticingActivity
      * @param serviceState
      */
     protected void handleServiceStateChange(int serviceState) {
+        super.handleServiceStateChange(serviceState);
         switch (serviceState){
-            case Constants.STARTING_SERVICE:{
+            case Constants.STARTING_SERVICE:
+            case Constants.ALREADY_STARTED_SERVICE:{
+                assert mBoundService!=null;
+                if(currentFragment!=Constants.COACH_PRACTICING_FRAGMENT) {
+                    // start PlayerPracticingFragment
+                    transactionToFragment(this, CoachPracticingFragment.class, true);
+                }
                 break;
             }
             case Constants.CLOSING_SERVICE:{
@@ -148,8 +158,8 @@ public class CoachPracticingActivity extends CommonPracticingActivity
         switch(msg.what){
             case Constants.MESSAGE_READ:{
                 // show received message
-                String s = new String((byte[]) msg.obj);
-                Log.d(TAG, s);
+                SensorData sd = (SensorData) msg.obj;
+                Log.d(TAG, "ricevuto: "+ sd + " con sd.sensorHeight="+ sd.getSensorData());
                 break;
             }
             case Constants.MESSAGE_WRITE:{
@@ -169,11 +179,9 @@ public class CoachPracticingActivity extends CommonPracticingActivity
         super.onClick(view);
         if(view.getId()==binding.bluetoothState.getId()){
             if(currentFragment==Constants.COACH_STARTING_FRAGMENT){
-                // start CoachPracticingFragment
-                transactionToFragment(this, CoachPracticingFragment.class, true);
                 // start servizio
                 doStartService(Constants.COACH_CHOICE); // idempotent
-                doBindService(BluetoothService.class); // idempotent
+                doBindService(SensorService.class); // idempotent
             }else{
                 // todo v1.1: mostra stato bt
                 GraphicUtil.scaleImage(this, view, -1, null);
@@ -184,7 +192,13 @@ public class CoachPracticingActivity extends CommonPracticingActivity
     // dialog onclick
     @Override
     public void onClick(DialogInterface dialogInterface, int i) {
-        if(showingDialog == Constants.WORK_IN_PROGRESS_DIALOG) {
+        if(showingDialog == Constants.CONNECTION_CLOSED_DIALOG) {
+            if(currentFragment == Constants.COACH_PRACTICING_FRAGMENT){
+                // go back to prev fragment
+                myStopService();
+                transactionToFragment(this, SelectTrainingFragment.class, false);
+            }
+        }else if(showingDialog == Constants.WORK_IN_PROGRESS_DIALOG) {
             // "Accept" is clicked on workInProgressDialog.
             transactionToFragment(this, SelectTrainingFragment.class, false);
         }else if(showingDialog == Constants.DISCOVERABILITY_DIALOG){
@@ -239,7 +253,6 @@ public class CoachPracticingActivity extends CommonPracticingActivity
     // unused here
     @Override public void onBluetoothActionFoundEventReceived(BluetoothDevice btDevice) {}
     @Override public void onBluetoothActionDiscoveryEventReceived(boolean isDiscoveryFinished) {}
-    @Override public void onBluetoothDeviceConnectionEventReceived(boolean isDeviceConnected) {}
 
     // utils--------------------------------------------------------
     protected Class<? extends Fragment> getFragmentClassFromModel() {

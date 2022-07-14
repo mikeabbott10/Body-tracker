@@ -55,7 +55,7 @@
             android:theme="@style/Theme.Transparent"/>
         <activity android:name=".activities.CoachPracticingActivity"/>
 
-        <service android:name=".services.BluetoothService" />
+        <service android:name=".services.SensorService" />
         <receiver android:name=".util.MyNotificationBroadcastReceiver" />
     </application>
 

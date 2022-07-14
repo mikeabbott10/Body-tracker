@@ -8,14 +8,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Binder;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
@@ -24,7 +21,6 @@ import java.util.Set;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import it.unipi.sam.volleyballmovementtracker.util.MessageWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.MyBroadcastReceiver;
-import it.unipi.sam.volleyballmovementtracker.util.bluetooth.ServiceStatesAndDataWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.bluetooth.ConnectToBTServerRunnable;
 import it.unipi.sam.volleyballmovementtracker.util.bluetooth.ConnectedThread;
 import it.unipi.sam.volleyballmovementtracker.util.bluetooth.GetBTConnectionsRunnable;
@@ -32,7 +28,7 @@ import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnBroadcastReceiver
 import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnConnectToBTServerListener;
 import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnGetBTConnectionsListener;
 
-public class BluetoothService extends NotificationService implements OnGetBTConnectionsListener,
+public abstract class BluetoothService extends NotificationService implements OnGetBTConnectionsListener,
         OnConnectToBTServerListener, OnBroadcastReceiverOnBTReceiveListener {
     private static String TAG = "SSSSBluetoothService";
     protected BluetoothAdapter bta;
@@ -46,6 +42,11 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
         boolean oscillator = true;
         @Override
         public void handleMessage(Message msg) {
+            if(msg.what == Constants.STREAM_DISCONNECTED){
+                updateBTState(Constants.BT_STATE_JUST_DISCONNECTED);
+                connectedDeviceThread.cancel();
+                return;
+            }
             // msg potrebbe essere uguale al precedente
             // (dati ricevuti dal device remoto possono essere uguali tra loro).
             oscillator = !oscillator; // questo rende il valore del LiveData diverso dal precedente
@@ -54,29 +55,27 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
     };
 
 
-    // binder
-    public class LocalBinder extends Binder {
-        public BluetoothService getService() {
-            return BluetoothService.this;
-        }
-    }
-    private final IBinder mBinder = new LocalBinder();
-
     // communication service to activity
-    ServiceStatesAndDataWrapper thisServiceState, thisBtState, messageData;
-    private MutableLiveData<ServiceStatesAndDataWrapper> live_state;
-    public MutableLiveData<ServiceStatesAndDataWrapper> getLive_state() {
-        return live_state;
+    private MutableLiveData<Integer> live_bt_state;
+    public MutableLiveData<Integer> getLive_bt_state() {
+        return live_bt_state;
+    }
+    private MutableLiveData<Integer> live_service_state;
+    public MutableLiveData<Integer> getLive_service_state() {
+        return live_service_state;
+    }
+    private MutableLiveData<MessageWrapper> live_message_data;
+    public MutableLiveData<MessageWrapper> getLive_message_data() {
+        return live_message_data;
     }
 
     @Override
     public void onCreate() {
         Log.i( TAG, "onCreate");
         super.onCreate();
-        live_state = new MutableLiveData<>();
-        thisServiceState = new ServiceStatesAndDataWrapper(-1,-1, null);
-        thisBtState = new ServiceStatesAndDataWrapper(-1,-1, null);
-        messageData = new ServiceStatesAndDataWrapper(-1,-1, null);
+        live_bt_state = new MutableLiveData<>();
+        live_service_state = new MutableLiveData<>();
+        live_message_data = new MutableLiveData<>();
     }
 
     @Override public int onStartCommand(Intent intent, int flags, int startId) {
@@ -97,18 +96,12 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
             intentFilters.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED); // (coach) status changed: discoverable/connectable/none
             intentFilters.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED); // (player) discovery has finished
             intentFilters.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED); // (player) discovery has started
-            intentFilters.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED); // remote device disconnected
-            intentFilters.addAction(BluetoothDevice.ACTION_ACL_CONNECTED); // remote device connected
             registerReceiver(mReceiver, intentFilters);
             return super.onStartCommand(intent, flags, startId);
         }else {
+            updateServiceState(Constants.ALREADY_STARTED_SERVICE);
             return handleRestartCode;
         }
-    }
-
-    @Nullable @Override
-    public IBinder onBind(@NonNull Intent intent) {
-        return mBinder;
     }
 
     @Override
@@ -118,6 +111,8 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
             getBTConnectionsRunnable.cancel();
         if(connectToBTServerRunnable!=null)
             connectToBTServerRunnable.cancel();
+        if(connectedDeviceThread!=null)
+            connectedDeviceThread.cancel();
         try{unregisterReceiver(mReceiver);}catch (RuntimeException ignored){}
         super.onDestroy();
     }
@@ -125,6 +120,7 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
     @Override
     public void myStop() {
         updateServiceState(Constants.CLOSING_SERVICE);
+
         super.myStop();
     }
 
@@ -157,7 +153,7 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
             }
             case BluetoothAdapter.SCAN_MODE_CONNECTABLE: {
                 // device non discoverable ma può ricevere connessioni
-                if(thisBtState.getBtState() == Constants.BT_STATE_DISCOVERABLE_AND_LISTENING){
+                if(Integer.valueOf(Constants.BT_STATE_DISCOVERABLE_AND_LISTENING).equals(live_bt_state.getValue())){
                     assert role == Constants.COACH_CHOICE;
                     // still waiting for client
                     updateBTState(Constants.BT_STATE_ENABLED);
@@ -166,7 +162,7 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
             }
             case BluetoothAdapter.SCAN_MODE_NONE:{
                 // device non discoverbale e non può ricevere connessioni
-                if(thisBtState.getBtState() == Constants.BT_STATE_DISCOVERABLE_AND_LISTENING){
+                if(Integer.valueOf(Constants.BT_STATE_DISCOVERABLE_AND_LISTENING).equals(live_bt_state.getValue())){
                     assert role == Constants.COACH_CHOICE;
                     // still waiting for client
                     updateBTState(Constants.BT_STATE_ENABLED);
@@ -184,27 +180,20 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
     public void onBluetoothActionDiscoveryEventReceived(boolean isDiscoveryFinished) {
         Log.d(TAG, "i'm discovering:"+!isDiscoveryFinished);
         if(role == Constants.PLAYER_CHOICE) {
-            if(thisBtState.getBtState() == Constants.BT_STATE_DISCOVERING) {
-                if (isDiscoveryFinished){
+
+            if (Integer.valueOf(Constants.BT_STATE_DISCOVERING).equals(live_bt_state.getValue())) {
+                if (isDiscoveryFinished) {
                     // need to start discovering again
                     updateBTState(Constants.BT_STATE_ENABLED);
                 }
-            }else{
-                if(!isDiscoveryFinished) {
+            } else {
+                if (!isDiscoveryFinished) {
                     // just started discovering
                     updateBTState(Constants.BT_STATE_DISCOVERING);
                 }
             }
-        }
-    }
 
-    @Override
-    public void onBluetoothDeviceConnectionEventReceived(boolean isDeviceConnected) {
-        if(!isDeviceConnected) {
-            updateBTState(Constants.BT_STATE_JUST_DISCONNECTED);
-            return;
         }
-        //updateBTState(Constants.BT_STATE_CONNECTED);
     }
 
     // unused here
@@ -212,18 +201,15 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
 
     // utils ---------------------------------------------------------------------------------------
     protected void updateBTState(int btState) {
-        thisBtState.setBtState(btState);
-        live_state.setValue(thisBtState);
+        live_bt_state.setValue(btState);
     }
 
     private void updateServiceState(int serviceState) {
-        thisServiceState.setServiceState(serviceState);
-        live_state.setValue(thisServiceState);
+        live_service_state.setValue(serviceState);
     }
 
     private void updateMessageData(MessageWrapper msgWrapper){
-        messageData.setMsg(msgWrapper);
-        live_state.setValue(messageData);
+        live_message_data.setValue(msgWrapper);
     }
 
     /**
@@ -303,5 +289,13 @@ public class BluetoothService extends NotificationService implements OnGetBTConn
             connectedDeviceThread.start();
         }
         updateBTState(Constants.BT_STATE_CONNECTED);
+        startCollectingData();
+    }
+    protected abstract void startCollectingData();
+
+    @Override
+    public void onConnectionError(@Nullable BluetoothSocket skt) {
+        // tried to connect to a socket but failed
+        updateBTState(Constants.BT_STATE_CONNECTION_FAILED);
     }
 }

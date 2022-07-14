@@ -22,15 +22,17 @@ public class Constants {
     public static final int BT_STATE_DISCOVERING = 3;  // bt in discovering state
     public static final int BT_STATE_LISTEN = 4;        // now listening for incoming connections
     public static final int BT_STATE_CONNECTING = 5;    // now initiating an outgoing connection
-    public static final int BT_STATE_CONNECTED = 6;     // now connected to a remote device
-    public static final int BT_STATE_JUST_DISCONNECTED = 7; // just disconnected from remote device
-    public static final int BT_STATE_PERMISSION_REQUIRED = 8;     // permissions required
-    public static final int BT_STATE_BADLY_DENIED = 9;  // permissions have been denied manually during service life (close the service)
-    public static final int BT_STATE_UNSOLVED = 10;      // bt unknown error (close the service)
+    public static final int BT_STATE_CONNECTION_FAILED = 6; // tried to connect but failed
+    public static final int BT_STATE_CONNECTED = 7;     // now connected to a remote device
+    public static final int BT_STATE_JUST_DISCONNECTED = 8; // just disconnected from remote device
+    public static final int BT_STATE_PERMISSION_REQUIRED = 9;     // permissions required
+    public static final int BT_STATE_BADLY_DENIED = 10;  // permissions have been denied manually during service life (close the service)
+    public static final int BT_STATE_UNSOLVED = 11;      // bt unknown error (close the service)
 
     // Constants that indicate the current service state
     public static final int CLOSING_SERVICE = 0;
     public static final int STARTING_SERVICE = 1;
+    public static final int ALREADY_STARTED_SERVICE = 2;
 
     // bt constants
     public static final String BT_NAME = "Coach";
@@ -57,6 +59,7 @@ public class Constants {
     public static final int BT_PERMANENTLY_DENIED_PERMISSIONS_DIALOG = 5;
     public static final int NOTIFICATION_ENABLING_DIALOG = 6;
     public static final int NOTIFICATION_CHANNEL_ENABLING_DIALOG = 7;
+    public static final int CONNECTION_CLOSED_DIALOG = 8;
 
     // colors
     public static final int BLUE = 0;
@@ -97,6 +100,7 @@ public class Constants {
     public static final int MESSAGE_READ = 0;
     public static final int MESSAGE_WRITE = 1;
     public static final int MESSAGE_TOAST = 2;
+    public static final int STREAM_DISCONNECTED = 3;
 
     // notification
     public static final String NOTIFICATION_CHANNEL_ID = "tracker_channel";

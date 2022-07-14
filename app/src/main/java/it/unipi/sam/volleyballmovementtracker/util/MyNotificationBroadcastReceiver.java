@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
-import it.unipi.sam.volleyballmovementtracker.services.BluetoothService;
+import it.unipi.sam.volleyballmovementtracker.services.SensorService;
 
 public class MyNotificationBroadcastReceiver extends BroadcastReceiver {
     private static final String TAG = "CLCLMyNotifBroadcRece";
@@ -17,10 +17,10 @@ public class MyNotificationBroadcastReceiver extends BroadcastReceiver {
         final String action = intent.getAction();
         switch(action){
             case CLOSETHESERVICE:{
-                Intent myServiceIntent = new Intent(context, BluetoothService.class);
+                Intent myServiceIntent = new Intent(context, SensorService.class);
                 IBinder service = this.peekService(context, myServiceIntent);
                 if(service==null) break;
-                BluetoothService mBoundService = ((BluetoothService.LocalBinder)service).getService();
+                SensorService mBoundService = ((SensorService.LocalBinder)service).getService();
                 mBoundService.myStop();
                 break;
             }

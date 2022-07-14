@@ -23,8 +23,9 @@ public class ConnectToBTServerRunnable implements Runnable {
     private final Handler mHandler;
     private BluetoothSocket mmSocket;
 
-    private final int NEW_CONNECTION = 0;
-    private final int PERMISSION_ERROR = 1;
+    private static final int NEW_CONNECTION = 0;
+    private static final int PERMISSION_ERROR = 1;
+    private static final int CONNECTION_ERROR = 2;
 
     public ConnectToBTServerRunnable(Context ctx, BluetoothDevice btDevice, BluetoothAdapter bta, OnConnectToBTServerListener onConnectToBTServerListener) {
         this.ctx = ctx;
@@ -39,6 +40,10 @@ public class ConnectToBTServerRunnable implements Runnable {
                 else if (msg.arg1 == PERMISSION_ERROR)
                     onConnectToBTServerListener.onPermissionError(
                             (String) msg.obj);
+                else if (msg.arg1 == CONNECTION_ERROR)
+                    onConnectToBTServerListener.onConnectionError(
+                            (BluetoothSocket) msg.obj);
+
             }
         };
 
@@ -59,8 +64,10 @@ public class ConnectToBTServerRunnable implements Runnable {
 
     @Override
     public void run() {
-        if(mmSocket==null)
+        if(mmSocket==null) {
+            sendMessage(CONNECTION_ERROR, null);
             return;
+        }
         try {
             // Cancel discovery because it otherwise slows down the connection.
             bta.cancelDiscovery();
@@ -83,6 +90,7 @@ public class ConnectToBTServerRunnable implements Runnable {
             // Unable to connect; close the socket and return.
             Log.e(TAG, "unable to connect", connectException);
             cancel();
+            sendMessage(CONNECTION_ERROR, mmSocket);
             return;
         }
 
@@ -101,7 +109,7 @@ public class ConnectToBTServerRunnable implements Runnable {
         try {
             mmSocket.close();
         } catch (IOException e) {
-            Log.e(TAG, "Could not close the client socket", e);
+            Log.w(TAG, "Could not close the client socket", e);
         }
     }
 }

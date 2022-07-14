@@ -64,8 +64,10 @@
         <entry key="app/src/main/res/layout/even_card_training.xml" value="0.19492293744333636" />
         <entry key="app/src/main/res/layout/fragment_coach_starting.xml" value="0.2954253954681488" />
         <entry key="app/src/main/res/layout/fragment_coach_starting_fragment.xml" value="0.294570329200513" />
+        <entry key="app/src/main/res/layout/fragment_data_sendind.xml" value="0.2954253954681488" />
+        <entry key="app/src/main/res/layout/fragment_data_sending.xml" value="0.14437944003343084" />
         <entry key="app/src/main/res/layout/fragment_get_connections.xml" value="0.294570329200513" />
-        <entry key="app/src/main/res/layout/fragment_load_recycler_view.xml" value="0.14437944003343084" />
+        <entry key="app/src/main/res/layout/fragment_load_recycler_view.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_number_picker.xml" value="0.14730463852904305" />
         <entry key="app/src/main/res/layout/fragment_player_starting.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_select_training.xml" value="0.20126926563916592" />
