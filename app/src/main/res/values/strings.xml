@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Volleyball Movement Tracker</string>
 
     <string name="bt_not_supported">Bluetooth non supportato</string>
@@ -17,7 +17,7 @@
     <string name="current_training_choice">current_training_choice</string>
     <string name="wait_for_n_connections">Numero di connessioni attese</string>
     <string name="picker_fragment_info">Selezionare il numero di connessioni attese. Questo corrisponde al numero di giocatori partecipanti all\'allenamento.</string>
-    <string name="practicing_coach_info">In attesa di ottenere le connessioni necessarie…</string>
+    <string name="practicing_coach_info" tools:ignore="Typos">Non appena la connessione è stabilita, è possibile vedere i dati ricevuti plottati sul grafico.</string>
     <string name="work_in_progress_warning">Potrebbe essere in corso un collegamento bluetooth con alcuni dispositivi. Chiudere connessione?</string>
     <string name="work_in_progress_warning_title">Operazione in corso</string>
     <string name="bt_discoverability_not_enabled">Dispositivo non visibile</string>
@@ -40,7 +40,7 @@
     <string name="ask_enable_notification">Questa applicazione ha bisogno che le notifiche siano abilitate. Ne useremo una per informarti sullo stato della tua connessione. Prego, abilitare le notifiche.</string>
     <string name="ask_enable_channel_notification">Questa applicazione ha bisogno di un canale di notifica funzionante. Prego, abilitare il canale notifiche.</string>
     <string name="alert_title">Avviso!</string>
-    <string name="practicing_player_info">Prepararsi all\'esercizio. Attendere il segnale dal coach</string>
+    <string name="practicing_player_info" tools:ignore="Typos">Una volta selezionato il dispositivo del coach e stabilita la connessione, è possibile iniziare l\'esercizio</string>
     <string name="connected">Connesso!</string>
     <string name="connecting">In connessione…</string>
     <string name="connection_closed_warning">La connessione è stata interrotta</string>

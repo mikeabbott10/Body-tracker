@@ -11,6 +11,7 @@ import it.unipi.sam.volleyballmovementtracker.util.DataRepository;
 import it.unipi.sam.volleyballmovementtracker.util.DataWrapper;
 
 public class DataViewModel extends AndroidViewModel {
+    private final LiveData<List<DataWrapper>> mLastData;
     private DataRepository mRepository;
     private LiveData<List<DataWrapper>> mAllData;
 
@@ -18,8 +19,12 @@ public class DataViewModel extends AndroidViewModel {
         super(application);
         mRepository = new DataRepository(application);
         mAllData = mRepository.getAllData();
+        mLastData = mRepository.getLastData();
     }
 
     public LiveData<List<DataWrapper>> getAllData() { return mAllData; }
+    public LiveData<List<DataWrapper>> getLastData() { return mLastData; }
     public void insert(DataWrapper data) { mRepository.insert(data); }
+    public void deleteBefore(long timestamp) { mRepository.deleteBefore(timestamp); }
+    public void deleteAll() { mRepository.deleteAll(); }
 }

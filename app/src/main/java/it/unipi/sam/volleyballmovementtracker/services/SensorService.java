@@ -21,6 +21,7 @@ public class SensorService extends BluetoothService implements SensorEventListen
     private SensorManager sm;
     private Sensor mAccelerometer;
     private DataCollectionListener dataCollectionListener;
+    private double accelerationPreviousValue;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -70,16 +71,16 @@ public class SensorService extends BluetoothService implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        Log.d(TAG, "onSensorChanged:"+ sensorEvent);
+        //Log.i(TAG, "onSensorChanged:"+ sensorEvent);
         float x = sensorEvent.values[0];
         float y = sensorEvent.values[1];
         float z = sensorEvent.values[2];
 
         // normalize
-        int accelerationCurrentValue = (int) Math.sqrt(x * x + y * y + z * z);
-        //double changeInAcceleration = Math.abs(accelerationCurrentValue - accelerationPreviousValue);
-        //accelerationPreviousValue = accelerationCurrentValue;
-        dataCollectionListener.onNewDataCollected(accelerationCurrentValue);
+        double accelerationCurrentValue = Math.sqrt(x * x + y * y + z * z);
+        double changeInAcceleration = Math.abs(accelerationCurrentValue - accelerationPreviousValue);
+        accelerationPreviousValue = accelerationCurrentValue;
+        dataCollectionListener.onNewDataCollected(changeInAcceleration);
     }
 
     @Override

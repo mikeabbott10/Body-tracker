@@ -61,7 +61,7 @@
         android:id="@+id/info_tap_gif_iv"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:rotation="40"
+        android:rotation="90"
         android:layout_alignParentEnd="true"
         android:contentDescription="@null" />
     <!-- info description -->

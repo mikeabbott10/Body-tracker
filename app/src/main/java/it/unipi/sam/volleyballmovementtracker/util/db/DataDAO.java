@@ -2,7 +2,6 @@ package it.unipi.sam.volleyballmovementtracker.util.db;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
@@ -18,13 +17,17 @@ public interface DataDAO {
     /*//custom delete
     @Query("DELETE FROM data_table WHERE id = :favoritesWrapperId")
     void delete(int favoritesWrapperId);*/
-    @Delete
-    Integer delete(DataWrapper favoritesWrapper);
+
+    @Query("DELETE FROM data_table WHERE timestamp < :mTimestamp")
+    int deleteBefore(long mTimestamp);
 
     @Query("DELETE FROM data_table")
     void deleteAll();
 
-    @Query("SELECT * FROM data_table")
+    @Query("SELECT * FROM data_table ORDER BY timestamp DESC LIMIT 1")
+    LiveData<List<DataWrapper>> getLast();
+
+    @Query("SELECT * FROM data_table ORDER BY timestamp DESC")
     LiveData<List<DataWrapper>> getAll();
 
 }

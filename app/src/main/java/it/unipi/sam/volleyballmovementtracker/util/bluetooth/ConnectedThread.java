@@ -22,8 +22,10 @@ public class ConnectedThread extends Thread {
     private final Handler handler; // handler that gets info from Bluetooth service
     private final ObjectOutputStream oos;
 
+    private boolean streamEndMessageAlreadySent;
 
     public ConnectedThread(BluetoothSocket socket, Handler handler) {
+        this.streamEndMessageAlreadySent = false;
         this.handler = handler;
         mmSocket = socket;
         InputStream tmpIn = null;
@@ -65,11 +67,11 @@ public class ConnectedThread extends Thread {
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
                 // Read from the InputStream.
-                Log.d(TAG, "waiting for data");
+                //Log.d(TAG, "waiting for data");
 
                 try {
                     DataWrapper sd = (DataWrapper) ois.readObject();
-                    Log.d(TAG, "received sd:" + sd);
+                    //Log.d(TAG, "received sd:" + sd);
 
                     // Send the obtained bytes to the UI activity.
                     Message readMsg = handler.obtainMessage(
@@ -96,8 +98,8 @@ public class ConnectedThread extends Thread {
             sendStreamEndedMsg();
             return;
         }
+        //Log.d(TAG, "data sent");
 
-        Log.d(TAG, "data sent");
         // Share the sent message with the UI activity.
         /*Message writtenMsg = handler.obtainMessage(
                 Constants.MESSAGE_WRITE, -1, -1, mmBuffer);
@@ -117,11 +119,6 @@ public class ConnectedThread extends Thread {
             Log.w(TAG, "Could not close the socket output stream", e);
         }
         try {
-            Thread.sleep(1000); //it's imprortant too. You should give a time to close streams before close the socket
-        } catch (InterruptedException e) {
-            Log.w(TAG, "Could not sleep", e);
-        }
-        try {
             mmSocket.close();
         } catch (IOException e) {
             Log.w(TAG, "Could not close the connect socket", e);
@@ -130,9 +127,12 @@ public class ConnectedThread extends Thread {
 
     // utils ---------------------------------------------------------------------------------------
     private void sendStreamEndedMsg(){
-        // Send a failure message back to the activity.
-        Message writtenMsg = handler.obtainMessage(
-                Constants.STREAM_DISCONNECTED, -1, -1, null);
-        writtenMsg.sendToTarget();
+        if(!streamEndMessageAlreadySent){
+            // Send a disconnection message back to the activity.
+            Message writtenMsg = handler.obtainMessage(
+                    Constants.STREAM_DISCONNECTED, -1, -1, null);
+            writtenMsg.sendToTarget();
+            streamEndMessageAlreadySent = true;
+        }
     }
 }

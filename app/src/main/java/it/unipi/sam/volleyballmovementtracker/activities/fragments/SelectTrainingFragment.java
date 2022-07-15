@@ -44,7 +44,7 @@ public class SelectTrainingFragment extends CommonFragment implements Observer<L
 
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         binding.rv.setLayoutManager(llm);
-        binding.rv.setHasFixedSize(true);
+        //binding.rv.setHasFixedSize(true);
         adapter = new TrainingsRecyclerViewAdapter(new ArrayList<>(), getActivity());
         binding.rv.setAdapter(adapter);
         viewModel.getTrainingList().observe(getViewLifecycleOwner(), this);
@@ -91,7 +91,10 @@ public class SelectTrainingFragment extends CommonFragment implements Observer<L
             // idk quante entries ci sono in più o in meno rispetto a prima (nè dove sono state inserite/eliminate).
             // E' quindi necessario un refresh dell'intero data set:
             adapter.notifyDataSetChanged();
-            binding.loadingPanel.setVisibility(View.GONE);
+            if(trainings.size()>0)
+                binding.loadingPanel.setVisibility(View.GONE);
+            else
+                binding.loadingPanel.setVisibility(View.VISIBLE);
         }
     }
 

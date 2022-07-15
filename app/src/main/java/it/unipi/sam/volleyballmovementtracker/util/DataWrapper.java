@@ -1,5 +1,8 @@
 package it.unipi.sam.volleyballmovementtracker.util;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -7,46 +10,76 @@ import androidx.room.PrimaryKey;
 import java.io.Serializable;
 
 @Entity(tableName = "data_table")
-public class DataWrapper implements Serializable, Comparable<DataWrapper> {
+public class DataWrapper implements Serializable, Comparable<DataWrapper>, Parcelable {
     @PrimaryKey(autoGenerate=true)
     private int uid;
 
-    private int data;
-    private int index;
+    private double data;
+    private long timestamp;
 
     public DataWrapper() {}
     @Ignore
-    public DataWrapper(int data, int index) {
+    public DataWrapper(double data, long timestamp) {
         this.data = data;
-        this.index = index;
+        this.timestamp = timestamp;
     }
 
-    public int getData() {
+    protected DataWrapper(Parcel in) {
+        uid = in.readInt();
+        data = in.readDouble();
+        timestamp = in.readLong();
+    }
+
+    public static final Creator<DataWrapper> CREATOR = new Creator<DataWrapper>() {
+        @Override
+        public DataWrapper createFromParcel(Parcel in) {
+            return new DataWrapper(in);
+        }
+
+        @Override
+        public DataWrapper[] newArray(int size) {
+            return new DataWrapper[size];
+        }
+    };
+
+    public int getUid() {
+        return uid;
+    }
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
+
+    public double getData() {
         return data;
     }
-    public void setData(int data) {
+    public void setData(double data) {
         this.data = data;
     }
 
-    public int getIndex() {
-        return index;
+    public long getTimestamp() {
+        return timestamp;
     }
-    public void setIndex(int index) {
-        this.index = index;
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     @Override
     public int compareTo(DataWrapper dataWrapper) {
         if(dataWrapper==null)
             return 1;
-        return index - dataWrapper.getIndex();
+        return (int) (timestamp - dataWrapper.getTimestamp());
     }
 
-    public int getUid() {
-        return uid;
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public void setUid(int uid) {
-        this.uid = uid;
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(uid);
+        parcel.writeDouble(data);
+        parcel.writeLong(timestamp);
     }
 }

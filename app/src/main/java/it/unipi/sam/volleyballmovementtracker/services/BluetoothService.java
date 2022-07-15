@@ -294,9 +294,10 @@ public abstract class BluetoothService extends NotificationService implements On
     @Override
     public void onNewDataCollected(double data) {
         // send this data to server if connected
-        assert Integer.valueOf(Constants.BT_STATE_CONNECTED).equals(live_bt_state.getValue());
-        dw.setData((int)data);
-        connectedDeviceThread.write(dw);
+        if(Integer.valueOf(Constants.BT_STATE_CONNECTED).equals(live_bt_state.getValue())) {
+            DataWrapper dw = new DataWrapper(data, System.currentTimeMillis());
+            connectedDeviceThread.write(dw);
+        }
     }
 
     // OnConnectToBTServerListener -----

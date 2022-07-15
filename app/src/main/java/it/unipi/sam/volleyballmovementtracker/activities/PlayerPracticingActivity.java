@@ -151,10 +151,7 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
                 break;
             }
             case Constants.CLOSING_SERVICE:{
-                myStopService();
-                //getSupportFragmentManager().popBackStack();
-                //transactionToFragment(this,
-                //        SelectTrainingFragment.class, false);
+                myStopServiceAndGoBack();
                 updateBtIconWithCurrentState(bta.isEnabled());
                 break;
             }
@@ -214,7 +211,7 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
         if(mBoundService.role != Constants.PLAYER_CHOICE){
             Snackbar.make(binding.getRoot(), "ERROR 04: role inconsistency", 2000).show();
             Log.e(TAG, "ERROR 04: role inconsistency");
-            myStopService();
+            myStopServiceAndGoBack();
             return;
         }
         // retrive so far found devices
@@ -230,12 +227,6 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
     protected void handleDeniedBTEnabling(){
         Log.d(TAG, "handleDeniedBTEnabling");
         super.handleDeniedBTEnabling();
-        transactionToFragment(this, SelectTrainingFragment.class, false);
-    }
-
-    @Override
-    public void myStopService() {
-        super.myStopService();
         transactionToFragment(this, SelectTrainingFragment.class, false);
     }
 

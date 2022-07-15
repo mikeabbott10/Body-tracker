@@ -86,6 +86,7 @@ public class Constants {
     public static final String should_unbind_key = "suk";
     public static String req_discoverability_launched_key = "rdlk";
     public static String req_bt_launched_key = "rblk";
+    public static String previous_graph_data_key = "pgdk";
 
     // net
     public static final String restBasePath = "https://donow.cloud/trackerapp/";

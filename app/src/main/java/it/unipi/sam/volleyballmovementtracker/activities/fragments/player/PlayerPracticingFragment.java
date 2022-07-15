@@ -47,13 +47,13 @@ public class PlayerPracticingFragment extends CommonFragment implements Observer
 
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         binding.rv.setLayoutManager(llm);
-        binding.rv.setHasFixedSize(true);
+        //binding.rv.setHasFixedSize(true);
         adapter = new BTDevicesRecyclerViewAdapter(new HashSet<>(), getActivity(), ((PlayerPracticingActivity)requireActivity()), this);
         binding.rv.setAdapter(adapter);
         ((PlayerPracticingActivity)requireActivity()).currentFoundDevicesList.observe(requireActivity(), this);
 
         if(((PlayerPracticingActivity)requireActivity()).mBoundService == null) {
-            requireActivity().getSupportFragmentManager().popBackStack();
+            requireActivity().onBackPressed();
             return root;
         }
         ((PlayerPracticingActivity)requireActivity()).mBoundService.getLive_bt_state().observe(requireActivity(), btState -> {
@@ -119,13 +119,16 @@ public class PlayerPracticingFragment extends CommonFragment implements Observer
             // prima (nè dove sono state inserite/eliminate).
             // E' quindi necessario un refresh dell'intero data set:
             adapter.notifyDataSetChanged();
-            binding.loadingPanel.setVisibility(View.GONE);
+            if(btDevices.size()>0)
+                binding.loadingPanel.setVisibility(View.GONE);
+            else
+                binding.loadingPanel.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void onClick(View view) {
-        ((PlayerPracticingActivity)requireActivity()).myStopService();
+        ((PlayerPracticingActivity)requireActivity()).myStopServiceAndGoBack();
     }
 
     // utils ---------------------------------------------------------------------------------------

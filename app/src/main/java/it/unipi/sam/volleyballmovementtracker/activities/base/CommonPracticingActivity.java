@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.unipi.sam.volleyballmovementtracker.R;
+import it.unipi.sam.volleyballmovementtracker.activities.fragments.SelectTrainingFragment;
 import it.unipi.sam.volleyballmovementtracker.databinding.ActivityPracticingBinding;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
 import it.unipi.sam.volleyballmovementtracker.util.MyBroadcastReceiver;
@@ -96,8 +97,11 @@ public abstract class CommonPracticingActivity extends ServiceBTActivity impleme
 
     @Override
     public void onBackPressed() {
-        //binding.fragmentContainerMain.setVisibility(View.INVISIBLE);
-        super.onBackPressed();
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -277,7 +281,15 @@ public abstract class CommonPracticingActivity extends ServiceBTActivity impleme
         }
     }
 
+    public Class<? extends Fragment> getCurrentFragment(){
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_container_main);
+        if(f==null) return null;
+        return f.getClass();
+    }
+
     protected void transactionToFragment(Context ctx, Class<? extends Fragment> clas, boolean addToBackStack) {
+        if(getCurrentFragment()==clas)
+            return;
         FragmentManager fragmentManager = ((FragmentActivity)ctx).getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.setCustomAnimations(android.R.anim.fade_in, 0)
@@ -326,6 +338,11 @@ public abstract class CommonPracticingActivity extends ServiceBTActivity impleme
         binding.middleActionIconIv.setOnClickListener(this);
         binding.bluetoothState.setOnClickListener(this);
         binding.backBtn.setOnClickListener(this);
+    }
+
+    public void myStopServiceAndGoBack() {
+        super.myStopService();
+        transactionToFragment(this, SelectTrainingFragment.class, false);
     }
 
     // info view stuff --------------

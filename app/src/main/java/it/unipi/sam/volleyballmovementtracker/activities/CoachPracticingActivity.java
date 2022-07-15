@@ -111,6 +111,7 @@ public class CoachPracticingActivity extends CommonPracticingActivity
             }
             case Constants.BT_STATE_JUST_DISCONNECTED:{
                 Log.d(TAG, "remote device disconnected!");
+                dataViewModel.deleteAll();
                 showMyDialog(Constants.CONNECTION_CLOSED_DIALOG);
                 break;
             }
@@ -146,9 +147,6 @@ public class CoachPracticingActivity extends CommonPracticingActivity
             }
             case Constants.CLOSING_SERVICE:{
                 myStopService();
-                //getSupportFragmentManager().popBackStack();
-                //transactionToFragment(this,
-                //        SelectTrainingFragment.class, false);
                 updateBtIconWithCurrentState(bta.isEnabled());
                 break;
             }
@@ -167,7 +165,7 @@ public class CoachPracticingActivity extends CommonPracticingActivity
                 if(sd==null)
                     return;
                 dataViewModel.insert(sd);
-                Log.d(TAG, "ricevuto: "+ sd + " con sd.sensor="+ sd.getData());
+                //Log.d(TAG, "ricevuto: "+ sd + " con sd.sensor="+ sd.getData());
                 break;
             }
             case Constants.MESSAGE_WRITE:{
@@ -201,11 +199,7 @@ public class CoachPracticingActivity extends CommonPracticingActivity
     @Override
     public void onClick(DialogInterface dialogInterface, int i) {
         if(showingDialog == Constants.CONNECTION_CLOSED_DIALOG) {
-            if(currentFragment == Constants.COACH_PRACTICING_FRAGMENT){
-                // go back to prev fragment
-                myStopService();
-                transactionToFragment(this, SelectTrainingFragment.class, false);
-            }
+            myStopService();
         }else if(showingDialog == Constants.WORK_IN_PROGRESS_DIALOG) {
             // "Accept" is clicked on workInProgressDialog.
             transactionToFragment(this, SelectTrainingFragment.class, false);
@@ -214,7 +208,7 @@ public class CoachPracticingActivity extends CommonPracticingActivity
                 askForEnablingBtAfterPermissionCheck();
                 askForDiscoverabilityAfterPermissionCheck();
             }else{
-                myStopService();
+                myStopServiceAndGoBack();
             }
         }
         super.onClick(dialogInterface,i);
@@ -226,7 +220,7 @@ public class CoachPracticingActivity extends CommonPracticingActivity
         if(mBoundService.role != Constants.COACH_CHOICE){
             Snackbar.make(binding.getRoot(), "ERROR 04: role inconsistency", 2000).show();
             Log.e(TAG, "ERROR 04: role inconsistency");
-            myStopService();
+            myStopServiceAndGoBack();
         }
     }
 
@@ -234,12 +228,6 @@ public class CoachPracticingActivity extends CommonPracticingActivity
     protected void handleDeniedBTEnabling(){
         Log.d(TAG, "handleDeniedBTEnabling");
         super.handleDeniedBTEnabling();
-        transactionToFragment(this, SelectTrainingFragment.class, false);
-    }
-
-    @Override
-    protected void myStopService() {
-        super.myStopService();
         transactionToFragment(this, SelectTrainingFragment.class, false);
     }
 
