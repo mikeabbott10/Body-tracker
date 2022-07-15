@@ -12,7 +12,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
-import it.unipi.sam.volleyballmovementtracker.util.SensorData;
+import it.unipi.sam.volleyballmovementtracker.util.DataWrapper;
 
 public class ConnectedThread extends Thread {
     private static final String TAG = "CLCLConnectedThread";
@@ -68,7 +68,7 @@ public class ConnectedThread extends Thread {
                 Log.d(TAG, "waiting for data");
 
                 try {
-                    SensorData sd = (SensorData) ois.readObject();
+                    DataWrapper sd = (DataWrapper) ois.readObject();
                     Log.d(TAG, "received sd:" + sd);
 
                     // Send the obtained bytes to the UI activity.

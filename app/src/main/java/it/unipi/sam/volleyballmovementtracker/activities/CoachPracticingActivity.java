@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -23,13 +24,15 @@ import it.unipi.sam.volleyballmovementtracker.activities.fragments.SelectTrainin
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.coach.CoachPracticingFragment;
 import it.unipi.sam.volleyballmovementtracker.services.SensorService;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
-import it.unipi.sam.volleyballmovementtracker.util.SensorData;
+import it.unipi.sam.volleyballmovementtracker.util.DataWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnBroadcastReceiverOnBTReceiveListener;
+import it.unipi.sam.volleyballmovementtracker.util.db.DataViewModel;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
 
 public class CoachPracticingActivity extends CommonPracticingActivity
         implements OnBroadcastReceiverOnBTReceiveListener {
     private static final String TAG = "AAAACoachPracAct";
+    private DataViewModel dataViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,6 +48,8 @@ public class CoachPracticingActivity extends CommonPracticingActivity
                 AppCompatResources.getDrawable(this, whoAmIDrawableId));
         updateBtIcon(binding.bluetoothState, currentBtStateDrawableId,
                 binding.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
+
+        dataViewModel = new ViewModelProvider(this).get(DataViewModel.class);
 
         setContentView(binding.getRoot());
         showMyDialog(showingDialog);
@@ -141,7 +146,7 @@ public class CoachPracticingActivity extends CommonPracticingActivity
             }
             case Constants.CLOSING_SERVICE:{
                 myStopService();
-                getSupportFragmentManager().popBackStack();
+                //getSupportFragmentManager().popBackStack();
                 //transactionToFragment(this,
                 //        SelectTrainingFragment.class, false);
                 updateBtIconWithCurrentState(bta.isEnabled());
@@ -157,9 +162,12 @@ public class CoachPracticingActivity extends CommonPracticingActivity
     protected void handleReceivedDataFromMessage(Message msg) {
         switch(msg.what){
             case Constants.MESSAGE_READ:{
-                // show received message
-                SensorData sd = (SensorData) msg.obj;
-                Log.d(TAG, "ricevuto: "+ sd + " con sd.sensorHeight="+ sd.getSensorData());
+                // message received
+                DataWrapper sd = (DataWrapper) msg.obj;
+                if(sd==null)
+                    return;
+                dataViewModel.insert(sd);
+                Log.d(TAG, "ricevuto: "+ sd + " con sd.sensor="+ sd.getData());
                 break;
             }
             case Constants.MESSAGE_WRITE:{

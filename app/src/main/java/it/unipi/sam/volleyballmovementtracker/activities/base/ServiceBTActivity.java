@@ -35,8 +35,9 @@ public abstract class ServiceBTActivity extends ServiceCommunicationActivity{
                             btState -> handleServiceBTStateChange(btState));
                     mBoundService.getLive_message_data().observe(ServiceBTActivity.this,
                             messageWrapper -> {
-                                if(messageWrapper!=null)
+                                if(messageWrapper!=null) {
                                     handleReceivedDataFromMessage(messageWrapper.msg);
+                                }
                             });
                     onServiceAlreadyStarted(); // check role consistency
                     return;

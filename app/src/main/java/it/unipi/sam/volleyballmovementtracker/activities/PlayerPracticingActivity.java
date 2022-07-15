@@ -25,7 +25,6 @@ import it.unipi.sam.volleyballmovementtracker.activities.fragments.SelectTrainin
 import it.unipi.sam.volleyballmovementtracker.activities.fragments.player.PlayerPracticingFragment;
 import it.unipi.sam.volleyballmovementtracker.services.SensorService;
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
-import it.unipi.sam.volleyballmovementtracker.util.SensorData;
 import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnFoundDeviceSelectedListener;
 import it.unipi.sam.volleyballmovementtracker.util.graphic.GraphicUtil;
 
@@ -121,7 +120,6 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
             }
             case Constants.BT_STATE_CONNECTED:{
                 Log.d(TAG, "remote device connected!");
-                mBoundService.connectedDeviceThread.write(new SensorData(123456));
                 break;
             }
             case Constants.BT_STATE_PERMISSION_REQUIRED:{

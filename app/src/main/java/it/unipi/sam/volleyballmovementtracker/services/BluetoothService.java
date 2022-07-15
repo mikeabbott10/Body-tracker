@@ -19,8 +19,10 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.Set;
 
 import it.unipi.sam.volleyballmovementtracker.util.Constants;
+import it.unipi.sam.volleyballmovementtracker.util.DataCollectionListener;
 import it.unipi.sam.volleyballmovementtracker.util.MessageWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.MyBroadcastReceiver;
+import it.unipi.sam.volleyballmovementtracker.util.DataWrapper;
 import it.unipi.sam.volleyballmovementtracker.util.bluetooth.ConnectToBTServerRunnable;
 import it.unipi.sam.volleyballmovementtracker.util.bluetooth.ConnectedThread;
 import it.unipi.sam.volleyballmovementtracker.util.bluetooth.GetBTConnectionsRunnable;
@@ -29,30 +31,35 @@ import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnConnectToBTServer
 import it.unipi.sam.volleyballmovementtracker.util.bluetooth.OnGetBTConnectionsListener;
 
 public abstract class BluetoothService extends NotificationService implements OnGetBTConnectionsListener,
-        OnConnectToBTServerListener, OnBroadcastReceiverOnBTReceiveListener {
+        OnConnectToBTServerListener, OnBroadcastReceiverOnBTReceiveListener, DataCollectionListener {
     private static String TAG = "SSSSBluetoothService";
     protected BluetoothAdapter bta;
     protected BroadcastReceiver mReceiver;
     protected GetBTConnectionsRunnable getBTConnectionsRunnable;
     protected ConnectToBTServerRunnable connectToBTServerRunnable;
     public int role;
+    protected DataWrapper dw;
 
     public ConnectedThread connectedDeviceThread;
     private final Handler connectedDeviceHandler = new Handler(Looper.getMainLooper()) {
-        boolean oscillator = true;
+        MessageWrapper mw = new MessageWrapper(null, true);
         @Override
         public void handleMessage(Message msg) {
             if(msg.what == Constants.STREAM_DISCONNECTED){
                 updateBTState(Constants.BT_STATE_JUST_DISCONNECTED);
+                if(role==Constants.PLAYER_CHOICE)
+                    stopCollectingData();
                 connectedDeviceThread.cancel();
                 return;
             }
+            mw.msg = msg;
             // msg potrebbe essere uguale al precedente
             // (dati ricevuti dal device remoto possono essere uguali tra loro).
-            oscillator = !oscillator; // questo rende il valore del LiveData diverso dal precedente
-            updateMessageData(new MessageWrapper(msg, oscillator));
+            mw.oscillator = !mw.oscillator; // questo rende il valore del LiveData diverso dal precedente
+            updateMessageData(mw);
         }
     };
+    protected abstract void stopCollectingData();
 
 
     // communication service to activity
@@ -82,14 +89,14 @@ public abstract class BluetoothService extends NotificationService implements On
         Log.i( TAG, "onStartCommand");
         Log.d( TAG, "isStarted:" + isStarted);
         if(!isStarted) {
-            role = intent.getIntExtra(Constants.choice_key, -1);
             bta = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
             updateServiceState(Constants.STARTING_SERVICE);
-            if(!bta.isEnabled()){
+            if (!bta.isEnabled()) {
                 updateBTState(Constants.BT_STATE_DISABLED);
-            }else{
+            } else {
                 updateBTState(Constants.BT_STATE_ENABLED);
             }
+            dw = new DataWrapper();
             mReceiver = new MyBroadcastReceiver(this, null);
             IntentFilter intentFilters = new IntentFilter();
             intentFilters.addAction(BluetoothAdapter.ACTION_STATE_CHANGED); // bt on/off
@@ -98,10 +105,11 @@ public abstract class BluetoothService extends NotificationService implements On
             intentFilters.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED); // (player) discovery has started
             registerReceiver(mReceiver, intentFilters);
             return super.onStartCommand(intent, flags, startId);
-        }else {
-            updateServiceState(Constants.ALREADY_STARTED_SERVICE);
-            return handleRestartCode;
         }
+
+        updateServiceState(Constants.ALREADY_STARTED_SERVICE);
+        return handleRestartCode;
+
     }
 
     @Override
@@ -114,13 +122,15 @@ public abstract class BluetoothService extends NotificationService implements On
         if(connectedDeviceThread!=null)
             connectedDeviceThread.cancel();
         try{unregisterReceiver(mReceiver);}catch (RuntimeException ignored){}
+        try{unregisterReceiver(mReceiver);}catch (RuntimeException ignored){}
         super.onDestroy();
     }
 
     @Override
     public void myStop() {
         updateServiceState(Constants.CLOSING_SERVICE);
-
+        if(role==Constants.PLAYER_CHOICE)
+            stopCollectingData();
         super.myStop();
     }
 
@@ -279,6 +289,16 @@ public abstract class BluetoothService extends NotificationService implements On
         new Thread(connectToBTServerRunnable).start();
     }
 
+    // DataCollectionListener -----
+    // (player)
+    @Override
+    public void onNewDataCollected(double data) {
+        // send this data to server if connected
+        assert Integer.valueOf(Constants.BT_STATE_CONNECTED).equals(live_bt_state.getValue());
+        dw.setData((int)data);
+        connectedDeviceThread.write(dw);
+    }
+
     // OnConnectToBTServerListener -----
     // (player callbacks)
     @Override
@@ -288,10 +308,14 @@ public abstract class BluetoothService extends NotificationService implements On
             connectedDeviceThread = new ConnectedThread(bs, connectedDeviceHandler);
             connectedDeviceThread.start();
         }
+        if(!startCollectingData(this)){
+            // sensor listener register failed
+            updateServiceState(Constants.CLOSING_SERVICE);
+            return;
+        }
         updateBTState(Constants.BT_STATE_CONNECTED);
-        startCollectingData();
     }
-    protected abstract void startCollectingData();
+    protected abstract boolean startCollectingData(DataCollectionListener dataCollectionListener);
 
     @Override
     public void onConnectionError(@Nullable BluetoothSocket skt) {

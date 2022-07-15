@@ -52,12 +52,21 @@ public class PlayerPracticingFragment extends CommonFragment implements Observer
         binding.rv.setAdapter(adapter);
         ((PlayerPracticingActivity)requireActivity()).currentFoundDevicesList.observe(requireActivity(), this);
 
+        if(((PlayerPracticingActivity)requireActivity()).mBoundService == null) {
+            requireActivity().getSupportFragmentManager().popBackStack();
+            return root;
+        }
         ((PlayerPracticingActivity)requireActivity()).mBoundService.getLive_bt_state().observe(requireActivity(), btState -> {
             switch(btState) {
                 case Constants.BT_STATE_CONNECTED: {
                     showConnected();
                     break;
                 }
+                case Constants.BT_STATE_DISABLED:
+                case Constants.BT_STATE_PERMISSION_REQUIRED:
+                case Constants.BT_STATE_BADLY_DENIED:
+                case Constants.BT_STATE_UNSOLVED:
+                case Constants.BT_STATE_JUST_DISCONNECTED:
                 case Constants.BT_STATE_CONNECTION_FAILED:{
                     hideConnectingContainer();
                     break;

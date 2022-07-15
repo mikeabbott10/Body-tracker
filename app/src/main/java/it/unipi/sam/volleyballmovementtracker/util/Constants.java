@@ -105,4 +105,7 @@ public class Constants {
     // notification
     public static final String NOTIFICATION_CHANNEL_ID = "tracker_channel";
     public static final String NOTIFICATION_CHANNEL_NAME = "Tracker channel";
+
+    // db
+    public static String DATABASE_NAME = "tracker_app_db";
 }
