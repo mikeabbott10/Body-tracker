@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/bar_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#aa000000"
+    android:paddingVertical="8dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/who_am_i_iv"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="0.3"
+        android:contentDescription="@null"
+        android:transitionName="@string/who_am_i_choice"
+        app:tint="@color/white" />
+
+    <ImageView
+        android:id="@+id/middle_action_icon_iv"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="0.3"
+        android:contentDescription="@null"
+        android:transitionName="@string/current_training_choice"
+        app:tint="@color/white" />
+
+    <RelativeLayout
+        android:id="@+id/bluetooth_state_layout"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="0.3">
+
+        <ImageView
+            android:id="@+id/bluetooth_state"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:contentDescription="@null" />
+
+        <ImageView
+            android:id="@+id/bluetooth_state_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:contentDescription="@null" />
+    </RelativeLayout>
+</LinearLayout>

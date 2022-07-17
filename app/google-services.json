@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1058589777508",
+    "project_id": "body-movement-tracker",
+    "storage_bucket": "body-movement-tracker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1058589777508:android:3481f2acfd82160753c971",
+        "android_client_info": {
+          "package_name": "it.unipi.sam.bodymovementtracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1058589777508-gijql2toidl79kaonrgp5ohhrqm17hdv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1CRmELgjAX61i_u-elgnc3ep53MLl9uU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1058589777508-gijql2toidl79kaonrgp5ohhrqm17hdv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

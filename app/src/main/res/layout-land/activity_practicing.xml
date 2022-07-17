@@ -18,17 +18,16 @@
         android:id="@+id/fragment_container_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/top_bar"
-        android:layout_toEndOf="@id/bottom_bar"/>
+        android:layout_toStartOf="@id/bar"
+        android:layout_toEndOf="@id/top_bar" />
     <!-- /Content -->
 
 
     <!-- top bar -->
     <RelativeLayout
         android:id="@+id/top_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/bottom_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:background="#aa000000">
         <!-- back button -->
         <ImageButton
@@ -51,7 +50,7 @@
             android:layout_margin="8dp"
             android:src="@drawable/ic_baseline_info_24"
             android:background="@android:color/transparent"
-            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
             android:contentDescription="@null" />
     </RelativeLayout>
     <!-- info tap gesture -->
@@ -59,68 +58,40 @@
         android:id="@+id/info_tap_gif_iv"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:rotation="40"
-        android:layout_alignParentEnd="true"
+        android:rotation="240"
+        android:layout_alignParentBottom="true"
         android:contentDescription="@null" />
     <!-- info description -->
     <TextView
         android:id="@+id/info_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/top_bar"
         android:layout_marginHorizontal="15dp"
         android:layout_marginVertical="5dp"
+        android:layout_toStartOf="@id/bar_comic"
+        android:layout_toEndOf="@id/top_bar"
         android:background="@drawable/rounded_corners"
         android:backgroundTint="#EE000000"
         android:fontFamily="@font/audiowide"
         android:padding="25dp"
+        android:text="@string/picker_fragment_info"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:typeface="monospace"
-        android:visibility="invisible"
-        android:layout_toEndOf="@id/bottom_bar"/>
+        android:visibility="invisible" />
 
-    <LinearLayout
-        android:id="@+id/bottom_bar"
+    <!-- bar -->
+    <include
+        android:id="@+id/bar"
+        layout="@layout/state_bar"
+        android:layout_width="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_height="match_parent" />
+
+    <!-- bar comic -->
+    <include android:id="@+id/bar_comic"
+        layout="@layout/bar_comic_layout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingHorizontal="8dp"
-        android:background="#aa000000">
-        <ImageView
-            android:id="@+id/who_am_i_iv"
-            android:layout_width="50dp"
-            android:layout_height="0dp"
-            android:layout_weight="0.3"
-            android:transitionName="@string/who_am_i_choice"
-            android:contentDescription="@null"
-            app:tint="@color/white" />
-        <ImageView
-            android:id="@+id/middle_action_icon_iv"
-            android:layout_width="50dp"
-            android:layout_height="0dp"
-            android:layout_weight="0.3"
-            android:transitionName="@string/current_training_choice"
-            android:contentDescription="@null"
-            app:tint="@color/white" />
-        <RelativeLayout
-            android:id="@+id/bluetooth_state_layout"
-            android:layout_width="50dp"
-            android:layout_height="0dp"
-            android:layout_weight="0.3">
-            <ImageView
-                android:id="@+id/bluetooth_state"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_centerInParent="true"
-                android:src="@drawable/ic_ok"
-                android:contentDescription="@null"/>
-            <ImageView
-                android:id="@+id/bluetooth_state_overlay"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_centerInParent="true"
-                android:contentDescription="@null"/>
-        </RelativeLayout>
-    </LinearLayout>
+        android:layout_toStartOf="@id/bar"/>
 </RelativeLayout>

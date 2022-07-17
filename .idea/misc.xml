@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable-anydpi/ic_back.xml" value="0.267" />
+        <entry key="app/src/main/res/drawable-anydpi/ic_down_arrow.xml" value="0.211" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3065" />
         <entry key="app/src/main/res/drawable/bluetooth.xml" value="0.2365" />
         <entry key="app/src/main/res/drawable/bottom_gradient.xml" value="0.2635" />
@@ -23,6 +24,8 @@
         <entry key="app/src/main/res/drawable/ic_comic.xml" value="0.2095" />
         <entry key="app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.2245" />
         <entry key="app/src/main/res/drawable/ic_disabled_ok.xml" value="0.3065" />
+        <entry key="app/src/main/res/drawable/ic_down_arrow.xml" value="0.211" />
+        <entry key="app/src/main/res/drawable/ic_left_arrow.xml" value="0.211" />
         <entry key="app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.231" />
         <entry key="app/src/main/res/drawable/ic_ok.xml" value="0.2365" />
         <entry key="app/src/main/res/drawable/ic_white_ok.xml" value="0.2105" />
@@ -42,19 +45,23 @@
         <entry key="app/src/main/res/layout-land/activity_player.xml" value="0.25" />
         <entry key="app/src/main/res/layout-land/activity_practicing.xml" value="0.18" />
         <entry key="app/src/main/res/layout-land/activity_trainer.xml" value="0.2" />
+        <entry key="app/src/main/res/layout-land/bar_comic_layout.xml" value="0.22" />
         <entry key="app/src/main/res/layout-land/fragment_coach_starting.xml" value="0.3049426301853486" />
         <entry key="app/src/main/res/layout-land/fragment_get_connections.xml" value="0.22" />
         <entry key="app/src/main/res/layout-land/fragment_get_data.xml" value="0.3049426301853486" />
         <entry key="app/src/main/res/layout-land/fragment_number_picker.xml" value="0.15091919623770841" />
         <entry key="app/src/main/res/layout-land/fragment_player_starting.xml" value="0.18" />
+        <entry key="app/src/main/res/layout-land/state_bar.xml" value="0.14" />
         <entry key="app/src/main/res/layout/activity_coach.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.16" />
         <entry key="app/src/main/res/layout/activity_middle_and_hitter_block.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_middle_blocker_block.xml" value="0.20806890299184044" />
         <entry key="app/src/main/res/layout/activity_player.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/activity_practicing.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_practicing.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_trainer.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_video_player.xml" value="0.14396155453405768" />
+        <entry key="app/src/main/res/layout/bar_comic_layout.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/bottom_bar.xml" value="0.25" />
         <entry key="app/src/main/res/layout/card_btdevice.xml" value="0.294570329200513" />
         <entry key="app/src/main/res/layout/card_training.xml" value="0.25" />
         <entry key="app/src/main/res/layout/choice_view.xml" value="0.22" />
@@ -74,6 +81,7 @@
         <entry key="app/src/main/res/layout/fragment_player_starting.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_select_training.xml" value="0.20126926563916592" />
         <entry key="app/src/main/res/layout/number_picker.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/state_bar.xml" value="0.2954253954681488" />
         <entry key="app/src/main/res/layout/video_player.xml" value="0.14396155453405768" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.35989583333333336" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2365" />

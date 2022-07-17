@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "Volleyball Movement Tracker"
+rootProject.name = "Body Movement Tracker"
 include ':app'

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- info description -->
+    <RelativeLayout
+        android:id="@+id/bar_info_description"
+        android:layout_width="250dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/rounded_corners"
+        android:backgroundTint="#EE000000"
+        android:padding="5dp"
+        android:layout_marginVertical="5dp"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/bar_info_description_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/audiowide"
+            android:gravity="center"
+            android:padding="5dp"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:typeface="monospace"
+            android:clickable="true"
+            android:focusable="true" />
+        <RelativeLayout
+            android:id="@+id/buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/bar_info_description_tv">
+
+            <it.unipi.sam.bodymovementtracker.util.graphic.ParamTextView
+                android:id="@+id/positive_btn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_toStartOf="@id/negative_btn"
+                android:fontFamily="@font/audiowide"
+                android:gravity="center"
+                android:text="@string/yes"
+                android:padding="5dp"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:typeface="monospace" />
+
+            <it.unipi.sam.bodymovementtracker.util.graphic.ParamTextView
+                android:id="@+id/negative_btn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:fontFamily="@font/audiowide"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:padding="5dp"
+                android:typeface="monospace"
+                android:gravity="center"
+                android:text="@string/no"
+                android:layout_margin="16dp"
+                android:layout_alignParentEnd="true"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/comic_info_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingEnd="2dp"
+        android:layout_toEndOf="@id/bar_info_description"
+        tools:ignore="RtlSymmetry">
+        <RelativeLayout
+            android:id="@+id/who_am_i_info_comic_base"
+            android:layout_width="20dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.3"
+            android:gravity="center_vertical"
+            android:visibility="invisible">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="30dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_right_arrow"
+                app:tint="#EE000000" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/middle_action_info_comic_base"
+            android:layout_width="20dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.3"
+            android:gravity="center_vertical"
+            android:visibility="invisible">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="30dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_right_arrow"
+                app:tint="#EE000000" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/bluetooth_state_info_comic_base"
+            android:layout_width="20dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.3"
+            android:gravity="center_vertical"
+            android:visibility="invisible">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="30dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_right_arrow"
+                app:tint="#EE000000" />
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

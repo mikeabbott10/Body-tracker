@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">Volleyball Movement Tracker</string>
+    <string name="app_name">Body Movement Tracker</string>
 
     <string name="bt_not_supported">Bluetooth non supportato</string>
     <string name="bt_permissions_request">Permettere l\'utilizzo del bluetooth?</string>
@@ -44,4 +44,13 @@
     <string name="connected">Connesso!</string>
     <string name="connecting">In connessione…</string>
     <string name="connection_closed_warning">La connessione è stata interrotta</string>
+
+    <string name="bt_start_connection_question">Iniziare l\'allenamento?</string>
+    <string name="bt_connected_info">Dispositivo remoto connesso!</string>
+    <string name="bt_discoverable_stop_question">Dispositivo visibile. Interrompere?</string>
+    <string name="bt_connected_stop_question">Dispositivo remoto connesso! Interrompere la connessione?</string>
+    <string name="bt_discovering_stop_question">In ricerca di dispositivi… Interrompere?</string>
+    <string name="bt_connection_failed_discovery_question">Connessione fallita. Riprendere la ricerca di dispositivi?</string>
+    <string name="yes">Si</string>
+    <string name="no">No</string>
 </resources>

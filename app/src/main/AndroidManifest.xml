@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="it.unipi.sam.volleyballmovementtracker">
+    package="it.unipi.sam.bodymovementtracker">
 
     <!--BLUETOOTH PERMISSION-->
     <!-- Request legacy Bluetooth permissions on older devices. -->
@@ -30,6 +30,9 @@
     <!-- FOREGROUND SERVICE -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
+    <!-- VIBRATION -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
     <!--accelerometer-->
     <uses-feature
         android:name="android.hardware.sensor.accelerometer"
@@ -49,20 +52,20 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name=".activities.MainActivity"
+            android:name="it.unipi.sam.bodymovementtracker.activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.PlayerPracticingActivity" />
-        <activity android:name=".activities.VideoPlayerActivity"
+        <activity android:name="it.unipi.sam.bodymovementtracker.activities.PlayerPracticingActivity" />
+        <activity android:name="it.unipi.sam.bodymovementtracker.activities.VideoPlayerActivity"
             android:theme="@style/Theme.Transparent"/>
-        <activity android:name=".activities.CoachPracticingActivity"/>
+        <activity android:name="it.unipi.sam.bodymovementtracker.activities.CoachPracticingActivity"/>
 
-        <service android:name=".services.SensorService" />
-        <receiver android:name=".util.MyNotificationBroadcastReceiver" />
+        <service android:name="it.unipi.sam.bodymovementtracker.services.SensorService" />
+        <receiver android:name="it.unipi.sam.bodymovementtracker.util.MyNotificationBroadcastReceiver" />
     </application>
 
 </manifest>
