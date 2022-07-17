@@ -77,7 +77,6 @@ public abstract class BaseActivity extends DownloadActivity implements
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
-    @SuppressLint("MissingPermission")
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         switch(requestCode){
@@ -115,7 +114,6 @@ public abstract class BaseActivity extends DownloadActivity implements
 
     @Override
     public void onClick(DialogInterface dialogInterface, int i) {
-        // todo check dialog flow
         if(showingDialog == Constants.BT_ENABLING_DIALOG){
             if(i==AlertDialog.BUTTON_POSITIVE) {
                 askForEnablingBtAfterPermissionCheck();
@@ -173,7 +171,7 @@ public abstract class BaseActivity extends DownloadActivity implements
     }
 
     @SuppressLint("MissingPermission")
-    protected void startDiscoveryAfterPermissionCheck() {
+    protected boolean startDiscoveryAfterPermissionCheck() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (!EasyPermissions.hasPermissions(this, Constants.BT_PERMISSIONS)) {
                 EasyPermissions.requestPermissions(this, getString(R.string.bt_permissions_request),
@@ -185,6 +183,7 @@ public abstract class BaseActivity extends DownloadActivity implements
                 if(bta.isDiscovering())
                     bta.cancelDiscovery();
                 bta.startDiscovery();
+                return true;
             }
         }else{
             if(!bta.isEnabled()) {
@@ -193,7 +192,9 @@ public abstract class BaseActivity extends DownloadActivity implements
             if(bta.isDiscovering())
                 bta.cancelDiscovery();
             bta.startDiscovery();
+            return true;
         }
+        return false;
     }
 
     private void enableBT() {

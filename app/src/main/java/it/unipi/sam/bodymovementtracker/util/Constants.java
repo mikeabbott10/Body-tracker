@@ -14,6 +14,7 @@ public class Constants {
             new String[]{Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT};
 
     // Constants that indicate the current bt state
+    public static final int NULL_STATE = -1;
     public static final int BT_STATE_DISABLED = 0;      // bt is off
     public static final int BT_STATE_ENABLED = 1;       // bt is on but we're doing nothing
     public static final int BT_STATE_DISCOVERABLE_AND_LISTENING = 2;  // bt in discoverable state

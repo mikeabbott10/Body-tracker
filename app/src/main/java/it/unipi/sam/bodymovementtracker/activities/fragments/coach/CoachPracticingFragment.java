@@ -123,7 +123,7 @@ public class CoachPracticingFragment extends CommonFragment implements Observer<
     public void onChanged(List<DataWrapper> dataWrappers) {
         if(dataWrappers==null || dataWrappers.size()==0)
             return;
-        assert dataWrappers.size()<=1;
+        //assert dataWrappers.size()<=1;
         DataWrapper lastDataWrapper = dataWrappers.get(0);
 
         // build the last 100 data wrappers in order to handle screen rotation

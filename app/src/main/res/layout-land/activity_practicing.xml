@@ -56,29 +56,34 @@
     <!-- info tap gesture -->
     <ImageView
         android:id="@+id/info_tap_gif_iv"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:rotation="240"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
         android:layout_alignParentBottom="true"
-        android:contentDescription="@null" />
+        android:contentDescription="@null"
+        android:rotation="240" />
+
     <!-- info description -->
-    <TextView
-        android:id="@+id/info_description"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="15dp"
-        android:layout_marginVertical="5dp"
         android:layout_toStartOf="@id/bar_comic"
         android:layout_toEndOf="@id/top_bar"
-        android:background="@drawable/rounded_corners"
-        android:backgroundTint="#EE000000"
-        android:fontFamily="@font/audiowide"
-        android:padding="25dp"
-        android:text="@string/picker_fragment_info"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:typeface="monospace"
-        android:visibility="invisible" />
+        android:scrollbars="none">
+        <TextView
+            android:id="@+id/info_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="5dp"
+            android:background="@drawable/rounded_corners"
+            android:backgroundTint="#EE000000"
+            android:fontFamily="@font/audiowide"
+            android:padding="25dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:typeface="monospace"
+            android:visibility="gone" />
+    </ScrollView>
 
     <!-- bar -->
     <include

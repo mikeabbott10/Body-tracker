@@ -48,7 +48,7 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
             updateBtIcon(binding.bar.bluetoothState, currentBtStateDrawableId,
                     binding.bar.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
         }
-        assert whoAmIDrawableId != ResourcesCompat.ID_NULL;
+        //assert whoAmIDrawableId != ResourcesCompat.ID_NULL;
         binding.bar.whoAmIIv.setImageDrawable(
                 AppCompatResources.getDrawable(this, whoAmIDrawableId));
 
@@ -103,8 +103,15 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
             }
             case Constants.BT_STATE_ENABLED:{
                 // ask for enabling bluetooth
-                if(showingDialog!=Constants.BT_START_DISCOVERY_PERMISSIONS_DIALOG)
-                    startDiscoveryAfterPermissionCheck();
+                if(showingDialog!=Constants.BT_START_DISCOVERY_PERMISSIONS_DIALOG) {
+                    //assert mBoundService!=null;
+                    if (startDiscoveryAfterPermissionCheck()) {
+                        // start discovery started
+                        mBoundService.onDiscoveryStarted();
+                    } else {
+                        mBoundService.onDiscoveryStartFail();
+                    }
+                }
                 break;
             }
             case Constants.BT_STATE_DISCOVERING:{
@@ -145,7 +152,7 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
         switch (serviceState){
             case Constants.STARTING_SERVICE:
             case Constants.ALREADY_STARTED_SERVICE:{
-                assert mBoundService!=null;
+                //assert mBoundService!=null;
                 if(currentFragment!=Constants.PLAYER_PRACTICING_FRAGMENT) {
                     // start PlayerPracticingFragment
                     transactionToFragment(this, PlayerPracticingFragment.class, true);
@@ -171,7 +178,7 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
                 break;
             }
             case Constants.MESSAGE_WRITE:{
-                // idk what to do here
+                // nothing to do here
                 break;
             }
             case Constants.MESSAGE_TOAST:{
@@ -226,6 +233,9 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
             }
             switch(action){
                 case Constants.ACTION_START_TRAINING:{
+                    // init found devices list
+                    currentFoundDevicesList = new MutableLiveData<>();
+                    currentFoundDevicesList.setValue(new HashSet<>());
                     // start servizio
                     doStartService(Constants.PLAYER_CHOICE); // idempotent
                     doBindService(SensorService.class); // idempotent
@@ -238,7 +248,8 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
                 }
                 case Constants.ACTION_START_DISCOVERING:{
                     // start discovery again updating service bt state
-                    assert mBoundService!=null;
+                    //assert mBoundService!=null;
+                    mBoundService.updateBTState(Constants.NULL_STATE);
                     mBoundService.updateBTState(bta.isEnabled() ?
                             Constants.BT_STATE_ENABLED : Constants.BT_STATE_DISABLED);
                     break;
@@ -291,8 +302,15 @@ public class PlayerPracticingActivity extends CommonPracticingActivity implement
     }
 
     @Override
+    protected void myStopService() {
+        currentFoundDevicesList.removeObservers(this);
+        currentFoundDevicesList = null;
+        super.myStopService();
+    }
+
+    @Override
     protected void onServiceAlreadyStarted() {
-        assert mBoundService!=null;
+        //assert mBoundService!=null;
         if(mBoundService.role != Constants.PLAYER_CHOICE){
             Snackbar.make(binding.getRoot(), "ERROR 04: role inconsistency", 2000).show();
             Log.e(TAG, "ERROR 04: role inconsistency");

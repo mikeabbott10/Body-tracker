@@ -50,7 +50,7 @@ public class CoachPracticingActivity extends CommonPracticingActivity
             updateBtIcon(binding.bar.bluetoothState, currentBtStateDrawableId,
                     binding.bar.bluetoothStateOverlay, ResourcesCompat.ID_NULL, false);
         }
-        assert whoAmIDrawableId != ResourcesCompat.ID_NULL;
+        //assert whoAmIDrawableId != ResourcesCompat.ID_NULL;
         binding.bar.whoAmIIv.setImageDrawable(
                 AppCompatResources.getDrawable(this, whoAmIDrawableId));
 
@@ -101,13 +101,15 @@ public class CoachPracticingActivity extends CommonPracticingActivity
         switch(bt_state){
             case Constants.BT_STATE_DISABLED:{
                 // ask for enabling bluetooth
-                if(showingDialog!=Constants.BT_ENABLING_DIALOG && !isRequestBluetoothLaunched)
+                if(showingDialog!=Constants.BT_ENABLING_DIALOG &&
+                        !isRequestBluetoothLaunched && mBoundService != null)
                     askForEnablingBtAfterPermissionCheck();
                 break;
             }
             case Constants.BT_STATE_ENABLED:{
                 // ask for discoverability
-                if(showingDialog!=Constants.DISCOVERABILITY_DIALOG && !isRequestDiscoverabilityLaunched)
+                if(showingDialog!=Constants.DISCOVERABILITY_DIALOG &&
+                        !isRequestDiscoverabilityLaunched && mBoundService != null)
                     askForDiscoverabilityAfterPermissionCheck();
                 break;
             }
@@ -154,7 +156,7 @@ public class CoachPracticingActivity extends CommonPracticingActivity
         switch (serviceState){
             case Constants.STARTING_SERVICE:
             case Constants.ALREADY_STARTED_SERVICE:{
-                assert mBoundService!=null;
+                //assert mBoundService!=null;
                 if(currentFragment!=Constants.COACH_PRACTICING_FRAGMENT) {
                     // start PlayerPracticingFragment
                     transactionToFragment(this, CoachPracticingFragment.class, true);
@@ -163,6 +165,7 @@ public class CoachPracticingActivity extends CommonPracticingActivity
             }
             case Constants.CLOSING_SERVICE:{
                 myStopService();
+                mBoundService = null;
                 updateBtIconWithCurrentState(bta.isEnabled());
                 break;
             }
@@ -299,7 +302,7 @@ public class CoachPracticingActivity extends CommonPracticingActivity
 
     @Override
     protected void onServiceAlreadyStarted() {
-        assert mBoundService!=null;
+        //assert mBoundService!=null;
         if(mBoundService.role != Constants.COACH_CHOICE){
             Snackbar.make(binding.getRoot(), "ERROR 04: role inconsistency", 2000).show();
             Log.e(TAG, "ERROR 04: role inconsistency");

@@ -34,8 +34,8 @@
     <string name="make_me_discoverable">Rendimi visibile</string>
     <string name="close">Chiudi</string>
     <string name="notification_title">Movement Tracker</string>
-    <string name="coach_state_none_notification">Servizio coach in attesa di istruzioni</string>
-    <string name="player_state_none_notification">Servizio giocatore in attesa di istruzioni</string>
+    <string name="coach_state_none_notification">Servizio coach.</string>
+    <string name="player_state_none_notification">Servizio giocatore.</string>
 
     <string name="ask_enable_notification">Questa applicazione ha bisogno che le notifiche siano abilitate. Ne useremo una per informarti sullo stato della tua connessione. Prego, abilitare le notifiche.</string>
     <string name="ask_enable_channel_notification">Questa applicazione ha bisogno di un canale di notifica funzionante. Prego, abilitare il canale notifiche.</string>

@@ -58,6 +58,7 @@ public class ConnectToBTServerRunnable implements Runnable {
             mmSocket = null;
         } catch (IOException e) {
             Log.e(TAG, "Socket's create() method failed", e);
+            sendMessage(CONNECTION_ERROR, e.getMessage());
             mmSocket = null;
         }
     }

@@ -39,6 +39,8 @@ public abstract class BluetoothService extends NotificationService implements On
     protected ConnectToBTServerRunnable connectToBTServerRunnable;
     public int role;
     protected DataWrapper dw;
+    private boolean isGetBTConnectionsThreadRunning;
+    private boolean isConnectToBTServerThreadRunning;
 
     public ConnectedThread connectedDeviceThread;
     private final Handler connectedDeviceHandler = new Handler(Looper.getMainLooper()) {
@@ -89,6 +91,7 @@ public abstract class BluetoothService extends NotificationService implements On
         Log.i( TAG, "onStartCommand");
         Log.d( TAG, "isStarted:" + isStarted);
         if(!isStarted) {
+            isGetBTConnectionsThreadRunning = false;
             bta = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
             updateServiceState(Constants.STARTING_SERVICE);
             if (!bta.isEnabled()) {
@@ -102,7 +105,6 @@ public abstract class BluetoothService extends NotificationService implements On
             intentFilters.addAction(BluetoothAdapter.ACTION_STATE_CHANGED); // bt on/off
             intentFilters.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED); // (coach) status changed: discoverable/connectable/none
             intentFilters.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED); // (player) discovery has finished
-            intentFilters.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED); // (player) discovery has started
             registerReceiver(mReceiver, intentFilters);
             return super.onStartCommand(intent, flags, startId);
         }
@@ -122,15 +124,20 @@ public abstract class BluetoothService extends NotificationService implements On
         if(connectedDeviceThread!=null)
             connectedDeviceThread.cancel();
         try{unregisterReceiver(mReceiver);}catch (RuntimeException ignored){}
-        try{unregisterReceiver(mReceiver);}catch (RuntimeException ignored){}
         super.onDestroy();
     }
 
     @Override
     public void myStop() {
         updateServiceState(Constants.CLOSING_SERVICE);
-        if(role==Constants.PLAYER_CHOICE)
+        if(role==Constants.PLAYER_CHOICE) {
             stopCollectingData();
+            try {
+                if (bta.isDiscovering())
+                    bta.cancelDiscovery();
+            }catch (SecurityException ignored){}
+            saveFoundDevicesList(null);
+        }
         super.myStop();
     }
 
@@ -164,7 +171,7 @@ public abstract class BluetoothService extends NotificationService implements On
             case BluetoothAdapter.SCAN_MODE_CONNECTABLE: {
                 // device non discoverable ma può ricevere connessioni
                 if(Integer.valueOf(Constants.BT_STATE_DISCOVERABLE_AND_LISTENING).equals(live_bt_state.getValue())){
-                    assert role == Constants.COACH_CHOICE;
+                    //assert role == Constants.COACH_CHOICE;
                     // still waiting for client
                     updateBTState(Constants.BT_STATE_ENABLED);
                 }
@@ -173,7 +180,7 @@ public abstract class BluetoothService extends NotificationService implements On
             case BluetoothAdapter.SCAN_MODE_NONE:{
                 // device non discoverbale e non può ricevere connessioni
                 if(Integer.valueOf(Constants.BT_STATE_DISCOVERABLE_AND_LISTENING).equals(live_bt_state.getValue())){
-                    assert role == Constants.COACH_CHOICE;
+                    //assert role == Constants.COACH_CHOICE;
                     // still waiting for client
                     updateBTState(Constants.BT_STATE_ENABLED);
                 }
@@ -195,14 +202,18 @@ public abstract class BluetoothService extends NotificationService implements On
                     // need to start discovering again
                     updateBTState(Constants.BT_STATE_ENABLED);
                 }
-            } else {
-                if (!isDiscoveryFinished) {
-                    // just started discovering
-                    updateBTState(Constants.BT_STATE_DISCOVERING);
-                }
             }
 
         }
+    }
+
+    public void onDiscoveryStarted(){
+        //assert role==Constants.PLAYER_CHOICE;
+        updateBTState(Constants.BT_STATE_DISCOVERING);
+    }
+    public void onDiscoveryStartFail(){
+        //assert role==Constants.PLAYER_CHOICE;
+        updateBTState(Constants.BT_STATE_ENABLED);
     }
 
     // unused here
@@ -240,6 +251,10 @@ public abstract class BluetoothService extends NotificationService implements On
      */
     public void onMeDiscoverable() {
         updateBTState(Constants.BT_STATE_DISCOVERABLE_AND_LISTENING);
+        if (isGetBTConnectionsThreadRunning) {
+            return;
+        }
+        isGetBTConnectionsThreadRunning = true;
         // get this listening for incoming connections
         getBTConnectionsRunnable =
                 new GetBTConnectionsRunnable(this, bta, this);
@@ -269,6 +284,7 @@ public abstract class BluetoothService extends NotificationService implements On
 
     @Override
     public void onPermissionError(String msg) {
+        isConnectToBTServerThreadRunning = false;
         // permissions removed during service life
         Log.w(TAG, "onPermissionError msg: " + msg);
         updateBTState(Constants.BT_STATE_BADLY_DENIED);
@@ -291,6 +307,9 @@ public abstract class BluetoothService extends NotificationService implements On
      */
     public void onBTServerSelected(BluetoothDevice btDevice){
         Log.i(TAG, "onBTServerSelected");
+        if(isConnectToBTServerThreadRunning)
+            return;
+        isConnectToBTServerThreadRunning = true;
         // get this listening for incoming connections
         connectToBTServerRunnable =
                 new ConnectToBTServerRunnable(this, btDevice, bta, this);
@@ -314,6 +333,7 @@ public abstract class BluetoothService extends NotificationService implements On
     public void onConnectionEstablished(BluetoothSocket bs) {
         Log.i(TAG, "onConnectionEstablished");
         Log.d(TAG, "coach bs: "+bs);
+        isConnectToBTServerThreadRunning = false;
         if(bs!=null){
             connectedDeviceThread = new ConnectedThread(bs, connectedDeviceHandler);
             connectedDeviceThread.start();
@@ -330,6 +350,7 @@ public abstract class BluetoothService extends NotificationService implements On
     @Override
     public void onConnectionError(@Nullable BluetoothSocket skt) {
         Log.i(TAG, "onConnectionError");
+        isConnectToBTServerThreadRunning = false;
         // tried to connect to a socket but failed
         updateBTState(Constants.BT_STATE_CONNECTION_FAILED);
     }

@@ -29,28 +29,25 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
         switch (action) {
             // BT ----------------------------------------------------------------------------------
             case BluetoothAdapter.ACTION_STATE_CHANGED: {
+                Log.d(TAG, "bt state changed");
                 onBTReceiveListener.onBluetoothStateChangedEventReceived(
                         intent.getExtras().getInt(BluetoothAdapter.EXTRA_STATE, -1));
                 break;
             }
             case BluetoothAdapter.ACTION_SCAN_MODE_CHANGED: {
                 int scanMode = intent.getExtras().getInt(BluetoothAdapter.EXTRA_SCAN_MODE);
-                Log.d(TAG, scanMode + "");
+                Log.d(TAG, "scanMode:"+scanMode);
                 onBTReceiveListener.onBluetoothScanModeChangedEventReceived(scanMode);
                 break;
             }
             case BluetoothDevice.ACTION_FOUND: {
                 BluetoothDevice dev = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                Log.d(TAG, dev + "");
+                Log.d(TAG, "dev:"+dev);
                 onBTReceiveListener.onBluetoothActionFoundEventReceived(dev);
                 break;
             }
             case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:{
                 onBTReceiveListener.onBluetoothActionDiscoveryEventReceived(true);
-                break;
-            }
-            case BluetoothAdapter.ACTION_DISCOVERY_STARTED:{
-                onBTReceiveListener.onBluetoothActionDiscoveryEventReceived(false);
                 break;
             }
             // DM ----------------------------------------------------------------------------------

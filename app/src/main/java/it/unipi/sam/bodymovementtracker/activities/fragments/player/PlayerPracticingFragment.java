@@ -107,6 +107,7 @@ public class PlayerPracticingFragment extends CommonFragment implements Observer
     @Override
     public void onDestroyView() {
         Log.i(TAG, "onDestroyView");
+        binding.rv.setAdapter(null);
         adapter = null;
         super.onDestroyView();
     }
@@ -115,7 +116,7 @@ public class PlayerPracticingFragment extends CommonFragment implements Observer
     @Override
     public void onChanged(Set<BluetoothDevice> btDevices) {
         if(btDevices!=null) {
-            Log.d(TAG, "found btDevices changed");
+            Log.d(TAG, "found btDevices changed:" + btDevices.size());
             adapter.setBtDevices(btDevices);
             // idk quante entries ci sono in più o in meno rispetto a
             // prima (nè dove sono state inserite/eliminate).

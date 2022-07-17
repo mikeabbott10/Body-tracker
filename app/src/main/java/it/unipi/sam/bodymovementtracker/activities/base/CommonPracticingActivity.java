@@ -119,7 +119,7 @@ public abstract class CommonPracticingActivity extends ServiceBTActivity impleme
         // make main info invisible
         binding.infoBtn.setAlpha(1.0f);
         GraphicUtil.slideUp(binding.infoDescription, -1, null, 2, false);
-        binding.infoDescription.setVisibility(View.INVISIBLE);
+        binding.infoDescription.setVisibility(View.GONE);
     }
 
     private boolean isMainInfoShown() {
@@ -350,7 +350,7 @@ public abstract class CommonPracticingActivity extends ServiceBTActivity impleme
     }
 
     private void initBars() {
-        assert mainColor != -1;
+        //assert mainColor != -1;
         if(mainColor == Constants.BLUE) {
             binding.topBar.setBackgroundColor(getResources().getColor(R.color.MidnightBlue));
             binding.bar.barParent.setBackgroundColor(getResources().getColor(R.color.MidnightBlue));
