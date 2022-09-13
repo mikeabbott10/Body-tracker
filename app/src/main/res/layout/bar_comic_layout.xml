@@ -34,8 +34,8 @@
             android:layout_below="@id/bar_info_description_tv">
             <it.unipi.sam.bodymovementtracker.util.graphic.ParamTextView
                 android:id="@+id/positive_btn"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:fontFamily="@font/audiowide"
                 android:textColor="@color/white"
                 android:textSize="22sp"
@@ -48,8 +48,8 @@
 
             <it.unipi.sam.bodymovementtracker.util.graphic.ParamTextView
                 android:id="@+id/negative_btn"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:fontFamily="@font/audiowide"
                 android:textColor="@color/white"
                 android:textSize="22sp"
